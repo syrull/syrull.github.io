@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>archive://syrull</title><link>localhost/</link><description>archive://syrull</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 23 May 2022 21:44:27 +0300</lastBuildDate><atom:link href="localhost/index.xml" rel="self" type="application/rss+xml"/><item><title>Create Plugin Architecture With Python</title><link>localhost/posts/create-plugin-architecture-with-python/</link><pubDate>Mon, 23 May 2022 21:44:27 +0300</pubDate><guid>localhost/posts/create-plugin-architecture-with-python/</guid><description>&lt;p>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the &lt;code>__subclasses__&lt;/code> dunder method and one using a decorator.&lt;/p>
+&lt;h1 id="solution-1" >Solution 1
+&lt;span>
+&lt;a href="#solution-1">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>Repository: &lt;a href="https://github.com/syrull/plugin-arch-python/tree/main/Solution-1">https://github.com/syrull/plugin-arch-python/tree/main/Solution-1&lt;/a>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-tree" data-lang="tree">SOLUTION-1
+│ configuration.py
+│ main.py
+│ README.md
+│ setup.py
+│
+└───actions
+action_example1.py
+action_example2.py
+__init__.py
+&lt;/code>&lt;/pre>&lt;p>Loading the &lt;code>__subclasses__&lt;/code> of the &lt;code>BaseAction&lt;/code> class and creating a &amp;lsquo;pluggable&amp;rsquo; classes. The actions can be specified in the &lt;code>configuration.py&lt;/code> file in the &lt;code>ACTIONS&lt;/code> const. This method is inspired by django&amp;rsquo;s &lt;code>INSTALLED_APPS&lt;/code> method.&lt;/p>
+&lt;p>The &lt;code>call&lt;/code> method is a placeholder for the &amp;ldquo;actions&amp;rdquo;.&lt;/p>
+&lt;h2 id="to-register-an-action" >To Register an action
+&lt;span>
+&lt;a href="#to-register-an-action">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;ul>
+&lt;li>New python file in &lt;code>actions/&lt;/code> folder&lt;/li>
+&lt;li>Create a class with an appropriate name (ex. &lt;code>ClickAction&lt;/code>)&lt;/li>
+&lt;li>Extend the class with &lt;code>BaseAction&lt;/code>&lt;/li>
+&lt;li>Add an entry to &lt;code>ACTIONS&lt;/code> const located in &lt;code>configuration.py&lt;/code> file with the approriate path to the module&lt;/li>
+&lt;/ul>
+&lt;p>After that the function will be available at the &lt;code>register&lt;/code> in the &lt;code>main.py&lt;/code> file.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ python main.py
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[&amp;lt;class &amp;#39;actions.action_example1.Example1Action&amp;#39;&amp;gt;, &amp;lt;class &amp;#39;actions.action_example2.Example2Action&amp;#39;&amp;gt;]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="benchmarks" >Benchmarks
+&lt;span>
+&lt;a href="#benchmarks">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>Measure-Command { python .\main.py }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>Days : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Hours : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Minutes : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Seconds : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Milliseconds : 24
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Ticks : 240745
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalDays : 2.78640046296296E-07
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalHours : 6.68736111111111E-06
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalMinutes : 0.000401241666666667
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalSeconds : 0.0240745
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalMilliseconds : 24.0745
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="solution-2" >Solution 2
+&lt;span>
+&lt;a href="#solution-2">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>Repository: &lt;a href="https://github.com/syrull/plugin-arch-python/tree/main/Solution-2">https://github.com/syrull/plugin-arch-python/tree/main/Solution-2&lt;/a>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-tree" data-lang="tree">SOLUTION-2
+│ main.py
+│ README.md
+│ register.py
+│
+└───actions
+action_example1.py
+action_example2.py
+__init__.py
+&lt;/code>&lt;/pre>&lt;p>The benefits of this solution are that we have a control over the decorator and we can pass some custom &lt;code>*args, **kwargs&lt;/code> to the decorated functions.&lt;/p>
+&lt;h2 id="to-register-an-action-1" >To Register an action
+&lt;span>
+&lt;a href="#to-register-an-action-1">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;ul>
+&lt;li>New python file in &lt;code>actions/&lt;/code> folder&lt;/li>
+&lt;li>Create function with an appropriate name (ex. &lt;code>action_onclick&lt;/code>)&lt;/li>
+&lt;li>Decorate the function with &lt;code>register_action&lt;/code> decorator&lt;/li>
+&lt;li>Export the function in the &lt;code>__all__&lt;/code> method in &lt;code>actions/__init__.py&lt;/code> file&lt;/li>
+&lt;/ul>
+&lt;p>After that the function will be available at the &lt;code>register&lt;/code> in the &lt;code>main.py&lt;/code> file.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ python main.py
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[&amp;lt;function action_example1 at 0x000001CC3F88D310&amp;gt;, &amp;lt;function action_example2 at 0x000001CC3F88D3A0&amp;gt;]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="benchmarks-1" >Benchmarks
+&lt;span>
+&lt;a href="#benchmarks-1">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>Measure-Command { python .\main.py }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>Days : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Hours : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Minutes : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Seconds : 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Milliseconds : 22
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Ticks : 227803
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalDays : 2.6366087962963E-07
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalHours : 6.32786111111111E-06
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalMinutes : 0.000379671666666667
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalSeconds : 0.0227803
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalMilliseconds : 22.7803
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Simple Fishing Bot for World of Warcraft</title><link>localhost/posts/simple-fishing-bot/</link><pubDate>Sun, 22 May 2022 21:37:03 +0300</pubDate><guid>localhost/posts/simple-fishing-bot/</guid><description>&lt;p>This fishing bot consists only of about 50 lines of code, it incorporates the mechanics of World of Warcraft and some simple Windows API Calls.&lt;/p>
+&lt;p>&lt;img src="localhost/fishing-bot/fishing.gif" alt="Fishing Bot in action">&lt;/p>
+&lt;p>Repository: &lt;a href="https://github.com/syrull/simple-fishing-bot">https://github.com/syrull/simple-fishing-bot&lt;/a>&lt;/p>
+&lt;h2 id="overview" >Overview
+&lt;span>
+&lt;a href="#overview">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>The bot has about ~99% success rate, there are some extremely rare cases where the bot won&amp;rsquo;t catch it and I will explain why later. The method that the bot is using, should
+work in almost any fishing scenario in the game, I would personally avoid crowded places. The testing has been done in the current expansion (Shadowlands).&lt;/p>
+&lt;p>The bot is running on the currently Active Window, I haven&amp;rsquo;t performed checks wether this is the window of the game or not. It waits for about 2 seconds before it starts.&lt;/p>
+&lt;h3 id="metrics" >Metrics
+&lt;span>
+&lt;a href="#metrics">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;pre tabindex="0">&lt;code>Zereth Mortis: 29m 33s
+Items Looted: 161
+&lt;/code>&lt;/pre>&lt;p>That means that we loot roughly about ~5.4 fish per minute.&lt;/p>
+&lt;h2 id="installation--usage" >Installation &amp;amp; Usage
+&lt;span>
+&lt;a href="#installation--usage">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>Check the &lt;code>requirements.txt&lt;/code>, for the Python Requirements and install them via &lt;code>pip install -r requirements.txt&lt;/code>. The tests are done under Python3.10 however I believe everything should work with Python&amp;gt;=3.6.&lt;/p>
+&lt;h3 id="set-the-bait" >Set the bait
+&lt;span>
+&lt;a href="#set-the-bait">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;p>Before using the bot, you need to supply it with an image of the bait. The image has to be on the bottom parts of the bait. Here is an example image, the green area indicates what would be a good image of the bait, it needs to be as small as possible.&lt;/p>
+&lt;p>&lt;img src="localhost/fishing-bot/bait_example.png" alt="Bait Example">&lt;/p>
+&lt;p>Save the image and place it at the root of the script as &lt;code>bait.png&lt;/code>, additionally you can adjust the variable &lt;code>BAIT_IMAGE&lt;/code> in the `fishingbot.py.&lt;/p>
+&lt;blockquote>
+&lt;p>⚠️ It is important for you to take the photo because of the graphical/display settings which can be different for each computer.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="fine-tune-the-script" >Fine-tune the script
+&lt;span>
+&lt;a href="#fine-tune-the-script">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;p>The fine tunning that you have to do consists of:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>FISHING_BUTTON &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TUNE_BAIT_MOUSE_UNDER_PX &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">35&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EDGE_RESET &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ACTIVE_AFTER &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>CONFIDENCE &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0.7&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Variable&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>FISHING_BUTTON&lt;/td>
+&lt;td>The button that you use for fishing, in my case it was &lt;code>b&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>TUNE_BAIT_MOUSE_UNDER_PX&lt;/td>
+&lt;td>The offset pixels where the mouse is going to be whenever there is a bait, see the &lt;a href="#how-it-works">How it works?&lt;/a> section&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>EDGE_RESET&lt;/td>
+&lt;td>Those are the &lt;code>x, y&lt;/code> coordinates to reset the mouse after catching the fish, it is used to improve the success rate, leave it at &lt;code>10, 10&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>ACTIVE_AFTER&lt;/td>
+&lt;td>The bot simply waits 2 secs before it starts&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CONFIDENCE&lt;/td>
+&lt;td>The confidence of the template matching&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="how-it-works" >How it works?
+&lt;span>
+&lt;a href="#how-it-works">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>The method is extremely simple, it utilizes two things. The first one is the &lt;a href="https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html">Template Matching&lt;/a>, this is what &lt;code>pyautogui.locateOnScreen&lt;/code> uses under the hood and the second one is the &lt;a href="https://github.com/mhammond/pywin32/blob/c08c3d9e4a503b195c312b0fbd51454bd2ee665a/win32/src/win32gui.i#L2486">PyGetCursorInfo&lt;/a> function which is exposed by the &lt;code>win32gui&lt;/code> lib.&lt;/p>
+&lt;p>The solution lies in the gif from the beginning, whenever the bobber actually catches a fish the AoE (Area of Effect) for the bobber becomes bigger allowing us to detect a change on the cursor, then we use the &lt;code>GetCursorInfo&lt;/code> to catch the change of the cursor and if it becomes a different &lt;code>tuple&lt;/code> from the default one which we set when there is nothing active on our cursor. Then we execute the click.&lt;/p>
+&lt;p>Now about the fine-tuning, look at this example&lt;/p>
+&lt;p>&lt;img src="localhost/fishing-bot/diagram_bobber.png" alt="Abstract">&lt;/p>
+&lt;p>The &lt;code>TUNE_BAIT_MOUSE_UNDER_PX&lt;/code> variable which doesn&amp;rsquo;t have the best name ever is indicated with red, in simple terms it is how many pixels under the located bobber to place the mouse. For myself the range between 28-32 works the best, but as I said earlier this could differ.&lt;/p>
+&lt;h2 id="edge-cases" >Edge cases
+&lt;span>
+&lt;a href="#edge-cases">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>There is a rare edge case when the default tuple for the cursor doesn&amp;rsquo;t change which happens if the script isn&amp;rsquo;t tune right, I&amp;rsquo;ve solved this by resetting the cursor at &lt;code>x=10, y=10&lt;/code> position of the screen and then bringing it back. In a case when the cursor&amp;rsquo;s icon doesn&amp;rsquo;t change and if it sits with the bait icon the bot would just wait the duration of the fishing and reset itself.&lt;/p>
+&lt;h2 id="additional-features" >Additional features
+&lt;span>
+&lt;a href="#additional-features">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>I&amp;rsquo;ve added a bit of randomness in the timings between each press of the fishing and the click of the bobber with additionally pressing space every now and then. Apparently the server can detect that something fishy is going on when this randomness is removed.&lt;/p></description></item><item><title>STIX/TAXII - Complete Knowledge</title><link>localhost/posts/stix-taxii-complete-knowledge/</link><pubDate>Sun, 10 Apr 2022 21:42:39 +0300</pubDate><guid>localhost/posts/stix-taxii-complete-knowledge/</guid><description>&lt;h2 id="introduction" >Introduction
+&lt;span>
+&lt;a href="#introduction">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;h3 id="stix" >STIX
+&lt;span>
+&lt;a href="#stix">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;p>What is STIX and what is TAXII? In the most simple terms STIX is a model of Threat Intelligence that is represented in motivations, abilities, capabilities and response objects. Those objects are then represented in either JSON (STIX 2) or XML (STIX 1).&lt;/p>
+&lt;p>Here is a very simple representation of STIX Objects in a graph.
+&lt;img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bsuw7lnfzefu81oft2fq.png" alt="STIX Example">
+&lt;a href="https://oasis-open.github.io/cti-documentation/examples/sighting-of-an-indicator">Explanation of the example&lt;/a>&lt;/p>
+&lt;p>The data can be helpful for preventing or mitigating various kinds of attacks that can be expressed with STIX. All the list of the examples you can find in their &lt;a href="https://oasis-open.github.io/cti-documentation/stix/examples">official example page&lt;/a>.&lt;/p>
+&lt;h3 id="taxii" >TAXII
+&lt;span>
+&lt;a href="#taxii">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;p>The STIX data has to be relayed in some way, that&amp;rsquo;s why we have the TAXII Server. It is a simple web server specifically created for storing and sharing that kind of data.&lt;/p>
+&lt;h4 id="taxii-1x-structure" >TAXII 1.x Structure
+&lt;span>
+&lt;a href="#taxii-1x-structure">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h4>&lt;p>The TAXII 1.2 Server has the following structure:&lt;/p>
+&lt;ul>
+&lt;li>Discovery Service - Within a POST request to their discovery URL (which should be pointed by the Server maintainers).&lt;/li>
+&lt;li>Collection Management URL - The service that has the collections with STIX objects.&lt;/li>
+&lt;li>Channels - Push/Subscribe pattern.&lt;/li>
+&lt;/ul>
+&lt;p>The full list of features for TAXII1 can be found in their official documentation:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://docs.oasis-open.org/cti/taxii/v1.1.1/taxii-v1.1.1-part3-http.html">https://docs.oasis-open.org/cti/taxii/v1.1.1/taxii-v1.1.1-part3-http.html&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://taxiiproject.github.io/releases/1.1/TAXII_Overview.pdf">https://taxiiproject.github.io/releases/1.1/TAXII_Overview.pdf&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.oasis-open.org/committees/download.php/57324/OASIS">https://www.oasis-open.org/committees/download.php/57324/OASIS&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h4 id="taxii-2x-structure" >TAXII 2.x Structure
+&lt;span>
+&lt;a href="#taxii-2x-structure">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h4>&lt;p>For the newer versions of the TAXII Server we have the following structure:&lt;/p>
+&lt;p>&lt;img src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2my74ivbmrhswj1nd83b.png" alt="Image description">&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>/discovery&lt;/code> - Discovers the paths to the different services provided by the Server.&lt;/li>
+&lt;li>&lt;code>api_roots&lt;/code> - Provides the API URLs for the different types of Collection Management.
+&lt;ul>
+&lt;li>&lt;code>collections&lt;/code> - Provides the available collections for the given &lt;code>api_root&lt;/code>.
+&lt;ul>
+&lt;li>&lt;code>collection/objects&lt;/code> - Provides a list of STIX Objects in a given collection&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>You can see that this is very similar to the TAXII 1.x servers, there isn&amp;rsquo;t much of a difference in the structure besides that the &lt;code>collection_management_url&lt;/code> is &lt;code>api_root&lt;/code> in TAXII 2.x.&lt;/p>
+&lt;p>The full list of features for TAXII2 can be found in their &lt;a href="https://docs.oasis-open.org/cti/taxii/v2.1/csprd01/taxii-v2.1-csprd01.html">official documentation&lt;/a>.&lt;/p>
+&lt;h4 id="taxii-servers-and-threat-intelligence-providers" >TAXII Servers and Threat Intelligence Providers
+&lt;span>
+&lt;a href="#taxii-servers-and-threat-intelligence-providers">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h4>&lt;p>The information about this is very scarce so I&amp;rsquo;ve gathered a quick list of the known providers for STIX data.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Resource&lt;/th>
+&lt;th>URL&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Data Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>AlienVault OTX&lt;/td>
+&lt;td>&lt;a href="https://otx.alienvault.com/api">https://otx.alienvault.com/api&lt;/a>&lt;/td>
+&lt;td>Requires an account, provides data in various ways including a TAXII Server.&lt;/td>
+&lt;td>STIX 1.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Threat Connect&lt;/td>
+&lt;td>&lt;a href="https://threatconnect.com/stix-taxii/">https://threatconnect.com/stix-taxii/&lt;/a>&lt;/td>
+&lt;td>Requires an account, Paid service, (consumes and provides) threat intel.&lt;/td>
+&lt;td>STIX 1.x/2.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>EcleticIQ&lt;/td>
+&lt;td>&lt;a href="https://www.taxiistand.com/">https://www.taxiistand.com/&lt;/a>&lt;/td>
+&lt;td>Test TAXII (v1x) server. (quite unstable and inconsistent)&lt;/td>
+&lt;td>STIX 1.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Limo - Anomali&lt;/td>
+&lt;td>&lt;a href="https://www.anomali.com/resources/limo">https://www.anomali.com/resources/limo&lt;/a>&lt;/td>
+&lt;td>Test TAXII (v1x/v2x) server. Somewhat unstable but mostly fine during tests.&lt;/td>
+&lt;td>STIX 1.x/2.x&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="tools-for-stixtaxii" >Tools for STIX/TAXII
+&lt;span>
+&lt;a href="#tools-for-stixtaxii">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>The main tool for creating/parsing or generating STIX data is going to be Python, since that all of the tools created are written in Python. Of course there are other alternatives but currently that&amp;rsquo;s the most common one.&lt;/p>
+&lt;p>Other tools that might come in handy.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Tool&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Version&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/opencybersecurityalliance/stix-shifter">stix-shifter&lt;/a>&lt;/td>
+&lt;td>Translates STIX to various other Threat Intelligence formats such as Carbon Black Cloud Query and others&lt;/td>
+&lt;td>STIX 1.x/2.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/oasis-open/cti-python-stix2">stix2&lt;/a>&lt;/td>
+&lt;td>The main python package to parse and use/create STIX2 data.&lt;/td>
+&lt;td>STIX 2.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/oasis-open/cti-stix-validator">stix2-validator&lt;/a>&lt;/td>
+&lt;td>Provides a validation for the STIX2 data, can be used to validate your data from your sources.&lt;/td>
+&lt;td>STIX 2.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/oasis-open/cti-stix-slider">stix2-slider&lt;/a>&lt;/td>
+&lt;td>Transforms STIX2 content to STIX1.2&lt;/td>
+&lt;td>STIX 2.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/oasis-open/cti-stix-elevator">stix2-elevator&lt;/a>&lt;/td>
+&lt;td>Transforms STIX1 data to STIX2.x&lt;/td>
+&lt;td>STIX 1.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/STIXProject/python-stix">stix&lt;/a>&lt;/td>
+&lt;td>The main python package for STIX1 data.&lt;/td>
+&lt;td>STIX 1.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/STIXProject/stix-validator">stix-validator&lt;/a>&lt;/td>
+&lt;td>Validating STIX1 data.&lt;/td>
+&lt;td>STIX 1.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/oasis-open/cti-pattern-validator">stix2-patterns&lt;/a>&lt;/td>
+&lt;td>Validator and Pattern Parser for STIX 2.x Patterns&lt;/td>
+&lt;td>STIX 2.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/oasis-open/cti-taxii-client/">taxii2-client&lt;/a>&lt;/td>
+&lt;td>Python Client for TAXII 2 Servers&lt;/td>
+&lt;td>TAXII 2.x&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://github.com/EclecticIQ/cabby/">cabby&lt;/a>&lt;/td>
+&lt;td>Python Client for TAXII 1 Servers&lt;/td>
+&lt;td>TAXII 1.x&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="snippets-and-gists" >Snippets and Gists
+&lt;span>
+&lt;a href="#snippets-and-gists">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a href="https://gist.github.com/syrull/6a2614560fb0474df166a51bcb34990d">https://gist.github.com/syrull/6a2614560fb0474df166a51bcb34990d&lt;/a> (Creating a TAXII2 Client for LimoAnomali)&lt;/li>
+&lt;li>&lt;a href="https://gist.github.com/syrull/73b1798f90c4109a13ef9fceb1f2f858">https://gist.github.com/syrull/73b1798f90c4109a13ef9fceb1f2f858&lt;/a> (Creating a TAXII1 Client for OTXAlienVault)&lt;/li>
+&lt;/ul></description></item><item><title>Installing Private Packages in Docker Image - Notes</title><link>localhost/posts/installing-private-packages-in-docker-image-notes/</link><pubDate>Thu, 27 May 2021 21:44:47 +0300</pubDate><guid>localhost/posts/installing-private-packages-in-docker-image-notes/</guid><description>&lt;p>Quick notes about how to forward an ssh agent and other tricks regarding the installation of python packages.&lt;/p>
+&lt;h2 id="using-ssh-forwarding" >Using SSH Forwarding
+&lt;span>
+&lt;a href="#using-ssh-forwarding">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>Exporting the &lt;code>$SSH_AUTH_SOCK&lt;/code> environment variable in the image.&lt;/p>
+&lt;pre tabindex="0">&lt;code>$ docker run -rm -t -i -v $(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK ubuntu /bin/bash
+&lt;/code>&lt;/pre>&lt;p>Or in the &lt;code>environment&lt;/code> section of a compose file.&lt;/p>
+&lt;pre tabindex="0">&lt;code>environment:
+SSH_AUTH_SOCK: $SSH_AUTH_SOCK
+&lt;/code>&lt;/pre>&lt;h3 id="eventual-issues-with-that" >Eventual Issues with that
+&lt;span>
+&lt;a href="#eventual-issues-with-that">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;ul>
+&lt;li>Installing ssh in the container&lt;/li>
+&lt;li>Adding entries to &lt;code>/etc/ssh/ssh_known_hosts&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="caveats" >Caveats
+&lt;span>
+&lt;a href="#caveats">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;ul>
+&lt;li>Traces of ssh keys inside the image&lt;/li>
+&lt;/ul>
+&lt;h2 id="references" >References
+&lt;span>
+&lt;a href="#references">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a href="https://gist.github.com/d11wtq/8699521">https://gist.github.com/d11wtq/8699521&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://vsupalov.com/build-docker-image-clone-private-repo-ssh-key/">https://vsupalov.com/build-docker-image-clone-private-repo-ssh-key/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c">https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>
