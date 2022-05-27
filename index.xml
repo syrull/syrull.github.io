@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>archive://syrull</title><link>localhost/</link><description>archive://syrull</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 23 May 2022 21:44:27 +0300</lastBuildDate><atom:link href="localhost/index.xml" rel="self" type="application/rss+xml"/><item><title>Create Plugin Architecture With Python</title><link>localhost/posts/create-plugin-architecture-with-python/</link><pubDate>Mon, 23 May 2022 21:44:27 +0300</pubDate><guid>localhost/posts/create-plugin-architecture-with-python/</guid><description>&lt;p>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the &lt;code>__subclasses__&lt;/code> dunder method and one using a decorator.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>archive://syrull</title><link>https://syrull.github.io/</link><description>archive://syrull</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 23 May 2022 21:44:27 +0300</lastBuildDate><atom:link href="https://syrull.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Create Plugin Architecture With Python</title><link>https://syrull.github.io/posts/create-plugin-architecture-with-python/</link><pubDate>Mon, 23 May 2022 21:44:27 +0300</pubDate><guid>https://syrull.github.io/posts/create-plugin-architecture-with-python/</guid><description>&lt;p>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the &lt;code>__subclasses__&lt;/code> dunder method and one using a decorator.&lt;/p>
 &lt;h1 id="solution-1" >Solution 1
 &lt;span>
 &lt;a href="#solution-1">
@@ -103,8 +103,8 @@ __init__.py
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalMinutes : 0.000379671666666667
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalSeconds : 0.0227803
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TotalMilliseconds : 22.7803
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Simple Fishing Bot for World of Warcraft</title><link>localhost/posts/simple-fishing-bot/</link><pubDate>Sun, 22 May 2022 21:37:03 +0300</pubDate><guid>localhost/posts/simple-fishing-bot/</guid><description>&lt;p>This fishing bot consists only of about 50 lines of code, it incorporates the mechanics of World of Warcraft and some simple Windows API Calls.&lt;/p>
-&lt;p>&lt;img src="localhost/fishing-bot/fishing.gif" alt="Fishing Bot in action">&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Simple Fishing Bot for World of Warcraft</title><link>https://syrull.github.io/posts/simple-fishing-bot/</link><pubDate>Sun, 22 May 2022 21:37:03 +0300</pubDate><guid>https://syrull.github.io/posts/simple-fishing-bot/</guid><description>&lt;p>This fishing bot consists only of about 50 lines of code, it incorporates the mechanics of World of Warcraft and some simple Windows API Calls.&lt;/p>
+&lt;p>&lt;img src="https://syrull.github.io/fishing-bot/fishing.gif" alt="Fishing Bot in action">&lt;/p>
 &lt;p>Repository: &lt;a href="https://github.com/syrull/simple-fishing-bot">https://github.com/syrull/simple-fishing-bot&lt;/a>&lt;/p>
 &lt;h2 id="overview" >Overview
 &lt;span>
@@ -138,7 +138,7 @@ Items Looted: 161
 &lt;/a>
 &lt;/span>
 &lt;/h3>&lt;p>Before using the bot, you need to supply it with an image of the bait. The image has to be on the bottom parts of the bait. Here is an example image, the green area indicates what would be a good image of the bait, it needs to be as small as possible.&lt;/p>
-&lt;p>&lt;img src="localhost/fishing-bot/bait_example.png" alt="Bait Example">&lt;/p>
+&lt;p>&lt;img src="https://syrull.github.io/fishing-bot/bait_example.png" alt="Bait Example">&lt;/p>
 &lt;p>Save the image and place it at the root of the script as &lt;code>bait.png&lt;/code>, additionally you can adjust the variable &lt;code>BAIT_IMAGE&lt;/code> in the `fishingbot.py.&lt;/p>
 &lt;blockquote>
 &lt;p>⚠️ It is important for you to take the photo because of the graphical/display settings which can be different for each computer.&lt;/p>
@@ -194,7 +194,7 @@ Items Looted: 161
 &lt;/h2>&lt;p>The method is extremely simple, it utilizes two things. The first one is the &lt;a href="https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html">Template Matching&lt;/a>, this is what &lt;code>pyautogui.locateOnScreen&lt;/code> uses under the hood and the second one is the &lt;a href="https://github.com/mhammond/pywin32/blob/c08c3d9e4a503b195c312b0fbd51454bd2ee665a/win32/src/win32gui.i#L2486">PyGetCursorInfo&lt;/a> function which is exposed by the &lt;code>win32gui&lt;/code> lib.&lt;/p>
 &lt;p>The solution lies in the gif from the beginning, whenever the bobber actually catches a fish the AoE (Area of Effect) for the bobber becomes bigger allowing us to detect a change on the cursor, then we use the &lt;code>GetCursorInfo&lt;/code> to catch the change of the cursor and if it becomes a different &lt;code>tuple&lt;/code> from the default one which we set when there is nothing active on our cursor. Then we execute the click.&lt;/p>
 &lt;p>Now about the fine-tuning, look at this example&lt;/p>
-&lt;p>&lt;img src="localhost/fishing-bot/diagram_bobber.png" alt="Abstract">&lt;/p>
+&lt;p>&lt;img src="https://syrull.github.io/fishing-bot/diagram_bobber.png" alt="Abstract">&lt;/p>
 &lt;p>The &lt;code>TUNE_BAIT_MOUSE_UNDER_PX&lt;/code> variable which doesn&amp;rsquo;t have the best name ever is indicated with red, in simple terms it is how many pixels under the located bobber to place the mouse. For myself the range between 28-32 works the best, but as I said earlier this could differ.&lt;/p>
 &lt;h2 id="edge-cases" >Edge cases
 &lt;span>
@@ -209,7 +209,7 @@ Items Looted: 161
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h2>&lt;p>I&amp;rsquo;ve added a bit of randomness in the timings between each press of the fishing and the click of the bobber with additionally pressing space every now and then. Apparently the server can detect that something fishy is going on when this randomness is removed.&lt;/p></description></item><item><title>STIX/TAXII - Complete Knowledge</title><link>localhost/posts/stix-taxii-complete-knowledge/</link><pubDate>Sun, 10 Apr 2022 21:42:39 +0300</pubDate><guid>localhost/posts/stix-taxii-complete-knowledge/</guid><description>&lt;h2 id="introduction" >Introduction
+&lt;/h2>&lt;p>I&amp;rsquo;ve added a bit of randomness in the timings between each press of the fishing and the click of the bobber with additionally pressing space every now and then. Apparently the server can detect that something fishy is going on when this randomness is removed.&lt;/p></description></item><item><title>STIX/TAXII - Complete Knowledge</title><link>https://syrull.github.io/posts/stix-taxii-complete-knowledge/</link><pubDate>Sun, 10 Apr 2022 21:42:39 +0300</pubDate><guid>https://syrull.github.io/posts/stix-taxii-complete-knowledge/</guid><description>&lt;h2 id="introduction" >Introduction
 &lt;span>
 &lt;a href="#introduction">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
@@ -394,7 +394,7 @@ Items Looted: 161
 &lt;/h2>&lt;ul>
 &lt;li>&lt;a href="https://gist.github.com/syrull/6a2614560fb0474df166a51bcb34990d">https://gist.github.com/syrull/6a2614560fb0474df166a51bcb34990d&lt;/a> (Creating a TAXII2 Client for LimoAnomali)&lt;/li>
 &lt;li>&lt;a href="https://gist.github.com/syrull/73b1798f90c4109a13ef9fceb1f2f858">https://gist.github.com/syrull/73b1798f90c4109a13ef9fceb1f2f858&lt;/a> (Creating a TAXII1 Client for OTXAlienVault)&lt;/li>
-&lt;/ul></description></item><item><title>Installing Private Packages in Docker Image - Notes</title><link>localhost/posts/installing-private-packages-in-docker-image-notes/</link><pubDate>Thu, 27 May 2021 21:44:47 +0300</pubDate><guid>localhost/posts/installing-private-packages-in-docker-image-notes/</guid><description>&lt;p>Quick notes about how to forward an ssh agent and other tricks regarding the installation of python packages.&lt;/p>
+&lt;/ul></description></item><item><title>Installing Private Packages in Docker Image - Notes</title><link>https://syrull.github.io/posts/installing-private-packages-in-docker-image-notes/</link><pubDate>Thu, 27 May 2021 21:44:47 +0300</pubDate><guid>https://syrull.github.io/posts/installing-private-packages-in-docker-image-notes/</guid><description>&lt;p>Quick notes about how to forward an ssh agent and other tricks regarding the installation of python packages.&lt;/p>
 &lt;h2 id="using-ssh-forwarding" >Using SSH Forwarding
 &lt;span>
 &lt;a href="#using-ssh-forwarding">
