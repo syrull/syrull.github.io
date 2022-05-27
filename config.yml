@@ -13,7 +13,12 @@ menu:
     name: Archive
     title: Archive
     url: /posts/
-    weight: 0
+    weight: 1
+  - identifier: cv
+    name: CV
+    title: CV
+    url: cv
+    weight: 2
 
 params:
   author: "Dimitar Ganev"
