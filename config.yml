@@ -1,5 +1,5 @@
 languageCode: "en-us"
-baseUrl: "localhost"
+baseUrl: "https://syrull.github.io/"
 title: "archive://syrull"
 theme: "anubis"
 paginate: 10
