@@ -435,4 +435,86 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;li>&lt;a href="https://gist.github.com/d11wtq/8699521">https://gist.github.com/d11wtq/8699521&lt;/a>&lt;/li>
 &lt;li>&lt;a href="https://vsupalov.com/build-docker-image-clone-private-repo-ssh-key/">https://vsupalov.com/build-docker-image-clone-private-repo-ssh-key/&lt;/a>&lt;/li>
 &lt;li>&lt;a href="https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c">https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c&lt;/a>&lt;/li>
-&lt;/ul></description></item></channel></rss>
+&lt;/ul></description></item><item><title>CV</title><link>https://syrull.github.io/cv/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://syrull.github.io/cv/</guid><description>&lt;p>&lt;a href="https://syrull.github.io/cv/cv.pdf">Download PDF&lt;/a>&lt;/p>
+&lt;p>My name is Dimitar Ganev and I am a software engineer interested in software architecture and building systems/tools from scratch. Areas of expertise/interest include Python, Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.&lt;/p>
+&lt;h1 id="software-experience" >&lt;strong>Software Experience&lt;/strong>
+&lt;span>
+&lt;a href="#software-experience">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;ul>
+&lt;li>
+&lt;p>&lt;a href="https://www.vmware.com/">&lt;strong>VMware&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; Sep 2021 - Present&lt;/p>
+&lt;p>Projects:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Threat Intelligence Connector for Carbon Black Cloud&lt;/strong> (&lt;a href="https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector">https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector&lt;/a>) - Main Developer and Maintainer&lt;/li>
+&lt;li>&lt;strong>VMware Carbon Black Cloud Python SDK&lt;/strong> (&lt;a href="https://github.com/carbonblack/carbon-black-cloud-sdk-python">https://github.com/carbonblack/carbon-black-cloud-sdk-python&lt;/a>) - Developer and Maintainer&lt;/li>
+&lt;/ul>
+&lt;p>And other closed-source projects.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://www.aiidatapro.com/">&lt;strong>ADataPro&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2019-06 - 2021-09&lt;/p>
+&lt;p>Managing the infrastructure, leading an architectural decisions, mentoring.&lt;/p>
+&lt;p>Projects:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>AI Media Intelligence Solution for TV/Radio&lt;/strong> - Cutting the cost for the company by 20x by implementing my idea for a Media Intelligence Listening Service - Sole Developer and Maintainer&lt;/li>
+&lt;li>&lt;strong>Crawling Solutions for various Websites&lt;/strong> - Created crawling solutions for numerous websites. - Developer&lt;/li>
+&lt;/ul>
+&lt;p>And other numerous ETL scripts and SDKs.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://nex-gen.eu/">&lt;strong>NexGen LTD&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2018-10 - 2019-04&lt;/p>
+&lt;p>Projects:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>IntraPricing Solution&lt;/strong> (&lt;a href="https://intrapricing.com/">https://intrapricing.com/&lt;/a>) - Maintaining the system&lt;/li>
+&lt;li>&lt;strong>Harzreisen&lt;/strong> (&lt;a href="https://harzreisen.de/">https://harzreisen.de/&lt;/a>) - Created the most of the frontend and the backend for the platform also including the admin panel.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://www.j-soft.net/">&lt;strong>JSoft&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2016-11 - 2017-03&lt;/p>
+&lt;p>Projects:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Property Management System&lt;/strong> - Developed a Property Management System with a small team of developers&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h1 id="audio-producing-experience" >&lt;strong>Audio Producing Experience&lt;/strong>
+&lt;span>
+&lt;a href="#audio-producing-experience">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;ul>
+&lt;li>&lt;a href="https://audiojungle.net/user/fujimsc/portfolio">&lt;strong>Full Length Productions / Sound Design - AudioJungle&lt;/strong>&lt;/a> (Audio Producer / Sound Designer) &amp;gt; 2017 - Present&lt;/li>
+&lt;li>&lt;a href="https://www.shutterstock.com/music/artist/Fuji">&lt;strong>Full Length Productions / Sound Design - Shutterstock Music&lt;/strong>&lt;/a> (Audio Producer / Sound Designer) &amp;gt; 2016 - Present&lt;/li>
+&lt;/ul>
+&lt;h1 id="education" >&lt;strong>Education&lt;/strong>
+&lt;span>
+&lt;a href="#education">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;ul>
+&lt;li>&lt;a href="https://www.bfu.bg/bg">&lt;strong>Burgas Free University&lt;/strong>&lt;/a> (Computer Science - Masters) - Bulgaria &amp;gt; 2020 - 2021 | Dropped&lt;/li>
+&lt;li>&lt;a href="https://www.tu-chemnitz.de/index.html.en">&lt;strong>TU Chemnitz&lt;/strong>&lt;/a> (Software Engineering - Masters) - Germany &amp;gt; 2018 - 2019&lt;/li>
+&lt;li>&lt;a href="https://www.bfu.bg/bg">&lt;strong>Burgas Free University&lt;/strong>&lt;/a> (Computer Science - Bachelor) - Bulgaria &amp;gt; 2015 - 2019&lt;/li>
+&lt;/ul>
+&lt;h1 id="certificates--languages" >&lt;strong>Certificates / Languages&lt;/strong>
+&lt;span>
+&lt;a href="#certificates--languages">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;ul>
+&lt;li>English CERF - C1&lt;/li>
+&lt;li>German - Deutsch für die technischen Fächer - B2/B1&lt;/li>
+&lt;li>Udemy [UC-CY7BEGYO, UC-0WC1CNGU]&lt;/li>
+&lt;/ul>
+&lt;h1 id="contact" >&lt;strong>Contact&lt;/strong>
+&lt;span>
+&lt;a href="#contact">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>You can reach me on my e-mail: &lt;a href="mailto:dganev@pm.me">dganev@pm.me&lt;/a> or by a phone +(359) 88 976 1722&lt;/p></description></item></channel></rss>
