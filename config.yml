@@ -61,8 +61,6 @@ params:
   social:
   - id: github
     name: syrull
-  - id: gitlab
-    name: syrull
   - id: email
     name: dganev@pm.me
   - id: telegram
