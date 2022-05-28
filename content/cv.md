@@ -23,6 +23,7 @@ My name is Dimitar Ganev and I am a software engineer interested in software arc
 
     Projects:
 
+    - **Media Listening Platform** - Platform for media listening and tracking
     - **AI Media Intelligence Solution for TV/Radio** - Cutting the cost for the company by 20x by implementing my idea for a Media Intelligence Listening Service - Sole Developer and Maintainer
     - **Crawling Solutions for various Websites** - Created crawling solutions for numerous websites. - Developer 
     
