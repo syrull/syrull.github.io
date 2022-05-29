@@ -1,7 +1,7 @@
 ---
 title: "From Python to Rust (Data Types)"
 date: 2022-05-28T21:35:13+03:00
-draft: false
+draft: true
 ---
 
 The idea of this post (there could be multiple posts) is to learn Rust as I begin to look at the differences between Python and Rust. My plan is to start with the most simple things and proceed to the more advanced ones. I am gonna follow a simple roadmap:
@@ -33,7 +33,7 @@ True
 2876372314544 2876372314544
 >>> x = 257 
 >>> y = 257 
->>> x is y  
+>>> x is y
 False
 >>> print(id(x), id(y))
 2876378360176 2876378359824
