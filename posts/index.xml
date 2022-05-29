@@ -1,4 +1,106 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on archive://syrull</title><link>https://syrull.github.io/posts/</link><description>archive://syrull (Posts)</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 23 May 2022 21:44:27 +0300</lastBuildDate><atom:link href="https://syrull.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Create Plugin Architecture With Python</title><link>https://syrull.github.io/posts/create-plugin-architecture-with-python/</link><pubDate>Mon, 23 May 2022 21:44:27 +0300</pubDate><guid>https://syrull.github.io/posts/create-plugin-architecture-with-python/</guid><description>&lt;p>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the &lt;code>__subclasses__&lt;/code> dunder method and one using a decorator.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on archive://syrull</title><link>https://syrull.github.io/posts/</link><description>archive://syrull (Posts)</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 28 May 2022 21:35:13 +0300</lastBuildDate><atom:link href="https://syrull.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>From Python to Rust (Data Types)</title><link>https://syrull.github.io/posts/from-python-to-rust/</link><pubDate>Sat, 28 May 2022 21:35:13 +0300</pubDate><guid>https://syrull.github.io/posts/from-python-to-rust/</guid><description>&lt;p>The idea of this post (there could be multiple posts) is to learn Rust as I begin to look at the differences between Python and Rust. My plan is to start with the most simple things and proceed to the more advanced ones. I am gonna follow a simple roadmap:&lt;/p>
+&lt;pre tabindex="0">&lt;code>- Variables
+- Data Types
+- Functions
+- Array or Lists
+- If statements
+- Conditional loops
+- Classes and objects
+- Exception handling
+- Trees, maps, and more.
+&lt;/code>&lt;/pre>&lt;p>In this post I am gonna start with the Data Types.&lt;/p>
+&lt;h2 id="integers" >Integers
+&lt;span>
+&lt;a href="#integers">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;h3 id="python" >Python
+&lt;span>
+&lt;a href="#python">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;p>The integers in Python are immutable and their size is unlimited (until you reach the end of your memory) &lt;a href="https://docs.python.org/3.10/library/stdtypes.html#numeric-types-int-float-complex">source&lt;/a>. You can declare them simply by &lt;code>x = 5&lt;/code>. One interesting fact about the integers is that the numbers between &lt;code>-5..256&lt;/code> are cached by the cpython vm since their usage frequency is really high.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> x &lt;span style="color:#f92672">is&lt;/span> y
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">True&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> print(id(x), id(y))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">2876372314544&lt;/span> &lt;span style="color:#ae81ff">2876372314544&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> x &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">257&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> y &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">257&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> x &lt;span style="color:#f92672">is&lt;/span> y
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">False&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> print(id(x), id(y))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">2876378360176&lt;/span> &lt;span style="color:#ae81ff">2876378359824&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> x &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">6&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> y &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">6&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> x &lt;span style="color:#f92672">is&lt;/span> y
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">False&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> x &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> y &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> x &lt;span style="color:#f92672">is&lt;/span> y
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">True&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can write integer literals with binary, octal and hexadecimal values.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0b11011101&lt;/span> &lt;span style="color:#75715e"># binary&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">221&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0x515&lt;/span> &lt;span style="color:#75715e"># hexadecimal&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">1301&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0o55&lt;/span> &lt;span style="color:#75715e"># octal&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">45&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can use delimiters with the &lt;code>_&lt;/code>, eg: &lt;code>x = 1_000_000&lt;/code> for better reading.&lt;/p>
+&lt;h3 id="rust" >Rust
+&lt;span>
+&lt;a href="#rust">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;p>The integers in Rust are also immutable, and since that Rust is statically typed language, we need to declare the type of the integer that we are gonna use. In Rust the type of integers are:&lt;/p>
+&lt;p>&lt;a href="https://doc.rust-lang.org/book/ch03-02-data-types.html">Full explanation in depth in the original rust documentation&lt;/a>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Length&lt;/th>
+&lt;th>Signed&lt;/th>
+&lt;th>Unsigned&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>8bit&lt;/td>
+&lt;td>&lt;code>i8&lt;/code>&lt;/td>
+&lt;td>&lt;code>u8&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>16bit&lt;/td>
+&lt;td>&lt;code>i16&lt;/code>&lt;/td>
+&lt;td>&lt;code>u16&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>32bit&lt;/td>
+&lt;td>&lt;code>i32&lt;/code>&lt;/td>
+&lt;td>&lt;code>u32&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>128bit&lt;/td>
+&lt;td>&lt;code>i128&lt;/code>&lt;/td>
+&lt;td>&lt;code>u128&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>arch&lt;/td>
+&lt;td>&lt;code>isize&lt;/code>&lt;/td>
+&lt;td>&lt;code>usize&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>The MAX value for each integer is denoted by -(2^(n - 1)) to 2^(n - 1) - 1, the arch type is short for architecture and it represents the current architecture of the OS (eg. 64/32).&lt;/p>
+&lt;p>As for rust optimizations of this sort are not needed due the speed of the language so if we check the address of an integer&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-rust" data-lang="rust">&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="comparison" >Comparison
+&lt;span>
+&lt;a href="#comparison">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3></description></item><item><title>Create Plugin Architecture With Python</title><link>https://syrull.github.io/posts/create-plugin-architecture-with-python/</link><pubDate>Mon, 23 May 2022 21:44:27 +0300</pubDate><guid>https://syrull.github.io/posts/create-plugin-architecture-with-python/</guid><description>&lt;p>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the &lt;code>__subclasses__&lt;/code> dunder method and one using a decorator.&lt;/p>
 &lt;h1 id="solution-1" >Solution 1
 &lt;span>
 &lt;a href="#solution-1">
