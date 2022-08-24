@@ -1,4 +1,71 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>archive://syrull</title><link>https://syrull.github.io/</link><description>archive://syrull</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 23 May 2022 21:44:27 +0300</lastBuildDate><atom:link href="https://syrull.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Create Plugin Architecture With Python</title><link>https://syrull.github.io/posts/create-plugin-architecture-with-python/</link><pubDate>Mon, 23 May 2022 21:44:27 +0300</pubDate><guid>https://syrull.github.io/posts/create-plugin-architecture-with-python/</guid><description>&lt;p>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the &lt;code>__subclasses__&lt;/code> dunder method and one using a decorator.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>archive://syrull</title><link>https://syrull.github.io/</link><description>archive://syrull</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 23 Aug 2022 21:44:47 +0300</lastBuildDate><atom:link href="https://syrull.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>LegionTD2 Go SDK (v0.2.0)</title><link>https://syrull.github.io/posts/legiontd2-sdk/</link><pubDate>Tue, 23 Aug 2022 21:44:47 +0300</pubDate><guid>https://syrull.github.io/posts/legiontd2-sdk/</guid><description>&lt;p>&lt;img src="https://syrull.github.io/legiontdsdk/header.png" alt="LegionTD2">&lt;/p>
+&lt;p>Recently I&amp;rsquo;ve been fascinated with a game called &lt;a href="https://beta.legiontd2.com/">LegionTD2&lt;/a>, this is a newly created game that I&amp;rsquo;ve been playing
+as a map ever since Warcraft 3, it is tactical multiplayer tower-defense(td). The game is based on predictions and timings, if you play your cards right (or in the context of the game: sends/workers/units) you will prevail over the enemy team. Read more about it &lt;a href="https://store.steampowered.com/app/469600/Legion_TD_2__Multiplayer_Tower_Defense/">here&lt;/a>.&lt;/p>
+&lt;h1 id="legiontd-sdk" >LegionTD SDK
+&lt;span>
+&lt;a href="#legiontd-sdk">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>I&amp;rsquo;ve doing stuff in Go in my free time (mainly code challenges) for a while now and I&amp;rsquo;ve decided that I should spend some time creating something useful for myself such as creating tools that would help me get better at the game. The game has an API which resides &lt;a href="https://swagger.legiontd2.com/">here&lt;/a>, there are couple of endpoints that are useful for helpful statistics such as the &lt;code>player/*&lt;/code> and &lt;code>games/*&lt;/code> endpoints. I knew that I will be querying the API a lot for
+fetching info about players and games, so I&amp;rsquo;ve decided to create an SDK for that so I can ease my work a little bit. And after couple of weeks free time work I&amp;rsquo;ve created the &lt;a href="https://github.com/syrull/ltdsdk">LegionTD 2 SDK for Go&lt;/a>.&lt;/p>
+&lt;h1 id="functionality" >Functionality
+&lt;span>
+&lt;a href="#functionality">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;h2 id="analyze-games" >Analyze games
+&lt;span>
+&lt;a href="#analyze-games">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>While my ultimate goal is to create set of analytics tools for Legion, I&amp;rsquo;ve created the most basic example of how that might happen using SQLite3 and Go.&lt;/p>
+&lt;p>Under the &lt;a href="https://github.com/syrull/ltdsdk/tree/main/examples/analyze_games">examples/analyze_games/&lt;/a> I&amp;rsquo;ve created an example that fetches about 3k games and put them into a SQLite database, after that you are able to analyze the data using SQL. I&amp;rsquo;ve created a simple query that gets the percentage of games
+that are being finished at waves 15, 13 and 10.&lt;/p>
+&lt;p>In my case here are the results, games finished at wave&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Wave 15&lt;/th>
+&lt;th>Wave 13&lt;/th>
+&lt;th>Wave 10&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>20%&lt;/td>
+&lt;td>14%&lt;/td>
+&lt;td>4%&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="exporting-the-games" >Exporting the games
+&lt;span>
+&lt;a href="#exporting-the-games">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>You can derive that from the previous example but I&amp;rsquo;ve created a dedicated examples for both exporting to JSON and exporting to SQL.&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/syrull/ltdsdk/tree/main/examples/export_games_to_sql">Export games to SQL&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/syrull/ltdsdk/blob/main/examples/export_games_to_json/main.go">Export games to JSON&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="fetching-all-of-the-units" >Fetching all of the Units
+&lt;span>
+&lt;a href="#fetching-all-of-the-units">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>Since that the game hasn&amp;rsquo;t got a dedicated route for fetching all the units I&amp;rsquo;ve created a simple example that resides in the repository under &lt;a href="https://github.com/syrull/ltdsdk/tree/main/examples/get_all_units">examples/get_all_units&lt;/a>. The important thing here is that I&amp;rsquo;ve exported all the units into a single txt file and then I just spawn requests for each unit.&lt;/p>
+&lt;h1 id="conclusion" >Conclusion
+&lt;span>
+&lt;a href="#conclusion">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>I will be updating the SDK as I am progressing with the analytical tools and I will be adding new examples and adding new posts as I am doing it. For now you can keep an eye on the &lt;a href="https://github.com/syrull/ltdsdk/">repository&lt;/a> and I will be definitely posting/discussing more about it in the &lt;a href="https://discord.gg/ttnSSqyV">Discord Channel&lt;/a>.&lt;/p></description></item><item><title>Create Plugin Architecture With Python</title><link>https://syrull.github.io/posts/create-plugin-architecture-with-python/</link><pubDate>Mon, 23 May 2022 21:44:27 +0300</pubDate><guid>https://syrull.github.io/posts/create-plugin-architecture-with-python/</guid><description>&lt;p>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the &lt;code>__subclasses__&lt;/code> dunder method and one using a decorator.&lt;/p>
 &lt;h1 id="solution-1" >Solution 1
 &lt;span>
 &lt;a href="#solution-1">
