@@ -6,6 +6,12 @@ title: "CV"
 
 My name is Dimitar Ganev and I am a software engineer interested in software architecture and building systems/tools from scratch. Areas of expertise/interest include Python, Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.
 
+
+# Speaker
+
+* @VMware Explore 2022 (1 Sep 2022 in San Francisco, California) - Converting Third-Party Threat Intelligence into Carbon Black Cloud - [Prerecorded version](https://www.youtube.com/watch?v=e74if-9KSZ4&list=PLnopqt07fPn1kBTIHiQ8ZeYaZQ-HQrXVg&index=13)
+
+
 # **Software Experience**
 
 * [**VMware**](https://www.vmware.com/) (Software Engineer) > Sep 2021 - Present
