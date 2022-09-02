@@ -504,6 +504,15 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;li>&lt;a href="https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c">https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>CV</title><link>https://syrull.github.io/cv/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://syrull.github.io/cv/</guid><description>&lt;p>&lt;a href="https://syrull.github.io/cv/cv.pdf">Download PDF&lt;/a>&lt;/p>
 &lt;p>My name is Dimitar Ganev and I am a software engineer interested in software architecture and building systems/tools from scratch. Areas of expertise/interest include Python, Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.&lt;/p>
+&lt;h1 id="speaker" >Speaker
+&lt;span>
+&lt;a href="#speaker">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;ul>
+&lt;li>@VMware Explore 2022 (1 Sep 2022 in San Francisco, California) - Converting Third-Party Threat Intelligence into Carbon Black Cloud - &lt;a href="https://www.youtube.com/watch?v=e74if-9KSZ4&amp;amp;list=PLnopqt07fPn1kBTIHiQ8ZeYaZQ-HQrXVg&amp;amp;index=13">Prerecorded version&lt;/a>&lt;/li>
+&lt;/ul>
 &lt;h1 id="software-experience" >&lt;strong>Software Experience&lt;/strong>
 &lt;span>
 &lt;a href="#software-experience">
