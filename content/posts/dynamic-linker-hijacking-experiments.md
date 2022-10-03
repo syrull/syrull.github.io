@@ -9,7 +9,7 @@ draft: false
 Recently I heard about a new malware called [Symbiote](https://blogs.blackberry.com/en/2022/06/symbiote-a-new-nearly-impossible-to-detect-linux-threat), which the researches are calling the "Nearly-Impossible-to-Detect Linux Threat". I was very intrigued by how that malware is being implemented and how it works internally to remain undetected, so naturally I've started to research it. 
 
 
-I highly advice you to read through these articles first before we begin with the actual post:
+I highly advise you to read through these articles first before we begin with the actual post:
 
  - [Hijack Execution Flow: Dynamic Linker Hijacking](https://attack.mitre.org/techniques/T1574/006/)
  - [What Is the LD_PRELOAD?](https://www.baeldung.com/linux/ld_preload-trick-what-is)
@@ -125,7 +125,7 @@ Now that we have shared object (*.so) file lets see how to use it in action.
 
 - [What is LD_PRELOAD?](https://man7.org/linux/man-pages/man8/ld.so.8.html)
 
-I advice you to read that first to get a better understanding of how it works.
+I advise you to read that first to get a better understanding of how it works.
 
 The next thing that we are going to do is to test our shared library and see if it works. Lets run `ls` with our `libhidemyfile.so` loaded before anything else.
 
