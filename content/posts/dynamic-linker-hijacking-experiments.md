@@ -85,7 +85,7 @@ Alright, let's start implementing our own function `readdir` that we will wrap t
 // The dynamic linking header file so we can use the dlsym
 // which will give us the address for the readdir symbol
 #include <dlfcn.h>
-#include <string.h> // So we can use the 
+#include <string.h> // So we can use the strstr
 
 struct dirent *readdir(DIR *dirp) {
     struct *(handle)(DIR *);
