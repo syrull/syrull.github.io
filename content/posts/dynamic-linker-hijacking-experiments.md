@@ -153,7 +153,7 @@ $ sudo mv ./libhidemyfile.so /lib/libhidemyfile.so
 Then we just need to place our library dir in `ld.so.preload` file.
 
 ```console
-$ sudo echo "libhidemyfile.so" > /etc/ld.so.preload
+$ sudo echo "/lib/libhidemyfile.so" > /etc/ld.so.preload
 ```
 
 And if everything is good, executing `ls` or any of its aliases will hide our file from the output.
