@@ -60,7 +60,7 @@ Now I concluded that I need to search into the source code of `readdir` which is
 ```c
 #include <dirent.h>
 
-struct dirent *readdir(DIR *dirp); // Signature of the dirent
+struct dirent *readdir(DIR *dirp); // Signature of the readdir
 ```
 
 ```c
