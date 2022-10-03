@@ -142,7 +142,7 @@ As you can see we successfully implement a shared library that hides our file fr
 
 If you read carefully the man pages for `LD_PRELOAD` you should know that you won't be able to override functions in the standard search directories without properly setting your set-user-ID permissions. 
 
-Instead we are going to use the `/etc/ld.so.preload` which does not suffer from that restrictions. This suffers from requiring root privileges but c'mon.. if you are here you will get those!
+Instead we are going to use the `/etc/ld.so.preload` which does not suffer from these restrictions. This suffers from requiring root privileges but c'mon.. if you are here you will get those!
 
 We first need to move our shared library file in some root directory, preferably /lib/ since..it is a library.
 
