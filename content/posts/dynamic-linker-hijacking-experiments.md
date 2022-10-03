@@ -158,6 +158,23 @@ $ sudo echo "libhidemyfile.so" > /etc/ld.so.preload
 
 And if everything is good, executing `ls` or any of its aliases will hide our file from the output.
 
+For your convenience I've setup a Docker container that you can use with `ld.so.preload` setup
+
+```console
+$ docker run -it --rm sylly/ctf_findme
+```
+
 # End
 
 If you reached here, thank you so much for the read. In the next part I will try to "completely" hide it from the system because now if we `cat` it despite not "reading" it in the directory would print us the contents of the file, but that will be the subject of the next post.
+
+# Resources
+
+This post wouldn't be possible without:
+
+- https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/
+- https://www.exploit-db.com/docs/english/31687-dynamic-link-library-hijacking.pdf
+- https://attack.mitre.org/techniques/T1574/006/
+- https://sysdig.com/blog/hiding-linux-processes-for-fun-and-profit/
+- https://www.cadosecurity.com/linux-attack-techniques-dynamic-linker-hijacking-with-ld-preload/
+- https://blog.jessfraz.com/post/ld_preload/
