@@ -37,7 +37,7 @@ params:
   style: dark-without-switcher
   readMore: false # show read more button
   readNextPosts: 5  # show 5 related posts, 0 by default
-  disableSummary: false
+  disableSummary: true
   copyCodeButton: true # true by default
   rssAsSocialIcon: true
   # utteranc.es support
