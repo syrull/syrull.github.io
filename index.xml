@@ -121,13 +121,30 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then we just need to place our library dir in &lt;code>ld.so.preload&lt;/code> file.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ sudo echo &lt;span style="color:#e6db74">&amp;#34;libhidemyfile.so&amp;#34;&lt;/span> &amp;gt; /etc/ld.so.preload
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And if everything is good, executing &lt;code>ls&lt;/code> or any of its aliases will hide our file from the output.&lt;/p>
-&lt;h1 id="end" >End
+&lt;p>For your convenience I&amp;rsquo;ve setup a Docker container that you can use with &lt;code>ld.so.preload&lt;/code> setup&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ docker run -it --rm sylly/ctf_findme
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="end" >End
 &lt;span>
 &lt;a href="#end">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h1>&lt;p>If you reached here, thank you so much for the read. In the next part I will try to &amp;ldquo;completely&amp;rdquo; hide it from the system because now if we &lt;code>cat&lt;/code> it despite not &amp;ldquo;reading&amp;rdquo; it in the directory would print us the contents of the file, but that will be the subject of the next post.&lt;/p></description></item><item><title>LegionTD2 Go SDK (v0.2.0)</title><link>https://syrull.github.io/posts/legiontd2-sdk/</link><pubDate>Tue, 23 Aug 2022 21:44:47 +0300</pubDate><guid>https://syrull.github.io/posts/legiontd2-sdk/</guid><description>&lt;p>&lt;img src="https://syrull.github.io/legiontdsdk/header.png" alt="LegionTD2">&lt;/p>
+&lt;/h1>&lt;p>If you reached here, thank you so much for the read. In the next part I will try to &amp;ldquo;completely&amp;rdquo; hide it from the system because now if we &lt;code>cat&lt;/code> it despite not &amp;ldquo;reading&amp;rdquo; it in the directory would print us the contents of the file, but that will be the subject of the next post.&lt;/p>
+&lt;h1 id="resources" >Resources
+&lt;span>
+&lt;a href="#resources">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;p>This post wouldn&amp;rsquo;t be possible without:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.exploit-db.com/docs/english/31687-dynamic-link-library-hijacking.pdf">https://www.exploit-db.com/docs/english/31687-dynamic-link-library-hijacking.pdf&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://attack.mitre.org/techniques/T1574/006/">https://attack.mitre.org/techniques/T1574/006/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://sysdig.com/blog/hiding-linux-processes-for-fun-and-profit/">https://sysdig.com/blog/hiding-linux-processes-for-fun-and-profit/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.cadosecurity.com/linux-attack-techniques-dynamic-linker-hijacking-with-ld-preload/">https://www.cadosecurity.com/linux-attack-techniques-dynamic-linker-hijacking-with-ld-preload/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://blog.jessfraz.com/post/ld_preload/">https://blog.jessfraz.com/post/ld_preload/&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>LegionTD2 Go SDK (v0.2.0)</title><link>https://syrull.github.io/posts/legiontd2-sdk/</link><pubDate>Tue, 23 Aug 2022 21:44:47 +0300</pubDate><guid>https://syrull.github.io/posts/legiontd2-sdk/</guid><description>&lt;p>&lt;img src="https://syrull.github.io/legiontdsdk/header.png" alt="LegionTD2">&lt;/p>
 &lt;p>Recently I&amp;rsquo;ve been fascinated with a game called &lt;a href="https://beta.legiontd2.com/">LegionTD2&lt;/a>, this is a newly created game that I&amp;rsquo;ve been playing
 as a map ever since Warcraft 3, it is tactical multiplayer tower-defense(td). The game is based on predictions and timings, if you play your cards right (or in the context of the game: sends/workers/units) you will prevail over the enemy team. Read more about it &lt;a href="https://store.steampowered.com/app/469600/Legion_TD_2__Multiplayer_Tower_Defense/">here&lt;/a>.&lt;/p>
 &lt;h1 id="legiontd-sdk" >LegionTD SDK
