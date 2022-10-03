@@ -5,7 +5,7 @@
 &lt;/a>
 &lt;/span>
 &lt;/h1>&lt;p>Recently I heard about a new malware called &lt;a href="https://blogs.blackberry.com/en/2022/06/symbiote-a-new-nearly-impossible-to-detect-linux-threat">Symbiote&lt;/a>, which the researches are calling the &amp;ldquo;Nearly-Impossible-to-Detect Linux Threat&amp;rdquo;. I was very intrigued by how that malware is being implemented and how it works internally to remain undetected, so naturally I&amp;rsquo;ve started to research it.&lt;/p>
-&lt;p>I highly advice you to read through these articles first before we begin with the actual post:&lt;/p>
+&lt;p>I highly advise you to read through these articles first before we begin with the actual post:&lt;/p>
 &lt;ul>
 &lt;li>&lt;a href="https://attack.mitre.org/techniques/T1574/006/">Hijack Execution Flow: Dynamic Linker Hijacking&lt;/a>&lt;/li>
 &lt;li>&lt;a href="https://www.baeldung.com/linux/ld_preload-trick-what-is">What Is the LD_PRELOAD?&lt;/a>&lt;/li>
@@ -63,7 +63,7 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#75715e">// The dynamic linking header file so we can use the dlsym
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// which will give us the address for the readdir symbol
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;dlfcn.h&amp;gt;&lt;/span>&lt;span style="color:#75715e">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;string.h&amp;gt; // So we can use the &lt;/span>&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#include&lt;/span> &lt;span style="color:#75715e">&amp;lt;string.h&amp;gt; // So we can use the strstr&lt;/span>&lt;span style="color:#75715e">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">readdir&lt;/span>(DIR &lt;span style="color:#f92672">*&lt;/span>dirp) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> &lt;span style="color:#f92672">*&lt;/span>(handle)(DIR &lt;span style="color:#f92672">*&lt;/span>);
@@ -101,7 +101,7 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;/h1>&lt;ul>
 &lt;li>&lt;a href="https://man7.org/linux/man-pages/man8/ld.so.8.html">What is LD_PRELOAD?&lt;/a>&lt;/li>
 &lt;/ul>
-&lt;p>I advice you to read that first to get a better understanding of how it works.&lt;/p>
+&lt;p>I advise you to read that first to get a better understanding of how it works.&lt;/p>
 &lt;p>The next thing that we are going to do is to test our shared library and see if it works. Lets run &lt;code>ls&lt;/code> with our &lt;code>libhidemyfile.so&lt;/code> loaded before anything else.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ ls
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>libhidemyfile.so syl.lys
@@ -115,7 +115,7 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;/a>
 &lt;/span>
 &lt;/h2>&lt;p>If you read carefully the man pages for &lt;code>LD_PRELOAD&lt;/code> you should know that you won&amp;rsquo;t be able to override functions in the standard search directories without properly setting your set-user-ID permissions.&lt;/p>
-&lt;p>Instead we are going to use the &lt;code>/etc/ld.so.preload&lt;/code> which does not suffer from that restrictions. This suffers from requiring root privileges but c&amp;rsquo;mon.. if you are here you will get those!&lt;/p>
+&lt;p>Instead we are going to use the &lt;code>/etc/ld.so.preload&lt;/code> which does not suffer from these restrictions. This suffers from requiring root privileges but c&amp;rsquo;mon.. if you are here you will get those!&lt;/p>
 &lt;p>We first need to move our shared library file in some root directory, preferably /lib/ since..it is a library.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ sudo mv ./libhidemyfile.so /lib/libhidemyfile.so
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then we just need to place our library dir in &lt;code>ld.so.preload&lt;/code> file.&lt;/p>
