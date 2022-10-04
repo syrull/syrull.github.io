@@ -17,9 +17,7 @@ I highly advise you to read through these articles first before we begin with th
 
 # Implementation 
 
-I decided to implement a very simple alternative of this malware just as a proof of concept since it was really interesting me. My idea is to create a file that will be hidden in the system.
-
-First, if you already read the articles that I've linked, it is apparent that we have to implement a shared library, that will override some symbols defined in the Linux Kernel.
+I decided to implement a very simple alternative of the evasive techniques that this malware uses just as a proof of concept and if you already read the articles that I've linked, it is apparent that we have to implement a shared library, that will override some symbols defined in the Linux Kernel.
 
 What do we need first and how to hide a file from lets say a command like `ls`? With a little bit of investigating of how the `ls` works internally through the [source code](https://github.com/coreutils/coreutils/blob/master/src/ls.c) and the [linux manual page](https://man7.org/linux/man-pages/man1/ls.1.html)
 We can see that internally we have a function that is called `print_dir`. I've truncated the comments of the original source code.
