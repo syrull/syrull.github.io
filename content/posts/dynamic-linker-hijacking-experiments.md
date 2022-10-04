@@ -154,7 +154,18 @@ Then we just need to place our library dir in `ld.so.preload` file.
 $ sudo echo "/lib/libhidemyfile.so" > /etc/ld.so.preload
 ```
 
-And if everything is good, executing `ls` or any of its aliases will hide our file from the output.
+And if everything is good, executing `ls` or any of its aliases will hide our file from the output. Let's verify this by using `ldd`
+
+```console
+$ ldd /bin/ls
+        linux-vdso.so.1 (0x00007ffc0c8e2000)
+        /lib/libhidemyfile.so (0x00007f00e59e4000) <--- Here it is!
+        libselinux.so.1 => /lib64/libselinux.so.1 (0x00007f00e5997000)
+        libcap.so.2 => /lib64/libcap.so.2 (0x00007f00e598d000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007f00e5600000)
+        libpcre2-8.so.0 => /lib64/libpcre2-8.so.0 (0x00007f00e58f0000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f00e5a0f000)
+```
 
 For your convenience I've setup a Docker container that you can use with `ld.so.preload` setup
 
