@@ -119,8 +119,16 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ sudo mv ./libhidemyfile.so /lib/libhidemyfile.so
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then we just need to place our library dir in &lt;code>ld.so.preload&lt;/code> file.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ sudo echo &lt;span style="color:#e6db74">&amp;#34;/lib/libhidemyfile.so&amp;#34;&lt;/span> &amp;gt; /etc/ld.so.preload
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And if everything is good, executing &lt;code>ls&lt;/code> or any of its aliases will hide our file from the output.&lt;/p>
-&lt;p>For your convenience I&amp;rsquo;ve setup a Docker container that you can use with &lt;code>ld.so.preload&lt;/code> setup&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And if everything is good, executing &lt;code>ls&lt;/code> or any of its aliases will hide our file from the output. Let&amp;rsquo;s verify this by using &lt;code>ldd&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ ldd /bin/ls
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> linux-vdso.so.1 (0x00007ffc0c8e2000)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> /lib/libhidemyfile.so (0x00007f00e59e4000) &amp;lt;--- Here it is!
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> libselinux.so.1 =&amp;gt; /lib64/libselinux.so.1 (0x00007f00e5997000)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> libcap.so.2 =&amp;gt; /lib64/libcap.so.2 (0x00007f00e598d000)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> libc.so.6 =&amp;gt; /lib64/libc.so.6 (0x00007f00e5600000)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> libpcre2-8.so.0 =&amp;gt; /lib64/libpcre2-8.so.0 (0x00007f00e58f0000)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> /lib64/ld-linux-x86-64.so.2 (0x00007f00e5a0f000)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For your convenience I&amp;rsquo;ve setup a Docker container that you can use with &lt;code>ld.so.preload&lt;/code> setup&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ docker run -it --rm sylly/ctf_findme
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="end" >End
 &lt;span>
