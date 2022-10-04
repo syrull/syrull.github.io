@@ -1,5 +1,5 @@
 languageCode: "en-us"
-baseUrl: "http://sy1.sh/"
+baseUrl: "sy1.sh"
 title: "archive://syrull"
 theme: "anubis"
 paginate: 10
