@@ -17,8 +17,7 @@
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
 &lt;/a>
 &lt;/span>
-&lt;/h1>&lt;p>I decided to implement a very simple alternative of this malware just as a proof of concept since it was really interesting me. My idea is to create a file that will be hidden in the system.&lt;/p>
-&lt;p>First, if you already read the articles that I&amp;rsquo;ve linked, it is apparent that we have to implement a shared library, that will override some symbols defined in the Linux Kernel.&lt;/p>
+&lt;/h1>&lt;p>I decided to implement a very simple alternative of the evasive techniques that this malware uses just as a proof of concept and if you already read the articles that I&amp;rsquo;ve linked, it is apparent that we have to implement a shared library, that will override some symbols defined in the Linux Kernel.&lt;/p>
 &lt;p>What do we need first and how to hide a file from lets say a command like &lt;code>ls&lt;/code>? With a little bit of investigating of how the &lt;code>ls&lt;/code> works internally through the &lt;a href="https://github.com/coreutils/coreutils/blob/master/src/ls.c">source code&lt;/a> and the &lt;a href="https://man7.org/linux/man-pages/man1/ls.1.html">linux manual page&lt;/a>
 We can see that internally we have a function that is called &lt;code>print_dir&lt;/code>. I&amp;rsquo;ve truncated the comments of the original source code.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>...
