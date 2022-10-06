@@ -177,6 +177,8 @@ $ docker run -it --rm sylly/ctf_findme
 
 If you reached here, thank you so much for the read. In the next part I will try to "completely" hide it from the system because now if we `cat` it despite not "reading" it in the directory would print us the contents of the file, but that will be the subject of the next post.
 
+[Full Source Code](https://github.com/syrull/evasive_techniques/blob/main/Part_1_readdir/)
+
 # Resources
 
 This post wouldn't be possible without:
