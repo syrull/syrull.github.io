@@ -137,6 +137,7 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;/a>
 &lt;/span>
 &lt;/h1>&lt;p>If you reached here, thank you so much for the read. In the next part I will try to &amp;ldquo;completely&amp;rdquo; hide it from the system because now if we &lt;code>cat&lt;/code> it despite not &amp;ldquo;reading&amp;rdquo; it in the directory would print us the contents of the file, but that will be the subject of the next post.&lt;/p>
+&lt;p>&lt;a href="https://github.com/syrull/evasive_techniques/blob/main/Part_1_readdir/">Full Source Code&lt;/a>&lt;/p>
 &lt;h1 id="resources" >Resources
 &lt;span>
 &lt;a href="#resources">
