@@ -61,7 +61,7 @@ int open (const char *filename, int flags, ...)
 }
 ```
 
-In this code block I've wrapped the original open function with our implementation of the open function. What is left now is to add our "malicious" part to it.
+In this code block I've wrapped the original `open` function with our implementation of the `open` function. What is left now is to add our "malicious" part to it.
 
 ```c
 if (strcmp(filename, MALICIOUS_FILE) == 0) 
@@ -107,6 +107,8 @@ intercept_open.so  syl.lys
 $ LD_PRELOAD=./intercept_open.so cat syl.lys
 cat: syl.lys: No such file or directory
 ```
+
+As you can see the `cat` command returns `No such file or directory` which is exactly what we are aiming for.
 
 ## Combining it with our `readdir`
 
