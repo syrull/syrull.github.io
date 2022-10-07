@@ -4,6 +4,11 @@ date: 2022-10-02T21:45:03+03:00
 draft: false
 ---
 
+## Series
+
+1. (this one)
+2. [Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 2)]({{< ref "/posts/dynamic-linker-hijacking-experiments-2.md" >}})
+
 # Overview
 
 Recently I heard about a new malware called [Symbiote](https://blogs.blackberry.com/en/2022/06/symbiote-a-new-nearly-impossible-to-detect-linux-threat), which the researches are calling the "Nearly-Impossible-to-Detect Linux Threat". I was very intrigued by how that malware is being implemented and how it works internally to remain undetected, so naturally I've started to research it. 
@@ -76,8 +81,8 @@ struct dirent {
 
 Alright, let's start implementing our own function `readdir` that we will wrap the original one with. 
 
+[intercept_readdir.c](https://github.com/syrull/evasive_techniques/blob/main/Part_1_readdir/intercept_readdir.c)
 ```c
-/* libhidemyfile.c */
 #define _GNU_SOURCE
 #include <dirent.h> // Including the Directory Entry structure
 // The dynamic linking header file so we can use the dlsym
