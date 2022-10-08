@@ -36,7 +36,7 @@ The most interesting sys call in the output is `openat` so lets see the source c
 `<journey>`
 
 
-After a few tries of trying I was quick to realize that there is some issue. The wrapper that I've implemented didn't work, or at least didn't work all the time. I've tested it out with a simple program that would just call it and in there it worked, I didn't quite get why it does what it does but I found the following discussions:
+After a few tries I was quick to realize that there is some issue. The wrapper that I've implemented didn't work, or at least didn't work all the time. I've tested it out with a simple program that would just call it and in there it worked, I didn't quite get why it does what it does but I found the following discussions:
 
 - [intercepting the openat() system call for GNU tar](https://stackoverflow.com/questions/9161116/intercepting-the-openat-system-call-for-gnu-tar)
 - [How to find out what functions to intercept with LD_PRELOAD?](https://stackoverflow.com/questions/49314057/how-to-find-out-what-functions-to-intercept-with-ld-preload)
