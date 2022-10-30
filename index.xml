@@ -1,4 +1,100 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>archive://syrull</title><link>https://sy1.sh/</link><description>archive://syrull</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 04 Oct 2022 21:45:03 +0300</lastBuildDate><atom:link href="https://sy1.sh/index.xml" rel="self" type="application/rss+xml"/><item><title>Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 2)</title><link>https://sy1.sh/posts/dynamic-linker-hijacking-experiments-2/</link><pubDate>Tue, 04 Oct 2022 21:45:03 +0300</pubDate><guid>https://sy1.sh/posts/dynamic-linker-hijacking-experiments-2/</guid><description>&lt;h2 id="series" >Series
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>archive://syrull</title><link>https://sy1.sh/</link><description>archive://syrull</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 26 Oct 2022 20:45:03 +0300</lastBuildDate><atom:link href="https://sy1.sh/index.xml" rel="self" type="application/rss+xml"/><item><title>Using DNS as C2 Communication - Evasive Techniques (Part 3)</title><link>https://sy1.sh/posts/dns-c2-communcation/</link><pubDate>Wed, 26 Oct 2022 20:45:03 +0300</pubDate><guid>https://sy1.sh/posts/dns-c2-communcation/</guid><description>&lt;h2 id="series" >Series
+&lt;span>
+&lt;a href="#series">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;ol>
+&lt;li>&lt;a href="https://sy1.sh/posts/dynamic-linker-hijacking-experiments/">Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 1)&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://sy1.sh/posts/dynamic-linker-hijacking-experiments-2/">Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 2)&lt;/a>&lt;/li>
+&lt;li>(this one)&lt;/li>
+&lt;/ol>
+&lt;h2 id="overview" >Overview
+&lt;span>
+&lt;a href="#overview">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>Following my last post about some evasion techniques that the &lt;a href="https://blogs.blackberry.com/en/2022/06/symbiote-a-new-nearly-impossible-to-detect-linux-threat">Symbiote&lt;/a> uses which I tried to recreate in their simplest form, this post will see how the Symbiote is communicating to the command and control &lt;a href="https://www.malwarepatrol.net/command-control-servers-c2-servers-fundamentals/">C2&lt;/a> server.&lt;/p>
+&lt;p>Upon reading the article, we can see that the Symbiote uses the DNS Protocol to exfiltrate data out of the infected machine, the way that it does that is by chunking it into a bunch of &lt;a href="https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/">A&lt;/a> Resource Records (RR) that it sends through the UDP. The &lt;code>A&lt;/code> Record looks like this:&lt;/p>
+&lt;pre tabindex="0">&lt;code>{PACKET_NUMBER}.{MACHINE_ID}.{HEX_ENCODED_PAYLOAD}.{DOMAIN_NAME}
+&lt;/code>&lt;/pre>&lt;p>I will deliberately skip the whole authentication process that the malware uses, since it gets out of the scope of the post.&lt;/p>
+&lt;h2 id="why-dns-and-not-arbitrary-protocol" >Why DNS and not {arbitrary protocol}?
+&lt;span>
+&lt;a href="#why-dns-and-not-arbitrary-protocol">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>DNS is being used in order to avoid/bypass the firewall rules and in some special scenarios that no TCP outgoing communication is possible.&lt;/p>
+&lt;p>&lt;a href="https://resources.infosecinstitute.com/topic/bypassing-security-products-via-dns-data-exfiltration/">Bypassing security products via DNS data exfiltration&lt;/a>&lt;/p>
+&lt;h2 id="implementation" >Implementation
+&lt;span>
+&lt;a href="#implementation">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>I will explain it briefly from the agent&amp;rsquo;s point of view. We are sending the C2 server a beam (in a shape of a DNS request) every n seconds to check if there is a command for us to execute if we receive a non empty Answer with a &lt;code>TXT&lt;/code> Record (containing a command such as &lt;code>ls&lt;/code>) we execute that command and after we have the output of the command, we exfiltrate it back to the C2 Server. This happens by sending multiple DNS A record questions (chunks) back to the server. I used the same format that the Symbiote uses for the records.&lt;/p>
+&lt;p>Note: Each element of a domain name can contain up to 63 chars of information, a full domain name can contain 253 chars. &lt;a href="https://stackoverflow.com/a/28918017">More info&lt;/a>&lt;/p>
+&lt;p>After the server receives a request with the packet number and the total number of packets (that&amp;rsquo;s the first part of the message) it starts building the output message that we will see after we receive all the packets (through the &lt;code>{HEX_ENCODED_PAYLOAD}&lt;/code> part of the message).&lt;/p>
+&lt;h2 id="code--demo" >Code / Demo
+&lt;span>
+&lt;a href="#code--demo">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>&lt;a href="https://github.com/syrull/dnsc2">Repository&lt;/a> - The repository is created for a starting point to improve/build upon.&lt;/p>
+&lt;p>&lt;img src="https://sy1.sh/dnsc2/demo.gif" alt="DNSC2Demo">&lt;/p>
+&lt;p>The repository contains both the agent and the server. When the server is being ran it sets the default handler &lt;code>dns.HandleFunc(&amp;quot;.&amp;quot;, AgentHandler)&lt;/code> to handle any pattern for domain question this is for convenience, in some other cases you will want to specify some special handles.&lt;/p>
+&lt;h3 id="usage" >Usage
+&lt;span>
+&lt;a href="#usage">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h3>&lt;ol>
+&lt;li>Start the server
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ go run main.go 127.0.0.1:8053
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>Start the agent
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ go run ./agent/main.go
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>Execute commands on the server side shell (In the case below simple &lt;code>dir&lt;/code>). Note that I type &lt;code>cmd /C dir&lt;/code> - &lt;a href="https://superuser.com/a/1246360">Why?&lt;/a>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>&amp;gt;&amp;lt;&lt;span style="color:#f92672">((((&lt;/span>&amp;gt; dns c2 by syl &amp;lt;&lt;span style="color:#f92672">))))&lt;/span>&amp;gt;&amp;lt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>dnsc2&amp;gt; cmd /C dir
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Volume in drive C is OS
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Volume Serial Number is XXXX-XXXX
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>Directory of C:\code\dnsc2\agent
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>10/28/2022 08:40 PM &amp;lt;DIR&amp;gt; .
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>10/29/2022 11:03 PM &amp;lt;DIR&amp;gt; ..
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>10/28/2022 08:40 PM 481 go.mod
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>10/28/2022 08:40 PM 3,755 go.sum
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>10/30/2022 12:37 PM 1,762 main.go
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 3 File(s) 5,998 bytes
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 2 Dir(s) 107,561,959,424 bytes free
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ol>
+&lt;h2 id="conclusion" >Conclusion
+&lt;span>
+&lt;a href="#conclusion">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h2>&lt;p>Please note that there could be some easier ways to do this, and some information can be wrong I did my best to research everything that I post here, if you find an error or if you think that something can be improved somewhere you can drop me a message!&lt;/p>
+&lt;h1 id="resources" >Resources
+&lt;span>
+&lt;a href="#resources">
+&lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
+&lt;/a>
+&lt;/span>
+&lt;/h1>&lt;ul>
+&lt;li>&lt;a href="https://blogs.blackberry.com/en/2022/06/symbiote-a-new-nearly-impossible-to-detect-linux-threat">https://blogs.blackberry.com/en/2022/06/symbiote-a-new-nearly-impossible-to-detect-linux-threat&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://stackoverflow.com/a/28918017">https://stackoverflow.com/a/28918017&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.cloudflare.com/learning/dns/what-is-dns/">https://www.cloudflare.com/learning/dns/what-is-dns/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://resources.infosecinstitute.com/topic/bypassing-security-products-via-dns-data-exfiltration/">https://resources.infosecinstitute.com/topic/bypassing-security-products-via-dns-data-exfiltration/&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 2)</title><link>https://sy1.sh/posts/dynamic-linker-hijacking-experiments-2/</link><pubDate>Tue, 04 Oct 2022 21:45:03 +0300</pubDate><guid>https://sy1.sh/posts/dynamic-linker-hijacking-experiments-2/</guid><description>&lt;h2 id="series" >Series
 &lt;span>
 &lt;a href="#series">
 &lt;svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg">&lt;path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>&lt;/svg>
@@ -7,6 +103,7 @@
 &lt;/h2>&lt;ol>
 &lt;li>&lt;a href="https://sy1.sh/posts/dynamic-linker-hijacking-experiments/">Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 1)&lt;/a>&lt;/li>
 &lt;li>(this one)&lt;/li>
+&lt;li>&lt;a href="https://sy1.sh/posts/dns-c2-communcation/">Using DNS as C2 Communication - Evasive Techniques (Part 3)&lt;/a>&lt;/li>
 &lt;/ol>
 &lt;h2 id="journey-post" >Journey Post
 &lt;span>
@@ -168,6 +265,7 @@
 &lt;/h2>&lt;ol>
 &lt;li>(this one)&lt;/li>
 &lt;li>&lt;a href="https://sy1.sh/posts/dynamic-linker-hijacking-experiments-2/">Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 2)&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://sy1.sh/posts/dns-c2-communcation/">Using DNS as C2 Communication - Evasive Techniques (Part 3)&lt;/a>&lt;/li>
 &lt;/ol>
 &lt;h1 id="overview" >Overview
 &lt;span>
