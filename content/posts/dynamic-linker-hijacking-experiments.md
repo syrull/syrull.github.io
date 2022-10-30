@@ -8,6 +8,7 @@ draft: false
 
 1. (this one)
 2. [Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 2)]({{< ref "/posts/dynamic-linker-hijacking-experiments-2.md" >}})
+3. [Using DNS as C2 Communication - Evasive Techniques (Part 3)]({{< ref "/posts/DNS-c2-communcation.md" >}})
 
 # Overview
 

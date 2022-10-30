@@ -8,6 +8,7 @@ draft: false
 
 1. [Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 1)]({{< ref "/posts/dynamic-linker-hijacking-experiments.md" >}})
 2. (this one)
+3. [Using DNS as C2 Communication - Evasive Techniques (Part 3)]({{< ref "/posts/DNS-c2-communcation.md" >}})
 
 ## Journey Post
 This post is a something that I call "journey post", this follows my process of researching and implementing the solution for the problem (or the challenge). I will wrap/pre-fix parts of the post with html-like `<journey>` so that you can skip it if you are in a hurry.
