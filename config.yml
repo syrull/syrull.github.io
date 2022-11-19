@@ -70,9 +70,9 @@ params:
     name: dganev@pm.me
   - id: telegram
     name: pwnm3rcury
-#  - id: hugo
-#    url: "https://gohugo.io/"
-#    icon: "hugo"
+  - id: mastodon
+    url: "https://infosec.exchange/@syl"
+    name: Mastodon
 
 markup:
   goldmark:
