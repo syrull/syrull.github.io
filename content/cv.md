@@ -14,7 +14,7 @@ My name is Dimitar Ganev and I am a software engineer interested in software arc
 
 # **Software Experience**
 
-* [**VMware**](https://www.vmware.com/) (Software Engineer) > Sep 2021 - Present
+* [**VMware**](https://www.vmware.com/) (Software Engineer) > 2021-09 - Present
 
     Projects:
 
@@ -53,6 +53,7 @@ My name is Dimitar Ganev and I am a software engineer interested in software arc
 
 * [**Full Length Productions / Sound Design - AudioJungle**](https://audiojungle.net/user/fujimsc/portfolio) (Audio Producer / Sound Designer) > 2017 - Present
 * [**Full Length Productions / Sound Design - Shutterstock Music**](https://www.shutterstock.com/music/artist/Fuji) (Audio Producer / Sound Designer) > 2016 - Present
+
 
 # **Education**
 * [**Burgas Free University**](https://www.bfu.bg/bg) (Computer Science - Masters) - Bulgaria > 2020 - 2021 | Dropped
