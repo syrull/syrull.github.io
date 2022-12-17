@@ -926,7 +926,9 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;li>&lt;a href="https://vsupalov.com/build-docker-image-clone-private-repo-ssh-key/">https://vsupalov.com/build-docker-image-clone-private-repo-ssh-key/&lt;/a>&lt;/li>
 &lt;li>&lt;a href="https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c">https://medium.com/@bmihelac/examples-for-building-docker-images-with-private-python-packages-6314440e257c&lt;/a>&lt;/li>
 &lt;/ul></description></item><item><title>CV</title><link>https://sy1.sh/cv/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://sy1.sh/cv/</guid><description>&lt;p>&lt;a href="https://sy1.sh/cv/cv.pdf">Download PDF&lt;/a>&lt;/p>
-&lt;p>My name is Dimitar Ganev and I am a software engineer interested in software architecture and building systems/tools from scratch. Areas of expertise/interest include Python, Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.&lt;/p>
+&lt;p>My name is Dimitar Ganev and I am a software engineer interested in cyber security, malware development and malware analysis. Areas of expertise/interest include Python, Go, PowerShell, Building Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.&lt;/p>
+&lt;p>In my spare time I am frequently researching various topics such as cyber secuirty topics, reverse engineering, game hacking/cheating (only for educational purposes). You can find the results of those researches in my website.&lt;/p>
+&lt;p>&lt;a href="https://sy1.sh/">https://sy1.sh/&lt;/a>&lt;/p>
 &lt;h1 id="speaker" >&lt;strong>Speaker&lt;/strong>
 &lt;span>
 &lt;a href="#speaker">
@@ -945,6 +947,7 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;/h1>&lt;ul>
 &lt;li>
 &lt;p>&lt;a href="https://www.vmware.com/">&lt;strong>VMware&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2021-09 - Present&lt;/p>
+&lt;p>Languages: [Python, Go, PowerShell, Java]&lt;/p>
 &lt;p>Projects:&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>Threat Intelligence Connector for Carbon Black Cloud&lt;/strong> (&lt;a href="https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector">https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector&lt;/a>) - Main Developer and Maintainer&lt;/li>
@@ -954,6 +957,7 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;/li>
 &lt;li>
 &lt;p>&lt;a href="https://www.aiidatapro.com/">&lt;strong>ADataPro&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2019-06 - 2021-09&lt;/p>
+&lt;p>Lanaguages: [JavaScript, Python]&lt;/p>
 &lt;p>Managing the infrastructure, leading an architectural decisions, mentoring.&lt;/p>
 &lt;p>Projects:&lt;/p>
 &lt;ul>
@@ -965,6 +969,7 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;/li>
 &lt;li>
 &lt;p>&lt;a href="https://nex-gen.eu/">&lt;strong>NexGen LTD&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2018-10 - 2019-04&lt;/p>
+&lt;p>Languages: [PHP, JavaScript]&lt;/p>
 &lt;p>Projects:&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>IntraPricing Solution&lt;/strong> (&lt;a href="https://intrapricing.com/">https://intrapricing.com/&lt;/a>) - Maintaining the system&lt;/li>
@@ -973,6 +978,7 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;/li>
 &lt;li>
 &lt;p>&lt;a href="https://www.j-soft.net/">&lt;strong>JSoft&lt;/strong>&lt;/a> (Software Engineer) &amp;gt; 2016-11 - 2017-03&lt;/p>
+&lt;p>Languages: [PHP, JavaScript]&lt;/p>
 &lt;p>Projects:&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>Property Management System&lt;/strong> - Developed a Property Management System with a small team of developers&lt;/li>
@@ -1007,6 +1013,7 @@ SSH_AUTH_SOCK: $SSH_AUTH_SOCK
 &lt;/a>
 &lt;/span>
 &lt;/h1>&lt;ul>
+&lt;li>TCM Security - Practical Malware Analysis &amp;amp; Triage&lt;/li>
 &lt;li>English CERF - C1&lt;/li>
 &lt;li>German - Deutsch für die technischen Fächer - B2/B1&lt;/li>
 &lt;li>Udemy [UC-CY7BEGYO, UC-0WC1CNGU]&lt;/li>
