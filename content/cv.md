@@ -4,8 +4,11 @@ title: "CV"
 
 [Download PDF](/cv/cv.pdf)
 
-My name is Dimitar Ganev and I am a software engineer interested in software architecture and building systems/tools from scratch. Areas of expertise/interest include Python, Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.
+My name is Dimitar Ganev and I am a software engineer interested in cyber security, malware development and malware analysis. Areas of expertise/interest include Python, Go, PowerShell, Building Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.
 
+In my spare time I am frequently researching various topics such as cyber secuirty topics, reverse engineering, game hacking/cheating (only for educational purposes). You can find the results of those researches in my website.
+
+https://sy1.sh/
 
 # **Speaker**
 
@@ -16,6 +19,8 @@ My name is Dimitar Ganev and I am a software engineer interested in software arc
 
 * [**VMware**](https://www.vmware.com/) (Software Engineer) > 2021-09 - Present
 
+    Languages: [Python, Go, PowerShell, Java]
+
     Projects:
 
     - **Threat Intelligence Connector for Carbon Black Cloud** (https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector) - Main Developer and Maintainer
@@ -24,6 +29,8 @@ My name is Dimitar Ganev and I am a software engineer interested in software arc
     And other closed-source projects.
 
 * [**ADataPro**](https://www.aiidatapro.com/) (Software Engineer) > 2019-06 - 2021-09
+
+    Lanaguages: [JavaScript, Python]
 
     Managing the infrastructure, leading an architectural decisions, mentoring.
 
@@ -38,12 +45,16 @@ My name is Dimitar Ganev and I am a software engineer interested in software arc
 
 * [**NexGen LTD**](https://nex-gen.eu/) (Software Engineer) > 2018-10 - 2019-04
 
+    Languages: [PHP, JavaScript]
+
     Projects:
 
     - **IntraPricing Solution** (https://intrapricing.com/) - Maintaining the system
     - **Harzreisen** (https://harzreisen.de/) - Created the most of the frontend and the backend for the platform also including the admin panel.
 
 * [**JSoft**](https://www.j-soft.net/) (Software Engineer) > 2016-11 - 2017-03
+
+    Languages: [PHP, JavaScript]
 
     Projects:
 
@@ -62,6 +73,7 @@ My name is Dimitar Ganev and I am a software engineer interested in software arc
 
 # **Certificates / Languages**
 
+- TCM Security - Practical Malware Analysis & Triage
 - English CERF - C1
 - German - Deutsch für die technischen Fächer - B2/B1
 - Udemy [UC-CY7BEGYO, UC-0WC1CNGU]
