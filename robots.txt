@@ -1,5 +1,3 @@
 User-agent: *
-# robotstxt.org - if environment is not `production` then robots will be disallowed.
-
-  Disallow:
-
+Disallow:
+Sitemap: https://sy1.sh/sitemap.xml
