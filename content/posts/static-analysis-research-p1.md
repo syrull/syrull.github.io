@@ -178,7 +178,7 @@ typedef struct _IMAGE_SECTION_HEADER {
 The sections of a Portable Executable (PE) file contain various types of data, such as code, data, resources, and other information. The headers of the file are used to specify the characteristics of these sections, such as whether they contain executable code, initialized data, uninitialized data, or other types of information.
 
 
-> **Tip**: You can detect if a PE file has been packed by comparing the values of the VirtualSize and SizeOfRawData fields in the headers. If the VirtualSize is significantly larger than the SizeOfRawData, it is a strong indication that the file has been packed. However, it is worth noting that there may be some discrepancy between the two values due to section padding and alignment.
+> **Tip**: You can detect if a PE file has been packed by comparing the values of the `VirtualSize` and `SizeOfRawData` fields in the headers. If the `VirtualSize` is significantly larger than the `SizeOfRawData`, it is a strong indication that the file has been packed. However, it is worth noting that there may be some discrepancy between the two values due to section padding and alignment.
 
 ## Sections
 
