@@ -6,5 +6,11 @@
     ],
     "spellright.language": [
         "en"
+    ],
+    "cSpell.words": [
+        "DWORD",
+        "lfanew",
+        "PIMAGE",
+        "struct"
     ]
 }
