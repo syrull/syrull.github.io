@@ -10,7 +10,7 @@ Recently, I decided do delve a little bit more into static analysis, something b
 
 Before reading further, I want you to know that this post is about research I did on static analysis. There is nothing new here - no new tools or features are being discovered. Everything that I talk about already exists in other tools. A big part of this research uses the OpenAI Chat GPT. I made sure to fact-check the information provided here, as the GPT can sometimes produce misleading output.
 
-Our research focuses on [Windows Portable Executable (PE)](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-intro?view=windows-11) files because they are the most common type. Therefore, we'll start by exploring how these files operate.
+My research focuses on [Windows Portable Executable (PE)](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-intro?view=windows-11) files because they are the most common type. Therefore, we'll start by exploring how these files operate.
 
 ## Keywords 
 
