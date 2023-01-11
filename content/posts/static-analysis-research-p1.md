@@ -403,6 +403,23 @@ typedef struct _IMAGE_LOAD_CONFIG_DIRECTORY {
 } IMAGE_LOAD_CONFIG_DIRECTORY, *PIMAGE_LOAD_CONFIG_DIRECTORY;
 ```
 
+## Access Rights of the Sections
+
+The section rights are presented in the `DWORD Characteristics;` field of the `_IMAGE_SECTION_HEADER `, you can check the valid values in the [microsoft's documentation](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-image_section_header?redirectedfrom=MSDN#members).
+
+Those are the standard access rights of PE.
+
+| Section Name | Access Rights |
+|--- |--- |
+| `.text` | Read and Execute |
+| `.rdata` | Read-Only |
+| `.data` | Read and Write |
+| `.bss` | Read and Write |
+| `.rsrc` | Read Only |
+| `.reloc` | Read Only |
+
+> Note: Seungwon Lee has indicated that if an essential element of an executable is the WRITE property of a section, the PE could be packed.
+
 # Conclusion 
 
 This is the first part of my research on static analysis; the primary focus would be on Windows PEs and exactly how much information I can extract before going into the guessing territory.  
@@ -422,3 +439,5 @@ I hope you have reached that far and the information that I have provided is use
 - https://www.virusbulletin.com/virusbulletin/2020/01/vb2019-paper-rich-headers-leveraging-mysterious-artifact-pe-format/
 - https://forensicitguy.github.io/rich-header-hashes-with-pefile/
 - https://github.com/mmn3mm/peresources
+- The Study of Evasion of Packed PE from Static Detection (Mirza Baig, Pavol Zavarsky, Ron Ruhl, Dale Lindskog)
+- Han, Seungwon Lee, Keungi Lee, Sangjin, “Packed PE File Detection for Malware Forensics”, Computer Science and its Applications, 2nd International Conference, http://ieeexplore.ieee.org/stamp/stamp.jsp?arn umber=05404211, 12 Dec 2009
