@@ -4,6 +4,8 @@ date: 2022-10-02T21:45:03+03:00
 draft: false
 ---
 
+![cover](/dyn-link-hijack/dynlinkhijack.png)
+
 ## Series
 
 1. (this one)

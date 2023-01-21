@@ -4,6 +4,8 @@ date: 2022-10-04T21:45:03+03:00
 draft: false
 ---
 
+![cover](/dyn-link-hijack/dynlinkhijack.png)
+
 ## Series
 
 1. [Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 1)]({{< ref "/posts/dynamic-linker-hijacking-experiments.md" >}})
