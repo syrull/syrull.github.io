@@ -25,6 +25,7 @@ https://sy1.sh/
 
     - **Threat Intelligence Connector for Carbon Black Cloud** (https://github.com/carbonblack/carbon-black-cloud-threat-intelligence-connector) - Main Developer and Maintainer
     - **VMware Carbon Black Cloud Python SDK** (https://github.com/carbonblack/carbon-black-cloud-sdk-python) - Developer and Maintainer
+    - **VMware Carbon Black Cloud for Splunk SOAR** (https://splunkbase.splunk.com/app/6732) - Developer
 
     And other closed-source projects.
 
