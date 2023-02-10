@@ -58,11 +58,6 @@ params:
     - name: linkedin
       url: "https://www.linkedin.com/in/dimitar-ganev-syl-/"
 
-  editPost:
-    URL: "https://github.com/syrull/syrull.github.io/tree/main/content"
-    Text: "Suggest Changes"
-    appendFilePath: true
-
 markup:
   goldmark:
     renderer:
