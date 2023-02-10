@@ -1,7 +1,7 @@
 # Hack The Box
 
-- [Stocker (Easy)]({{< ref "/posts/writeups/htb-stocker" >}})
-- [Broscience (Medium)]({{< ref "/posts/writeups/htb-broscience" >}})
+- [Stocker (Easy)]({{< ref "/posts/writeups/htb-stocker.md" >}})
+- [Broscience (Medium)]({{< ref "/posts/writeups/htb-broscience.md" >}})
 
 # Malware Analysis
 
