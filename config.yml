@@ -22,7 +22,7 @@ menu:
   - identifier: writeups
     name: Write-ups
     title: Write-ups
-    url: writeups
+    url: /writeups/
     weight: 3
 
 outputs:
