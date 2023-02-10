@@ -21,7 +21,7 @@ menu:
     weight: 2
   - identifier: writeups
     name: Write-ups
-    title: writeups
+    title: Write-ups
     url: /writeups/
     weight: 3
 
