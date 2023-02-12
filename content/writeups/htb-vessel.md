@@ -29,7 +29,7 @@ With that I discovered a folder called `dev` which then led me to dumping the gi
 $ git-dumper http://vessel.htb/dev/.git ./website_dump
 ```
 
-With the website avaliable, I can check the actual source code for vulnerabilities, immediately after opening the `routes/index.js`
+With the website avaliable, I can check the actual source code for vulnerabilities, immediately after opening the `routes/index.js` I have noticed that this code might be vulnerable to NoSQL Injection.
 
 ```javascript
 ...
@@ -39,9 +39,14 @@ if (username && password) {
 connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) { ...
 ```
 
-With that I can see that the login page is vulnerable to NoSQL Injection. Since that the code doesn't check if the passed values if they are objects, I can use NoSQL payload to successfully login to the `/admin` page. 
+The code doesn't check if the passed values if they are objects, I can use a crafted NoSQL payload to successfully login 
+with the admin user using this payload while doing the POST request:
 
-Upon another discovery in the admin panel, I found that there is another domain on the host called `openwebanalytics`. From further investigation over what can be exploted there I landed on [CVE-2022-24637](https://www.exploit-db.com/exploits/51026). With that I could run a successful reverse shell on the machine. 
+```
+username=admin&password[password]=1
+```
+
+Upon another discovery in the admin panel, I found that there is another domain on the host called `openwebanalytics`. From further investigation over what can be exploted there I have landed on [CVE-2022-24637](https://www.exploit-db.com/exploits/51026). With that exploit I could run a successful reverse shell on the machine. 
 
 Using [linpeas](https://github.com/carlospolop/PEASS-ng) I found some useful information over the user `steven`
 
@@ -51,7 +56,9 @@ Using [linpeas](https://github.com/carlospolop/PEASS-ng) I found some useful inf
 /home/steven/.notes/notes.pdf # Password protected PDF
 ```
 
-I suspected that the `screenshot.png` is a screenshot out of the `passwordGenerator`. The `passwordGenerator` was unusually big and the whole use of that binary is to create 'secure' passwords. I noticed 'python' icon over the icon on the binary and I suspected that this could be a packed python project with `PyInstaller`. I confirmed that when I loaded the whole thing in Ghidra/IDA. I used [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor) to extract the `*.pyc` files, which I then used the [uncomplyle6](https://pypi.org/project/uncompyle6/) to decompile the `*.pyc` files. Which led me to the actual source code of that binary:
+I suspected that the `screenshot.png` is am image of the `passwordGenerator`.On the other hand the `passwordGenerator` was unusually big and the whole use of that binary is to create 'secure' passwords. I noticed the python icon on the binary and I suspected that this could be a packed python project with `PyInstaller`. I confirmed that when I loaded the whole thing in Ghidra/IDA.
+
+I have used [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor) to extract the `*.pyc` files, and then the [uncomplyle6](https://pypi.org/project/uncompyle6/) to decompile the `*.pyc` files. Which has led me to the actual source code of the binary:
 
 This is the function that generates the password:
 
@@ -85,9 +92,9 @@ def genPassword(self):
                 return password
 ```
 
-I edited the `length` to 32 (as I have it on the screenshot) and edit the script a bit more to create a word list out of passwords. I can do that because `QTime.currentTime().msec()` which are the numbers from 1-1000 with that range I have a big chance of guessing the generated password. 
+I edited the `length` to 32 (as I have it on the screenshot) and edited the script a bit more to create a list out of possible passwords. I can do that because the `QTime.currentTime().msec()` function returns the numbers from 1-1000 with that range I have a big chance of guessing the generated password.
 
-> **Note**: This process can be a bit frustrating since it takes time to generate the word lists. I personally spent little over 1 hour.
+> **Note**: This process can be a bit frustrating since it takes time to generate the passwords. I personally spent little over an hour.
 
 Then I used `pdfcrack` to crack the password of the PDF, there I found the password for the user `ethan` and I successfully logged in with it and I found the first flag.
 
