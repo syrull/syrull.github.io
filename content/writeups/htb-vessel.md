@@ -1,5 +1,5 @@
 ---
-title: "Hack The Box - Investigation [Medium]"
+title: "Hack The Box - Vessel [Hard]"
 date: 2023-02-12T10:42:27+03:00
 draft: false
 description: 
