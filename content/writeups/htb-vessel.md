@@ -9,7 +9,7 @@ description:
 
 Since it becomes very time consuming doing this in a video this write-up is going to be in a text.
 
-The machine is labeled hard with a good reason, most of the tasks are time consuming but there are some interesting vulnerabilities like [CVE-2022-0811](https://www.crowdstrike.com/blog/cr8escape-new-vulnerability-discovered-in-cri-o-container-engine-cve-2022-0811/)and [CVE-2022-24637](https://www.exploit-db.com/exploits/51026).
+The machine is labeled hard with a good reason, most of the tasks are time consuming but there are some interesting vulnerabilities like [CVE-2022-0811](https://www.crowdstrike.com/blog/cr8escape-new-vulnerability-discovered-in-cri-o-container-engine-cve-2022-0811/) and [CVE-2022-24637](https://www.exploit-db.com/exploits/51026).
 
 On top of these we have [NoSQL Injection](https://book.hacktricks.xyz/pentesting-web/nosql-injection) and some PE reverse engineering.
 
