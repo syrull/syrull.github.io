@@ -1,6 +1,6 @@
 ---
 title: "Hack The Box - Interface [Medium]"
-date: 2023-02-014T02:01:27+03:00
+date: 2023-02-14T02:01:27+03:00
 draft: false
 description: 
 ---
