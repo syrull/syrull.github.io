@@ -97,7 +97,7 @@ It is pretty obvious that this code is vulnerable to LFI, and I can use it to ga
 
 And this is me figuring out this after 2 days of trying...
 
-![[Pasted image 20230218001326.png]]
+![rwojak](/random/rwojak.jpg)
 
 I generated a payload with the [PHP filter chain generator](https://github.com/synacktiv/php_filter_chain_generator).
 
