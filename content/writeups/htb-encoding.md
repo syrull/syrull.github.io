@@ -1,5 +1,5 @@
 ---
-title: "Hack The Box - Interface [Medium]"
+title: "Hack The Box - Encoding [Medium]"
 date: 2023-02-17T02:01:27+03:00
 draft: false
 description: 
