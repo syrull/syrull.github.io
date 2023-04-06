@@ -42,11 +42,12 @@ params:
   ShowBreadCrumbs: true
   ShowPostNavLinks: true
   ShowCodeCopyButtons: true
-  hideSummary: false
+  hideSummary: true
 
-  homeInfoParams:
-      Title: "archive://sy1.sh"
-      Content: >
+  profileMode:
+    enabled: true
+    Title: "archive://sy1.sh"
+    Content: >
         - This website is my research archive; 
         I am trying my best to keep the information consistent and correct, 
         but some of it might be wrong. You can always suggest an edit on 
