@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Stocker [Easy]"
 date: 2023-02-09T19:42:27+03:00
-draft: false
+draft: true
 description: 
 ---
 

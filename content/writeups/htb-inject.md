@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Inject [Easy]"
 date: 2023-04-03T02:01:27+03:00
-draft: false
+draft: true
 description: 
 ---
 
