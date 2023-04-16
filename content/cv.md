@@ -1,14 +1,8 @@
 ---
-title: "CV"
+title: "About"
 ---
 
 [Download PDF](/cv/cv.pdf)
-
-My name is Dimitar Ganev and I am a software engineer interested in cyber security, malware development and malware analysis. Areas of expertise/interest include Python, Go, PowerShell, Building Pipelines, Debugging and Profiling. I am located in Bulgaria and I have worked as a remote engineer since 2019.
-
-In my spare time I am frequently researching various topics such as cyber secuirty topics, reverse engineering, game hacking/cheating (only for educational purposes). You can find the results of those researches in my website.
-
-https://sy1.sh/
 
 # **Speaker**
 
