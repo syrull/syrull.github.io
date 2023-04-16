@@ -2,7 +2,7 @@
 title: "Hack The Box - Precious [Easy]"
 date: 2023-03-12T19:42:27+03:00
 draft: true
-description: 
+tags: ["hackthebox"]
 ---
 
 We begin with a simple web page that has an input, apparently this input turns a webpage to a PDF, I tried with hosting a page on my machine and tried to use it for the input. 

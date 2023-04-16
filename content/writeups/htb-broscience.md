@@ -2,7 +2,7 @@
 title: "Hack The Box - Broscience [Medium]"
 date: 2023-02-09T19:42:27+03:00
 draft: false
-description: 
+tags: ["hackthebox"]
 ---
 
 <iframe style="width:100%; height:400px;" src="https://youtu.be/qXYINAe-Zm0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>

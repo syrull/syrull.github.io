@@ -2,7 +2,7 @@
 title: "Hack The Box - Investigation [Medium]"
 date: 2023-02-10T19:42:27+03:00
 draft: true
-description: 
+tags: ["hackthebox"]
 ---
 
 <iframe style="width:100%; height:400px;" src="https://www.youtube.com/embed/bYAHMY38kHE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>

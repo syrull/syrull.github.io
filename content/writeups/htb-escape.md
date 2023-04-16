@@ -2,7 +2,7 @@
 title: "Hack The Box - Escape [Medium]"
 date: 2023-03-23T02:01:27+03:00
 draft: true
-description: 
+tags: ["hackthebox"]
 ---
 
 This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I've seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine. 

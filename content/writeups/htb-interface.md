@@ -2,7 +2,7 @@
 title: "Hack The Box - Interface [Medium]"
 date: 2023-02-14T02:01:27+03:00
 draft: true
-description: 
+tags: ["hackthebox"]
 ---
 
 The most important in this machine would be the enumeration, it exploits vulnerabilities like:

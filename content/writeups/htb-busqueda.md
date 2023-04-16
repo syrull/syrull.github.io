@@ -2,7 +2,7 @@
 title: "Hack The Box - Busqueda [Easy]"
 date: 2023-04-09T19:42:27+03:00
 draft: true
-description: 
+tags: ["hackthebox"]
 ---
 
 This machine is rather simple, upon scanning it we can see that the website has a generating search query URLs input form. On the bottom of the page, we can see the versions of the used software:

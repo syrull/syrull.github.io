@@ -2,7 +2,7 @@
 title: "Hack The Box - Encoding [Medium]"
 date: 2023-02-17T02:01:27+03:00
 draft: false
-description: 
+tags: ["hackthebox"]
 ---
 
 This machine took me a couple of days due to its complexity and some minor stuff that were a hassle to get right.
