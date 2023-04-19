@@ -2,5 +2,5 @@
 title: "About"
 ---
 
-[Download PDF](/cv/cv.pdf)
+[Download PDF](/cv.pdf)
 
