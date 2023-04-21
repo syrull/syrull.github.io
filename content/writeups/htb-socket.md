@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Socket [Medium]"
 date: 2023-04-21T10:42:27+03:00
-draft: false
+draft: true
 tags: ["hackthebox"]
 ---
 
