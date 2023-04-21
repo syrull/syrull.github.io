@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Socket [Medium]"
 date: 2023-04-21T10:42:27+03:00
-draft: true
+draft: false
 tags: ["hackthebox"]
 ---
 
@@ -149,7 +149,3 @@ root
 bash-5.1# cat /root/root.txt 
 <HASH>
 ```
-
-# 'Mindmap' of the Attack Surface
-
-![[Pasted image 20230421150613.png]]
