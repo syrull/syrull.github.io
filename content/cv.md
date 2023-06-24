@@ -2,5 +2,4 @@
 title: "About"
 ---
 
-[Download PDF](/cv.pdf)
-
+syl[at]sy1.sh
