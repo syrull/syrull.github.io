@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Interface [Medium]"
-date: 2023-02-14T02:01:27+03:00
-draft: true
+date: 2023-06-08T02:01:27+03:00
+draft: false
 tags: ["hackthebox"]
 ---
 
