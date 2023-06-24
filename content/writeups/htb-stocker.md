@@ -1,8 +1,8 @@
 ---
 title: "Hack The Box - Stocker [Easy]"
 date: 2023-02-09T19:42:27+03:00
-draft: true
-description: asd
+draft: false
+description: Hack The Box - Stocker [Easy]
 ---
 
 <iframe style="width:100%; height:400px;" src="https://www.youtube.com/embed/yUWk88U55_M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
