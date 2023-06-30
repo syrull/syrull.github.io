@@ -46,8 +46,6 @@ The injection point is the `name` of the PGP key, so I've generated a key called
 $ gpg --gen-key
 ```
 
-![[Pasted image 20230624124410.png]]
-
 The exploit is described/explained [here](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection#jinja2).
 
 After that, we need to export the public key using this command:
