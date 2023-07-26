@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Precious [Easy]"
 date: 2023-05-23T19:42:27+03:00
-draft: false
+draft: true
 tags: ["hackthebox"]
 ---
 
