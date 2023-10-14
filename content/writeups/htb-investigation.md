@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Investigation [Medium]"
 date: 2023-02-10T19:42:27+03:00
-draft: true
+draft: false
 tags: ["hackthebox"]
 ---
 
