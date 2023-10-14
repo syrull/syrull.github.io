@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Escape [Medium]"
 date: 2023-06-10T02:01:27+03:00
-draft: true
+draft: false
 tags: ["hackthebox"]
 ---
 
