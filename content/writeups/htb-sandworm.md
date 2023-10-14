@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - Sandworm [Medium]"
 date: 2023-06-24T10:42:27+03:00
-draft: true
+draft: false
 tags: ["hackthebox"]
 ---
 
