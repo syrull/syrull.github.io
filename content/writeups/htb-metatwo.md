@@ -1,7 +1,7 @@
 ---
 title: "Hack The Box - MetaTwo [Easy]"
 date: 2023-04-21T19:42:27+03:00
-draft: true
+draft: false
 tags: ["hackthebox"]
 ---
 
