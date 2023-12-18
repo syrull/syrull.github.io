@@ -5,7 +5,9 @@ draft: false
 tags: ["vulnlab"]
 ---
 
-Recently I've started to explore more platforms for hacking different type of boxes and I found that `xct` has created `vulndev`. From what I've explored, I have to say that I am really impressed with it and so far, I really like it. Here is my writeup for the "Baby" lab.
+Recently I've started to explore more platforms for hacking different type of boxes and I found that `xct` has created `vulnlab`. From what I've explored, I have to say that I am really impressed with it and so far, I really like it. Here is my writeup for the "Baby" lab.
+
+https://www.vulnlab.com/
 
 # User / Initial Foothold
 
