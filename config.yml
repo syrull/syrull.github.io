@@ -2,7 +2,7 @@ languageCode: "en-us"
 baseUrl: "https://sy1.sh"
 title: "0x73796C31"
 paginate: 10
-theme: "PaperMod"
+theme: "binario"
 enableRobotsTXT: true
 enableEmoji: true
 pygmentsUseClasses: true
@@ -43,15 +43,6 @@ params:
   ShowPostNavLinks: true
   ShowCodeCopyButtons: true
   hideSummary: true
-
-  profileMode:
-    enabled: true
-    Title: "archive://sy1.sh"
-    Content: >
-        - This website is my research archive; 
-        I am trying my best to keep the information consistent and correct, 
-        but some of it might be wrong. You can always suggest an edit on 
-        anything that you think isn't correct.
 
   socialIcons:
     - name: github
