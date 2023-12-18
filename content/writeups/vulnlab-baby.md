@@ -1,6 +1,6 @@
 ---
 title: "Vulnlab - Baby [Easy]"
-date: 2023-12-18T03:42:27+03:00
+date: 2023-12-18T10:42:27+03:00
 draft: false
 tags: ["vulnlab"]
 ---
