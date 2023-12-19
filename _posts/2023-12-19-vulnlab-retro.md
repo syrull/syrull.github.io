@@ -296,7 +296,7 @@ INFO: Querying computer: DC.retro.vl
 INFO: Done in 00M 04S
 ```
 
-Then I can query the user `BANKING$` and I can see its `First Degree Group Membership` that this user is part of the group `DOMAIN COMPUTERS`, so we can use that user to exploit the certificate and retrieve the NTLM hash.
+Then I can query the user `BANKING$` and I can see its `First Degree Group Membership` that this user is part of the group `DOMAIN COMPUTERS`, so we can use that user to exploit the certificate and retrieve the NTLM hash of the administrator.
 
 # UnPAC the hash Method #1
 
