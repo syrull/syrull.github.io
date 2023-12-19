@@ -265,7 +265,9 @@ Certipy v4.8.2 - by Oliver Lyak (ly4k)
 [*] Saved JSON output to '20231219202428_Certipy.json'
 ```
 
-Looking at the `20231219202428_Certipy.txt` we can see a ESC1 vunlerability related to the `RetroClients` certificate. More about ESC1: https://www.blackhillsinfosec.com/abusing-active-directory-certificate-services-part-one/
+Looking at the `20231219202428_Certipy.txt` we can see a ESC1 vunlerability related to the `RetroClients` certificate. 
+
+<a href="https://www.blackhillsinfosec.com/abusing-active-directory-certificate-services-part-one/">More about ESC1</a>
 
 Looking at the permissions of the certificate template we notice that it can be used only by:
 - RETRO.VL\Domain Admins
