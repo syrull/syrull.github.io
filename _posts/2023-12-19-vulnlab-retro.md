@@ -243,7 +243,9 @@ Enter it again:
 Password changed.
 ```
 
-And now we can use this account later on. Lets enumerate the ADCS (Active Directory Certificate Services). I used `certipy` for that matter.
+And now we can use this account!
+
+Lets enumerate the ADCS (Active Directory Certificate Services). I used `certipy` for that matter.
 
 ```
 syl@sylsec:~/vulnlab/Retro$ certipy find -u trainee -p 'trainee' -dc-ip 10.10.113.62 -vulnerable

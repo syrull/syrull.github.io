@@ -262,7 +262,9 @@ Enter it again:
 Password changed.
 </code></pre></div></div>
 
-<p>And now we can use this account later on. Lets enumerate the ADCS (Active Directory Certificate Services). I used <code class="language-plaintext highlighter-rouge">certipy</code> for that matter.</p>
+<p>And now we can use this account!</p>
+
+<p>Lets enumerate the ADCS (Active Directory Certificate Services). I used <code class="language-plaintext highlighter-rouge">certipy</code> for that matter.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>syl@sylsec:~/vulnlab/Retro$ certipy find -u trainee -p 'trainee' -dc-ip 10.10.113.62 -vulnerable
 Certipy v4.8.2 - by Oliver Lyak (ly4k)
