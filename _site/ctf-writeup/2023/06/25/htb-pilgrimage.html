@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Hack The Box - Pilgrimage [Easy]</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Hack The Box - Pilgrimage [Easy]" />
+<meta name="author" content="Dimitar Ganev" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I started off with rustscan" />
+<meta property="og:description" content="I started off with rustscan" />
+<link rel="canonical" href="http://localhost:4000/ctf-writeup/2023/06/25/htb-pilgrimage.html" />
+<meta property="og:url" content="http://localhost:4000/ctf-writeup/2023/06/25/htb-pilgrimage.html" />
+<meta property="og:site_name" content="archive://syl" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-06-25T00:00:00+03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Hack The Box - Pilgrimage [Easy]" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Dimitar Ganev"},"@type":"BlogPosting","description":"I started off with rustscan","headline":"Hack The Box - Pilgrimage [Easy]","dateModified":"2023-06-25T00:00:00+03:00","datePublished":"2023-06-25T00:00:00+03:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/ctf-writeup/2023/06/25/htb-pilgrimage.html"},"url":"http://localhost:4000/ctf-writeup/2023/06/25/htb-pilgrimage.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="archive://syl" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">..</a><article>
+  <p class="post-meta">
+    <time datetime="2023-06-25 00:00:00 +0300">2023-06-25</time>
+  </p>
+  
+  <h1>Hack The Box - Pilgrimage [Easy]</h1>
+
+  <p>I started off with <code class="language-plaintext highlighter-rouge">rustscan</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rustscan <span class="nt">-a</span> 
+Open 10.10.11.219:22
+Open 10.10.11.219:80
+</code></pre></div></div>
+
+<p>Then I ran <code class="language-plaintext highlighter-rouge">ffuf</code> to brute force some directories.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ffuf <span class="nt">-u</span> http://10.10.11.219/FUZZ <span class="nt">-w</span> ~/tools/SecLists/Discovery/Web-Content/common.txt
+</code></pre></div></div>
+
+<p>That yielded the <code class="language-plaintext highlighter-rouge">.git</code> folders, I used <code class="language-plaintext highlighter-rouge">git-dumper</code> to dump the whole repository. Upon investigating the source code of the application, I’ve noticed a user called <code class="language-plaintext highlighter-rouge">emily</code>. I also discovered an executable <code class="language-plaintext highlighter-rouge">magick</code> and this fragmet of code:</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$newname</span> <span class="o">=</span> <span class="nb">uniqid</span><span class="p">();</span>
+<span class="nb">exec</span><span class="p">(</span><span class="s2">"/var/www/pilgrimage.htb/magick convert /var/www/pilgrimage.htb/tmp/"</span> <span class="mf">.</span> <span class="nv">$upload</span><span class="o">-&gt;</span><span class="nf">getName</span><span class="p">()</span> <span class="mf">.</span> <span class="nv">$mime</span> <span class="mf">.</span> <span class="s2">" -resize 50% /var/www/pilgrimage.htb/shrunk/"</span> <span class="mf">.</span> <span class="nv">$newname</span> <span class="mf">.</span> <span class="nv">$mime</span><span class="p">);</span>
+<span class="nb">unlink</span><span class="p">(</span><span class="nv">$upload</span><span class="o">-&gt;</span><span class="nf">getFullPath</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>The program seems to be invoking this binary to shrink the image that is being uploaded through the website, the program itself is <code class="language-plaintext highlighter-rouge">ImageMagick 7.1.0-49 beta</code> we discover that by invoking it with <code class="language-plaintext highlighter-rouge">-version</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./magick <span class="nt">-version</span>
+Version: ImageMagick 7.1.0-49 beta Q16-HDRI x86_64 c243c9281:20220911 https://imagemagick.org
+Copyright: <span class="o">(</span>C<span class="o">)</span> 1999 ImageMagick Studio LLC
+License: https://imagemagick.org/script/license.php
+Features: Cipher DPC HDRI OpenMP<span class="o">(</span>4.5<span class="o">)</span> 
+Delegates <span class="o">(</span>built-in<span class="o">)</span>: bzlib djvu fontconfig freetype jbig jng jpeg lcms lqr lzma openexr png raqm tiff webp x xml zlib
+Compiler: gcc <span class="o">(</span>7.5<span class="o">)</span>
+</code></pre></div></div>
+
+<p>This version is vulnerable to Arbitrary Remote Leak, https://www.metabaseq.com/imagemagick-zero-days/.</p>
+
+<p>Furthermore, we notice some files of interest in the source code as well, such as the database file.</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$db</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PDO</span><span class="p">(</span><span class="s1">'sqlite:/var/db/pilgrimage'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h1 id="exploiting">Exploiting</h1>
+
+<p>I’ve used this PoC to generate my payload: https://github.com/Sybil-Scan/imagemagick-lfi-poc</p>
+
+<p>I’ve crafted my malicious image to read the database file <code class="language-plaintext highlighter-rouge">/var/db/pilgrimage</code> and shrink it through the website, I’ve then downloaded the file and converted the bytes, opened it and after some digging I found the password for user <code class="language-plaintext highlighter-rouge">emiliy</code>. Then you can login with <code class="language-plaintext highlighter-rouge">ssh</code>.</p>
+
+<h1 id="getting-root">Getting root</h1>
+
+<p>I’ve used <code class="language-plaintext highlighter-rouge">linpeas.sh</code> to enumerate the system, and I’ve noticed a process running:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root         726  0.0  0.0   6816  3072 ?        Ss   15:00   0:00 /bin/bash /usr/sbin/malwarescan.sh
+</code></pre></div></div>
+
+<p>I checked the permissions of the script:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>emily@pilgrimage:~<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-la</span> /usr/sbin/malwarescan.sh
+<span class="nt">-rwxr--r--</span> 1 root root 474 Jun  1 19:14 /usr/sbin/malwarescan.sh
+</code></pre></div></div>
+
+<p>And then I saw the script itself:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>emily@pilgrimage:~<span class="nv">$ </span><span class="nb">cat</span> /usr/sbin/malwarescan.sh
+<span class="c">#!/bin/bash</span>
+
+<span class="nv">blacklist</span><span class="o">=(</span><span class="s2">"Executable script"</span> <span class="s2">"Microsoft executable"</span><span class="o">)</span>
+
+/usr/bin/inotifywait <span class="nt">-m</span> <span class="nt">-e</span> create /var/www/pilgrimage.htb/shrunk/ | <span class="k">while </span><span class="nb">read </span>FILE<span class="p">;</span> <span class="k">do
+	</span><span class="nv">filename</span><span class="o">=</span><span class="s2">"/var/www/pilgrimage.htb/shrunk/</span><span class="si">$(</span>/usr/bin/echo <span class="s2">"</span><span class="nv">$FILE</span><span class="s2">"</span> | /usr/bin/tail <span class="nt">-n</span> 1 | /usr/bin/sed <span class="nt">-n</span> <span class="nt">-e</span> <span class="s1">'s/^.*CREATE //p'</span><span class="si">)</span><span class="s2">"</span>
+	<span class="nv">binout</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>/usr/local/bin/binwalk <span class="nt">-e</span> <span class="s2">"</span><span class="nv">$filename</span><span class="s2">"</span><span class="si">)</span><span class="s2">"</span>
+        <span class="k">for </span>banned <span class="k">in</span> <span class="s2">"</span><span class="k">${</span><span class="nv">blacklist</span><span class="p">[@]</span><span class="k">}</span><span class="s2">"</span><span class="p">;</span> <span class="k">do
+		if</span> <span class="o">[[</span> <span class="s2">"</span><span class="nv">$binout</span><span class="s2">"</span> <span class="o">==</span> <span class="k">*</span><span class="s2">"</span><span class="nv">$banned</span><span class="s2">"</span><span class="k">*</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+			/usr/bin/rm <span class="s2">"</span><span class="nv">$filename</span><span class="s2">"</span>
+			<span class="nb">break
+		</span><span class="k">fi
+	done
+done</span>
+</code></pre></div></div>
+
+<p>This script seems to be invoking <code class="language-plaintext highlighter-rouge">binwalk</code>, I searched for some exploits and I found this one: https://www.exploit-db.com/exploits/51249 following the steps in the exploit, I’ve set up a listener and placed the malicious <code class="language-plaintext highlighter-rouge">png</code> crafted by the exploit in the <code class="language-plaintext highlighter-rouge">/var/www/pilgrimage.htb/shrunk/</code> directory.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>emily@pilgrimage:/tmp/syl<span class="nv">$ </span><span class="nb">cp</span> ./binwalk_exploit.png /var/www/pilgrimage.htb/shrunk/
+</code></pre></div></div>
+
+<p>After a couple of seconds, my listener got a connection, which was with <code class="language-plaintext highlighter-rouge">root</code> privileges.</p>
+
+<h1 id="conclusions">Conclusions</h1>
+
+<p>I wanted to investigate a little further how the <code class="language-plaintext highlighter-rouge">magick</code> binary includes the file that it converts and this article explains it perfectly.</p>
+
+<p>https://www.metabaseq.com/imagemagick-zero-days/</p>
+
+<p>The exploit targets the <code class="language-plaintext highlighter-rouge">tEXt</code> chunk of the PNG file, and this chunk is being used for storing key-value metadata for the PNG file. The problem comes whenever you use the “profile” string into that metadata, if that is being used as “key” the “value” is being interpreted as a filename, that then the functions <code class="language-plaintext highlighter-rouge">FileToStringInfo</code> → <code class="language-plaintext highlighter-rouge">FileToBlob</code> will fetch from the system, and it will populate the “value” with the file’s contents.</p>
+
+<p>And to add some speculation on top of it, this almost feels like a backdoor ;).</p>
+
+</article>
+      </div>
+    </main>
+  </body>
+</html>

