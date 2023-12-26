@@ -109,12 +109,12 @@ We can try to switch to the user `ubuntu` which doesn't work, but the user `root
 ```
 tomcat@ip-10-10-10-7:/tmp$ su ubuntu
 su ubuntu
-Password: H2RR3rGDrbAnPxWa
+Password: H2R<REDACTED>
 
 su: Authentication failure
 tomcat@ip-10-10-10-7:/tmp$ su root
 su root
-Password: H2RR3rGDrbAnPxWa
+Password: H2R<REDACTED>
 
 root@ip-10-10-10-7:/# whoami
 whoami
