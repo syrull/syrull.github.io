@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/assets/css/syntax.css" type="text/css" />
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Vulnlab - Forgotten [Easy]</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Vulnlab - Forgotten [Easy]" />
+<meta name="author" content="Dimitar Ganev" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Name OS Difficulty Forgotten Linux Easy" />
+<meta property="og:description" content="Name OS Difficulty Forgotten Linux Easy" />
+<link rel="canonical" href="http://localhost:4000/ctf-writeup/2023/12/26/vulnlab-forgotten.html" />
+<meta property="og:url" content="http://localhost:4000/ctf-writeup/2023/12/26/vulnlab-forgotten.html" />
+<meta property="og:site_name" content="archive://syl" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-12-26T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Vulnlab - Forgotten [Easy]" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Dimitar Ganev"},"@type":"BlogPosting","description":"Name OS Difficulty Forgotten Linux Easy","headline":"Vulnlab - Forgotten [Easy]","dateModified":"2023-12-26T00:00:00+02:00","datePublished":"2023-12-26T00:00:00+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/ctf-writeup/2023/12/26/vulnlab-forgotten.html"},"url":"http://localhost:4000/ctf-writeup/2023/12/26/vulnlab-forgotten.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="archive://syl" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">..</a><article>
+  <p class="post-meta">
+    <time datetime="2023-12-26 00:00:00 +0200">2023-12-26</time>
+  </p>
+  
+  <h1>Vulnlab - Forgotten [Easy]</h1>
+
+  <table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>OS</th>
+      <th>Difficulty</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Forgotten</strong></td>
+      <td>Linux</td>
+      <td><span style="color:green;">Easy</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary">Summary</h2>
+
+<p>We would find a website that we are going to fuzz and find an installation page for the <strong>LimeSurvey</strong> software. Then we would set up our local database to work with the installation of that software and run it on the server. We would then install a malicious plugin so that we can gain remote code execution on the machine. Then we would find credentials in the environment variables that we can use to gain access to the SSH. After that, we are going to abuse the mount points of the docker image to gain root on the host machine.</p>
+
+<h2 id="initial-foothold">Initial Foothold</h2>
+
+<p>Upon scanning the machine, we would find a couple of ports open ports.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo nmap -sS -sU 10.10.105.241 --min-rate 10000 --open -p-
+</code></pre></div></div>
+
+<p><img src="/assets/images/Pasted image 20231226123653.png" alt="" /></p>
+
+<p>Going to the web page, we would find that it results to status code 403, so the next step that we are going to take is to fuzz it</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ffuf -w $commontxt -u http://10.10.105.241/FUZZ
+</code></pre></div></div>
+
+<p><img src="/assets/images/Pasted image 20231226123711.png" alt="" /></p>
+
+<p>Then we would find an installation page for the software <strong>LimeSurvey</strong>.</p>
+
+<p><img src="/assets/images/Pasted image 20231226092416.png" alt="" /></p>
+
+<p>We are going to try to install it, however to do that we need to install <code class="language-plaintext highlighter-rouge">mysql</code> server onto our local server and expose it to the machine so that the system can connect to us, otherwise we would get:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ERROR 1130 (HY000): Host '&lt;MACHINE_IP&gt;' is not allowed to connect to this MySQL server
+</code></pre></div></div>
+
+<p>In order to do that, we would need to set our <strong>MySQL</strong> server to accept connections from anywhere and create a user.</p>
+
+<p>First, we need to edit our configuration</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+# Change "bind-address" to "0.0.0.0"
+</code></pre></div></div>
+
+<p>Then we can connect using the <code class="language-plaintext highlighter-rouge">root</code> user and</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'forgotten'</span><span class="o">@</span><span class="s1">'%'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'forgotten'</span><span class="p">;</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="o">*</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'forgotten'</span><span class="o">@</span><span class="s1">'%'</span> <span class="k">WITH</span> <span class="k">GRANT</span> <span class="k">OPTION</span><span class="p">;</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>We would then be able to install the <strong>LimeSurvey</strong> and get into the admin panel.</p>
+
+<p><img src="/assets/images/Pasted image 20231226095209.png" alt="" /></p>
+
+<p>We can now research of some ways to get remote code execution on the machine using this software, a quick google search would lead us to this exploit: <a href="https://github.com/Y1LD1R1M-1337/Limesurvey-RCE">LimeSurvey RCE</a>.</p>
+
+<p>The exploit is leveraging the plugins feature of the software to install a malicious plugin which can connect to our listener.</p>
+
+<p>We can setup such plugin by cloning the repository and replacing the needed variables in the file <code class="language-plaintext highlighter-rouge">php-rev.php</code> after that we also need to edit the <code class="language-plaintext highlighter-rouge">config.xml</code> and add the installed version of the <strong>LimeSurvey</strong> to the <code class="language-plaintext highlighter-rouge">&lt;compatibility&gt;</code> element, after that we would zip the files and upload them.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ zip plg.zip ./php-rev.php ./config.xml 
+</code></pre></div></div>
+
+<p>We can then navigate to <code class="language-plaintext highlighter-rouge">/index.php/admin/pluginmanager?sa=upload</code> to upload our plugin. After we upload it and activate it, we can start a local listener with the given configuration earlier, and to execute our reverse shell we need to head to <code class="language-plaintext highlighter-rouge">/survey/upload/plugins/Y1LD1R1M/php-rev.php</code></p>
+
+<p><img src="/assets/images/Pasted image 20231226130614.png" alt="" /></p>
+
+<p>We can now run <code class="language-plaintext highlighter-rouge">linpeas</code> to enumerate further, and upon examining the output we would find this environment variable set in the beginning <code class="language-plaintext highlighter-rouge">LIMESURVEY_PASS=5W5&lt;REDACTED&gt;</code> we would also find that the current shell is running within a docker container.</p>
+
+<p>After finding that password I immediately tried it to change the user to <code class="language-plaintext highlighter-rouge">root</code> in the current container which worked, and I also tried to SSH with the user <code class="language-plaintext highlighter-rouge">limesvc</code> which also worked!</p>
+
+<p><img src="/assets/images/Pasted image 20231226131121.png" alt="" /></p>
+
+<p>And judging by the system information, it seems that we are not in the docker container anymore, if we list the home directory we would find the <code class="language-plaintext highlighter-rouge">user.txt</code> flag.</p>
+
+<h2 id="privilege-escalation">Privilege Escalation</h2>
+
+<p>We can use a tool called <strong><a href="https://github.com/cdk-team/CDK#cdk---zero-dependency-container-penetration-toolkit">CDK - Zero Dependency Container Penetration Toolkit</a></strong>  to inspect our docker container which runs the <strong>LimeSurvey</strong> application.</p>
+
+<p><img src="/assets/images/Pasted image 20231226141545.png" alt="" /></p>
+
+<p>In the <strong>Mounts</strong> section we can see the listed mounts, the <code class="language-plaintext highlighter-rouge">resolv.conf | hostname | hosts</code> are standard for every container but the <code class="language-plaintext highlighter-rouge">/opt/limesurvey</code> isn’t so we can check that out.</p>
+
+<p>We can see that the host has mounted the <code class="language-plaintext highlighter-rouge">/opt/limesurvey</code> directory in the <code class="language-plaintext highlighter-rouge">/dev/</code> folder on the container, We can go to <code class="language-plaintext highlighter-rouge">/dev/</code> to create a single file and check its permissions on the host system. Since that the docker container process is running as <code class="language-plaintext highlighter-rouge">root</code> we would have the same permissions from within the container. The file that has been created is having <code class="language-plaintext highlighter-rouge">root</code> permissions.</p>
+
+<p>We can now try the same thing but with the <code class="language-plaintext highlighter-rouge">bash</code> executable, we would try the following thing on the container:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@efaa6f5097ed:/var/www/html/survey# cp /bin/bash ./syl
+root@efaa6f5097ed:/var/www/html/survey# chmod u+s ./syl
+</code></pre></div></div>
+
+<p>Now on the host machine we can invoke our binary <code class="language-plaintext highlighter-rouge">./syl</code> and we should be <code class="language-plaintext highlighter-rouge">root</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>limesvc@ip-xxx:/opt/limesurvey$ ./syl -p
+syl-5.1# whoami
+root
+syl-5.1# cat /root/root.txt
+VL{&lt;REDACTED&gt;}
+</code></pre></div></div>
+
+</article>
+      </div>
+    </main>
+  </body>
+</html>
