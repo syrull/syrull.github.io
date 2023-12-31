@@ -1,5 +1,5 @@
 ---
-title: "Vulnlab - Forgotten [Easy]"
+title: "Vulnlab - Baby2 [Medium]"
 category: ctf-writeup
 layout: post
 ---
