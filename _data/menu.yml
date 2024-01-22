@@ -8,3 +8,5 @@ entries:
     url: writeups.html
   - title: info
     url: info.html
+  - title: completed challenges/ctfs
+    url: progress.html
