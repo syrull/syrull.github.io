@@ -16,10 +16,10 @@ We can see the source code is a project that is a result from this course:
 Upon reviewing the code that we got from the mount, we can see that the `/transaction` path that tries to `decode` the value of the `transaction`
 
 
-![[Pasted image 20240229101409.png]]
+![](/assets/images/Pasted image 20240229101409.png)
 Then it goes into the `BlockchainUtils.decode` which has the following code:
 
-![[Pasted image 20240229101422.png]]
+![](/assets/images/Pasted image 20240229101422.png)
 It is notable that the `jsonpickle` direct decoding can be vulnerable to deserialization, so I've crafted the following payload:
 
 ```
@@ -33,6 +33,6 @@ I did this payload from scratch, but I found an article that has much more effic
 
 Nonetheless we can see that we got a connection back.
 
-![[Pasted image 20240229165506.png]]
+![](/assets/images/Pasted image 20240229165506.png)
 
 After that and after a bit of enumeration we can see that `snap` is in the user folder which kind-a hints that. The vulnerability is `CVE-2021-44731`, we can find a PoC on GitHub, after that we are `root`.
