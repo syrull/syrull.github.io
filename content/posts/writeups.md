@@ -1,6 +1,6 @@
 ---
 title: "Achieved CTF Writeups"
-date: "2024-05-11"
+date: "2024-11-05"
 tags:
   - writeups
   - ctf
