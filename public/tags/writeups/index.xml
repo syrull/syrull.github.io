@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Writeups on GeoCities - New Page (35) (or syls boring website)</title>
+    <link>http://localhost:1313/tags/writeups/</link>
+    <description>Recent content in Writeups on GeoCities - New Page (35) (or syls boring website)</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 11 May 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/writeups/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Achieved CTF Writeups</title>
+      <link>http://localhost:1313/posts/writeups/</link>
+      <pubDate>Sat, 11 May 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/writeups/</guid>
+      <description>I&amp;rsquo;ve achieved my writeups since that there are a lot of them, with a lot of images and I just don&amp;rsquo;t have the time to port them all. Here is a comperhensive list of the writeups:&#xA;You can find them here: https://github.com/syrull/writeups htb-broscience.md htb-stocker.md htb-investigation.md htb-vessel.md htb-encoding.md pg-photographer.md pg-sar.md htb-metatwo.md htb-socket.md htb-inject.md htb-precious.md htb-pc.md htb-interface.md htb-busqueda.md htb-escape.md htb-sandworm.md htb-pilgrimage.md htb-topology.md htb-joker.md htb-irked.md htb-ambassador.md vulnlab-baby.md vulnlab-retro.md vulnlab-sync.md vulnlab-feedback.md vulnlab-forgotten.md vulnlab-baby2.md vulnlab-kaiju.md vulnlab-unchained.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dynamic Linker Hijacking on My New Hugo Site</title>
+    <link>http://localhost:1313/tags/dynamic-linker-hijacking/</link>
+    <description>Recent content in Dynamic Linker Hijacking on My New Hugo Site</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 23 May 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/dynamic-linker-hijacking/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 1)</title>
+      <link>http://localhost:1313/posts/2022-10-02-dynamic-linker-hijacking-experiments/</link>
+      <pubDate>Mon, 23 May 2022 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2022-10-02-dynamic-linker-hijacking-experiments/</guid>
+      <description>Overview Recently I heard about a new malware called Symbiote , which the researches are calling the &amp;ldquo;Nearly-Impossible-to-Detect Linux Threat&amp;rdquo;. I was very intrigued by how that malware is being implemented and how it works internally to remain undetected, so naturally I&amp;rsquo;ve started to research it.&#xA;I highly advise you to read through these articles first before we begin with the actual post:&#xA;Hijack Execution Flow: Dynamic Linker Hijacking What Is the LD_PRELOAD?</description>
+    </item>
+  </channel>
+</rss>

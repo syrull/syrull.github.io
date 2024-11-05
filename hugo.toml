@@ -1,0 +1,15 @@
+baseURL = 'https://sy1.sh/'
+languageCode = 'en-us'
+title = 'GeoCities - New Page (35) (or syls boring website)'
+theme = 'hugo-dead-simple'
+
+[menu]
+  [[menu.main]]
+    name = "<u>H</u>ome"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "<u>A</u>bout"
+    url = "/about"
+    weight = 2

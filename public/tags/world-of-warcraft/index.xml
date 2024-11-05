@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>World of Warcraft on GeoCities - New Page (35) (or syls boring website)</title>
+    <link>http://localhost:1313/tags/world-of-warcraft/</link>
+    <description>Recent content in World of Warcraft on GeoCities - New Page (35) (or syls boring website)</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 22 May 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/world-of-warcraft/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Simple Fishing Bot for World of Warcraft</title>
+      <link>http://localhost:1313/posts/2022-05-22-simple-fishing-bot/</link>
+      <pubDate>Sun, 22 May 2022 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2022-05-22-simple-fishing-bot/</guid>
+      <description>This fishing bot consists only of about 50 lines of code, it incorporates the mechanics of World of Warcraft and some simple Windows API Calls.&#xA;Repository: https://github.com/syrull/simple-fishing-bot Overview The bot has about ~99% success rate, there are some extremely rare cases where the bot won&amp;rsquo;t catch it and I will explain why later. The method that the bot is using, should work in almost any fishing scenario in the game, I would personally avoid crowded places.</description>
+    </item>
+  </channel>
+</rss>

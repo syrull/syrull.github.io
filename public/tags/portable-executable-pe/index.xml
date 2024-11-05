@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Portable Executable (PE) on GeoCities - New Page (35) (or syls boring website)</title>
+    <link>http://localhost:1313/tags/portable-executable-pe/</link>
+    <description>Recent content in Portable Executable (PE) on GeoCities - New Page (35) (or syls boring website)</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 06 Jan 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/portable-executable-pe/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Static Analysis Research - Windows PE</title>
+      <link>http://localhost:1313/posts/2023-01-06-static-analysis-research-p1/</link>
+      <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2023-01-06-static-analysis-research-p1/</guid>
+      <description>Overview Recently, I decided do delve a little bit more into static analysis, something beyond just running strings on a binary and getting the ASCII characters that are printable. I decided to take a deep look at how FLOSS is working and possibly recreate some of its functionality in my own tool.&#xA;Before reading further, I want you to know that this post is about research I did on static analysis.</description>
+    </item>
+  </channel>
+</rss>

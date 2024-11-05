@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on My New Hugo Site</title>
+    <link>http://localhost:1313/tags/hugo/</link>
+    <description>Recent content in Hugo on My New Hugo Site</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 01 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hugo dead simple theme</title>
+      <link>http://localhost:1313/posts/example/</link>
+      <pubDate>Wed, 01 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/example/</guid>
+      <description>Simple hugo theme to be dead easy on the reader.&#xA;Installation Initialize go module&#xA;hugo mod init &amp;lt;module_path&amp;gt; Add theme to your config.yml&#xA;module: imports: - path: github.com/barklan/hugo-dead-simple Fetch theme&#xA;hugo mod get -u </description>
+    </item>
+  </channel>
+</rss>
