@@ -2,18 +2,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Threat Intelligence on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>http://localhost:1313/tags/threat-intelligence/</link>
+    <link>https://sy1.sh/tags/threat-intelligence/</link>
     <description>Recent content in Threat Intelligence on GeoCities - New Page (35) (or syls boring website)</description>
-    <generator>Hugo</generator>
+    <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 10 Apr 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/threat-intelligence/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/threat-intelligence/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>STIX/TAXII - Complete Knowledge</title>
-      <link>http://localhost:1313/posts/2022-04-10-stix-taxii-complete-knowledge/</link>
+      <link>https://sy1.sh/posts/2022-04-10-stix-taxii-complete-knowledge/</link>
       <pubDate>Sun, 10 Apr 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2022-04-10-stix-taxii-complete-knowledge/</guid>
-      <description>Introduction STIX What is STIX and what is TAXII? In the most simple terms STIX is a model of Threat Intelligence that is represented in motivations, abilities, capabilities and response objects. Those objects are then represented in either JSON (STIX 2) or XML (STIX 1).&#xA;Here is a very simple representation of STIX Objects in a graph. Explanation of the example The data can be helpful for preventing or mitigating various kinds of attacks that can be expressed with STIX.</description>
+      
+      <guid>https://sy1.sh/posts/2022-04-10-stix-taxii-complete-knowledge/</guid>
+      <description>Introduction STIX What is STIX and what is TAXII? In the most simple terms STIX is a model of Threat Intelligence that is represented in motivations, abilities, capabilities and response objects. Those objects are then represented in either JSON (STIX 2) or XML (STIX 1).
+Here is a very simple representation of STIX Objects in a graph. Explanation of the example The data can be helpful for preventing or mitigating various kinds of attacks that can be expressed with STIX.</description>
     </item>
+    
   </channel>
 </rss>

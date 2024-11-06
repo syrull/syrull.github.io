@@ -2,107 +2,112 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2024-05-11T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/posts/</loc>
+    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
-    <lastmod>2024-05-11T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/</loc>
+    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <priority>0</priority>
   </url><url>
-    <loc>http://localhost:1313/posts/writeups/</loc>
-    <lastmod>2024-05-11T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/posts/writeups/</loc>
+    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/ctf/</loc>
-    <lastmod>2024-05-11T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/writeups/</loc>
+    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
-    <lastmod>2024-05-11T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/tags/ctf/</loc>
+    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/writeups/</loc>
-    <lastmod>2024-05-11T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/tags/</loc>
+    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/analysis/</loc>
+    <loc>https://sy1.sh/tags/writeups/</loc>
+    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/analysis/</loc>
     <lastmod>2023-01-06T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/c/</loc>
+    <loc>https://sy1.sh/tags/c/</loc>
     <lastmod>2023-01-06T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/portable-executable-pe/</loc>
+    <loc>https://sy1.sh/tags/portable-executable-pe/</loc>
     <lastmod>2023-01-06T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2023-01-06-static-analysis-research-p1/</loc>
+    <loc>https://sy1.sh/posts/2023-01-06-static-analysis-research-p1/</loc>
     <lastmod>2023-01-06T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/windows/</loc>
+    <loc>https://sy1.sh/tags/windows/</loc>
     <lastmod>2023-01-06T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/c2/</loc>
+    <loc>https://sy1.sh/tags/c2/</loc>
     <lastmod>2022-10-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/dns/</loc>
+    <loc>https://sy1.sh/tags/dns/</loc>
     <lastmod>2022-10-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/go/</loc>
+    <loc>https://sy1.sh/tags/go/</loc>
     <lastmod>2022-10-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2022-10-26-dns-c2-communcation/</loc>
+    <loc>https://sy1.sh/posts/2022-10-26-dns-c2-communcation/</loc>
     <lastmod>2022-10-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/dynamic-linker/</loc>
+    <loc>https://sy1.sh/tags/dynamic-linker/</loc>
     <lastmod>2022-10-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2022-10-04-dynamic-linker-hijacking-experiments-2/</loc>
+    <loc>https://sy1.sh/posts/2022-10-04-dynamic-linker-hijacking-experiments-2/</loc>
     <lastmod>2022-10-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/ld_preload/</loc>
+    <loc>https://sy1.sh/tags/ld_preload/</loc>
     <lastmod>2022-10-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2022-10-02-dynamic-linker-hijacking-experiments/</loc>
+    <loc>https://sy1.sh/posts/2022-10-02-dynamic-linker-hijacking-experiments/</loc>
     <lastmod>2022-10-02T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2022-05-23-create-plugin-architecture-with-python/</loc>
+    <loc>https://sy1.sh/posts/2022-05-23-create-plugin-architecture-with-python/</loc>
     <lastmod>2022-05-23T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/python/</loc>
+    <loc>https://sy1.sh/tags/python/</loc>
     <lastmod>2022-05-23T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/game-bot/</loc>
+    <loc>https://sy1.sh/tags/game-bot/</loc>
     <lastmod>2022-05-22T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2022-05-22-simple-fishing-bot/</loc>
+    <loc>https://sy1.sh/posts/2022-05-22-simple-fishing-bot/</loc>
     <lastmod>2022-05-22T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/windows-api/</loc>
+    <loc>https://sy1.sh/tags/windows-api/</loc>
     <lastmod>2022-05-22T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/world-of-warcraft/</loc>
+    <loc>https://sy1.sh/tags/world-of-warcraft/</loc>
     <lastmod>2022-05-22T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/stix/</loc>
+    <loc>https://sy1.sh/tags/stix/</loc>
     <lastmod>2022-04-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2022-04-10-stix-taxii-complete-knowledge/</loc>
+    <loc>https://sy1.sh/posts/2022-04-10-stix-taxii-complete-knowledge/</loc>
     <lastmod>2022-04-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/taxii/</loc>
+    <loc>https://sy1.sh/tags/taxii/</loc>
     <lastmod>2022-04-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/threat-intelligence/</loc>
+    <loc>https://sy1.sh/tags/threat-intelligence/</loc>
     <lastmod>2022-04-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/docker/</loc>
+    <loc>https://sy1.sh/tags/docker/</loc>
     <lastmod>2021-05-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</loc>
+    <loc>https://sy1.sh/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</loc>
     <lastmod>2021-05-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/ssh/</loc>
+    <loc>https://sy1.sh/tags/ssh/</loc>
     <lastmod>2021-05-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/ssh-forwarding/</loc>
+    <loc>https://sy1.sh/tags/ssh-forwarding/</loc>
     <lastmod>2021-05-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/about/</loc>
+    <loc>https://sy1.sh/about/</loc>
+    <priority>0</priority>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://sy1.sh/categories/</loc>
   </url>
 </urlset>

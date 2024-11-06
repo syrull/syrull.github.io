@@ -2,74 +2,102 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>http://localhost:1313/posts/</link>
+    <link>https://sy1.sh/posts/</link>
     <description>Recent content in Posts on GeoCities - New Page (35) (or syls boring website)</description>
-    <generator>Hugo</generator>
+    <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Nov 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 05 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Achieved CTF Writeups</title>
-      <link>http://localhost:1313/posts/writeups/</link>
+      <link>https://sy1.sh/posts/writeups/</link>
       <pubDate>Tue, 05 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/writeups/</guid>
-      <description>I&amp;rsquo;ve achieved my writeups since that there are a lot of them, with a lot of images and I just don&amp;rsquo;t have the time to port them all. Here is a comperhensive list of the writeups:&#xA;You can find them here: https://github.com/syrull/writeups htb-broscience.md htb-stocker.md htb-investigation.md htb-vessel.md htb-encoding.md pg-photographer.md pg-sar.md htb-metatwo.md htb-socket.md htb-inject.md htb-precious.md htb-pc.md htb-interface.md htb-busqueda.md htb-escape.md htb-sandworm.md htb-pilgrimage.md htb-topology.md htb-joker.md htb-irked.md htb-ambassador.md vulnlab-baby.md vulnlab-retro.md vulnlab-sync.md vulnlab-feedback.md vulnlab-forgotten.md vulnlab-baby2.md vulnlab-kaiju.md vulnlab-unchained.</description>
+      
+      <guid>https://sy1.sh/posts/writeups/</guid>
+      <description>I&amp;rsquo;ve achieved my writeups since that there are a lot of them, with a lot of images and I just don&amp;rsquo;t have the time to port them all. Here is a comperhensive list of the writeups:
+You can find them here: https://github.com/syrull/writeups  htb-broscience.md htb-stocker.md htb-investigation.md htb-vessel.md htb-encoding.md pg-photographer.md pg-sar.md htb-metatwo.md htb-socket.md htb-inject.md htb-precious.md htb-pc.md htb-interface.md htb-busqueda.md htb-escape.md htb-sandworm.md htb-pilgrimage.md htb-topology.md htb-joker.md htb-irked.md htb-ambassador.md vulnlab-baby.md vulnlab-retro.md vulnlab-sync.md vulnlab-feedback.md vulnlab-forgotten.md vulnlab-baby2.md vulnlab-kaiju.</description>
     </item>
+    
     <item>
       <title>Static Analysis Research - Windows PE</title>
-      <link>http://localhost:1313/posts/2023-01-06-static-analysis-research-p1/</link>
+      <link>https://sy1.sh/posts/2023-01-06-static-analysis-research-p1/</link>
       <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2023-01-06-static-analysis-research-p1/</guid>
-      <description>Overview Recently, I decided do delve a little bit more into static analysis, something beyond just running strings on a binary and getting the ASCII characters that are printable. I decided to take a deep look at how FLOSS is working and possibly recreate some of its functionality in my own tool.&#xA;Before reading further, I want you to know that this post is about research I did on static analysis.</description>
+      
+      <guid>https://sy1.sh/posts/2023-01-06-static-analysis-research-p1/</guid>
+      <description>Overview Recently, I decided do delve a little bit more into static analysis, something beyond just running strings on a binary and getting the ASCII characters that are printable. I decided to take a deep look at how FLOSS is working and possibly recreate some of its functionality in my own tool.
+Before reading further, I want you to know that this post is about research I did on static analysis.</description>
     </item>
+    
     <item>
       <title>Using DNS as C2 Communication - Evasive Techniques (Part 3)</title>
-      <link>http://localhost:1313/posts/2022-10-26-dns-c2-communcation/</link>
+      <link>https://sy1.sh/posts/2022-10-26-dns-c2-communcation/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2022-10-26-dns-c2-communcation/</guid>
-      <description>Overview Following my last post about some evasion techniques that the Symbiote uses which I tried to recreate in their simplest form, this post will see how the Symbiote is communicating to the command and control C2 server.&#xA;Upon reading the article, we can see that the Symbiote uses the DNS Protocol to exfiltrate data out of the infected machine, the way that it does that is by chunking it into a bunch of A Resource Records (RR) that it sends through the UDP.</description>
+      
+      <guid>https://sy1.sh/posts/2022-10-26-dns-c2-communcation/</guid>
+      <description>Overview Following my last post about some evasion techniques that the Symbiote uses which I tried to recreate in their simplest form, this post will see how the Symbiote is communicating to the command and control C2 server.
+Upon reading the article, we can see that the Symbiote uses the DNS Protocol to exfiltrate data out of the infected machine, the way that it does that is by chunking it into a bunch of A Resource Records (RR) that it sends through the UDP.</description>
     </item>
+    
     <item>
       <title>Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 2)</title>
-      <link>http://localhost:1313/posts/2022-10-04-dynamic-linker-hijacking-experiments-2/</link>
+      <link>https://sy1.sh/posts/2022-10-04-dynamic-linker-hijacking-experiments-2/</link>
       <pubDate>Tue, 04 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2022-10-04-dynamic-linker-hijacking-experiments-2/</guid>
-      <description>Journey Post This post is a something that I call &amp;ldquo;journey post&amp;rdquo;, this follows my process of researching and implementing the solution for the problem (or the challenge). I will wrap/pre-fix parts of the post with html-like &amp;lt;journey&amp;gt; so that you can skip it if you are in a hurry.&#xA;Overview In the last post I&amp;rsquo;ve described how I hid a file from all the sys calls that are using readdir.</description>
+      
+      <guid>https://sy1.sh/posts/2022-10-04-dynamic-linker-hijacking-experiments-2/</guid>
+      <description>Journey Post This post is a something that I call &amp;ldquo;journey post&amp;rdquo;, this follows my process of researching and implementing the solution for the problem (or the challenge). I will wrap/pre-fix parts of the post with html-like &amp;lt;journey&amp;gt; so that you can skip it if you are in a hurry.
+ Overview In the last post I&amp;rsquo;ve described how I hid a file from all the sys calls that are using readdir.</description>
     </item>
+    
     <item>
       <title>Dynamic Linker Hijacking Experiments - Evasive Techniques (Part 1)</title>
-      <link>http://localhost:1313/posts/2022-10-02-dynamic-linker-hijacking-experiments/</link>
+      <link>https://sy1.sh/posts/2022-10-02-dynamic-linker-hijacking-experiments/</link>
       <pubDate>Sun, 02 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2022-10-02-dynamic-linker-hijacking-experiments/</guid>
-      <description>Overview Recently I heard about a new malware called Symbiote , which the researches are calling the &amp;ldquo;Nearly-Impossible-to-Detect Linux Threat&amp;rdquo;. I was very intrigued by how that malware is being implemented and how it works internally to remain undetected, so naturally I&amp;rsquo;ve started to research it.&#xA;I highly advise you to read through these articles first before we begin with the actual post:&#xA;Hijack Execution Flow: Dynamic Linker Hijacking What Is the LD_PRELOAD?</description>
+      
+      <guid>https://sy1.sh/posts/2022-10-02-dynamic-linker-hijacking-experiments/</guid>
+      <description>Overview Recently I heard about a new malware called Symbiote , which the researches are calling the &amp;ldquo;Nearly-Impossible-to-Detect Linux Threat&amp;rdquo;. I was very intrigued by how that malware is being implemented and how it works internally to remain undetected, so naturally I&amp;rsquo;ve started to research it.
+I highly advise you to read through these articles first before we begin with the actual post:
+ Hijack Execution Flow: Dynamic Linker Hijacking  What Is the LD_PRELOAD?</description>
     </item>
+    
     <item>
       <title>Create Plugin Architecture With Python</title>
-      <link>http://localhost:1313/posts/2022-05-23-create-plugin-architecture-with-python/</link>
+      <link>https://sy1.sh/posts/2022-05-23-create-plugin-architecture-with-python/</link>
       <pubDate>Mon, 23 May 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2022-05-23-create-plugin-architecture-with-python/</guid>
-      <description>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;rsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the __subclasses__ dunder method and one using a decorator.</description>
+      
+      <guid>https://sy1.sh/posts/2022-05-23-create-plugin-architecture-with-python/</guid>
+      <description>There are some use-cases where a plugin architecture is needed, I call this &amp;ldquo;code&amp;rdquo; plugins but it is quite possible that there is already a word for that. The idea is to &amp;lsquo;load&amp;rsquo; functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I&amp;rsquo;ve created 2 solutions for that matter one that is using the __subclasses__ dunder method and one using a decorator.</description>
     </item>
+    
     <item>
       <title>Simple Fishing Bot for World of Warcraft</title>
-      <link>http://localhost:1313/posts/2022-05-22-simple-fishing-bot/</link>
+      <link>https://sy1.sh/posts/2022-05-22-simple-fishing-bot/</link>
       <pubDate>Sun, 22 May 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2022-05-22-simple-fishing-bot/</guid>
-      <description>This fishing bot consists only of about 50 lines of code, it incorporates the mechanics of World of Warcraft and some simple Windows API Calls.&#xA;Repository: https://github.com/syrull/simple-fishing-bot Overview The bot has about ~99% success rate, there are some extremely rare cases where the bot won&amp;rsquo;t catch it and I will explain why later. The method that the bot is using, should work in almost any fishing scenario in the game, I would personally avoid crowded places.</description>
+      
+      <guid>https://sy1.sh/posts/2022-05-22-simple-fishing-bot/</guid>
+      <description>This fishing bot consists only of about 50 lines of code, it incorporates the mechanics of World of Warcraft and some simple Windows API Calls.
+Repository: https://github.com/syrull/simple-fishing-bot Overview The bot has about ~99% success rate, there are some extremely rare cases where the bot won&amp;rsquo;t catch it and I will explain why later. The method that the bot is using, should work in almost any fishing scenario in the game, I would personally avoid crowded places.</description>
     </item>
+    
     <item>
       <title>STIX/TAXII - Complete Knowledge</title>
-      <link>http://localhost:1313/posts/2022-04-10-stix-taxii-complete-knowledge/</link>
+      <link>https://sy1.sh/posts/2022-04-10-stix-taxii-complete-knowledge/</link>
       <pubDate>Sun, 10 Apr 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2022-04-10-stix-taxii-complete-knowledge/</guid>
-      <description>Introduction STIX What is STIX and what is TAXII? In the most simple terms STIX is a model of Threat Intelligence that is represented in motivations, abilities, capabilities and response objects. Those objects are then represented in either JSON (STIX 2) or XML (STIX 1).&#xA;Here is a very simple representation of STIX Objects in a graph. Explanation of the example The data can be helpful for preventing or mitigating various kinds of attacks that can be expressed with STIX.</description>
+      
+      <guid>https://sy1.sh/posts/2022-04-10-stix-taxii-complete-knowledge/</guid>
+      <description>Introduction STIX What is STIX and what is TAXII? In the most simple terms STIX is a model of Threat Intelligence that is represented in motivations, abilities, capabilities and response objects. Those objects are then represented in either JSON (STIX 2) or XML (STIX 1).
+Here is a very simple representation of STIX Objects in a graph. Explanation of the example The data can be helpful for preventing or mitigating various kinds of attacks that can be expressed with STIX.</description>
     </item>
+    
     <item>
       <title>Installing Private Packages in Docker Image - Notes</title>
-      <link>http://localhost:1313/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</link>
+      <link>https://sy1.sh/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</link>
       <pubDate>Thu, 27 May 2021 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</guid>
-      <description>Quick notes about how to forward an ssh agent and other tricks regarding the installation of python packages.&#xA;Using SSH Forwarding Exporting the $SSH_AUTH_SOCK environment variable in the image.&#xA;$ docker run -rm -t -i -v $(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK ubuntu /bin/bash Or in the environment section of a compose file.&#xA;environment: SSH_AUTH_SOCK: $SSH_AUTH_SOCK Eventual Issues with that Installing ssh in the container Adding entries to /etc/ssh/ssh_known_hosts Caveats Traces of ssh keys inside the image References https://gist.</description>
+      
+      <guid>https://sy1.sh/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</guid>
+      <description>Quick notes about how to forward an ssh agent and other tricks regarding the installation of python packages.
+Using SSH Forwarding Exporting the $SSH_AUTH_SOCK environment variable in the image.
+$ docker run -rm -t -i -v $(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK ubuntu /bin/bash Or in the environment section of a compose file.
+environment: SSH_AUTH_SOCK: $SSH_AUTH_SOCK Eventual Issues with that  Installing ssh in the container Adding entries to /etc/ssh/ssh_known_hosts  Caveats  Traces of ssh keys inside the image  References  https://gist.</description>
     </item>
+    
   </channel>
 </rss>

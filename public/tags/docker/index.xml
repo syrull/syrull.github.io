@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Docker on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>http://localhost:1313/tags/docker/</link>
-    <description>Recent content in Docker on GeoCities - New Page (35) (or syls boring website)</description>
-    <generator>Hugo</generator>
+    <title>docker on GeoCities - New Page (35) (or syls boring website)</title>
+    <link>https://sy1.sh/tags/docker/</link>
+    <description>Recent content in docker on GeoCities - New Page (35) (or syls boring website)</description>
+    <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 27 May 2021 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 27 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/docker/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Installing Private Packages in Docker Image - Notes</title>
-      <link>http://localhost:1313/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</link>
+      <link>https://sy1.sh/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</link>
       <pubDate>Thu, 27 May 2021 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</guid>
-      <description>Quick notes about how to forward an ssh agent and other tricks regarding the installation of python packages.&#xA;Using SSH Forwarding Exporting the $SSH_AUTH_SOCK environment variable in the image.&#xA;$ docker run -rm -t -i -v $(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK ubuntu /bin/bash Or in the environment section of a compose file.&#xA;environment: SSH_AUTH_SOCK: $SSH_AUTH_SOCK Eventual Issues with that Installing ssh in the container Adding entries to /etc/ssh/ssh_known_hosts Caveats Traces of ssh keys inside the image References https://gist.</description>
+      
+      <guid>https://sy1.sh/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</guid>
+      <description>Quick notes about how to forward an ssh agent and other tricks regarding the installation of python packages.
+Using SSH Forwarding Exporting the $SSH_AUTH_SOCK environment variable in the image.
+$ docker run -rm -t -i -v $(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK ubuntu /bin/bash Or in the environment section of a compose file.
+environment: SSH_AUTH_SOCK: $SSH_AUTH_SOCK Eventual Issues with that  Installing ssh in the container Adding entries to /etc/ssh/ssh_known_hosts  Caveats  Traces of ssh keys inside the image  References  https://gist.</description>
     </item>
+    
   </channel>
 </rss>

@@ -2,158 +2,199 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>http://localhost:1313/tags/</link>
+    <link>https://sy1.sh/tags/</link>
     <description>Recent content in Tags on GeoCities - New Page (35) (or syls boring website)</description>
-    <generator>Hugo</generator>
+    <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 11 May 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 05 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Ctf</title>
-      <link>http://localhost:1313/tags/ctf/</link>
-      <pubDate>Sat, 11 May 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/ctf/</guid>
+      <title>ctf</title>
+      <link>https://sy1.sh/tags/ctf/</link>
+      <pubDate>Tue, 05 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/ctf/</guid>
       <description></description>
     </item>
+    
     <item>
-      <title>Writeups</title>
-      <link>http://localhost:1313/tags/writeups/</link>
-      <pubDate>Sat, 11 May 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/writeups/</guid>
+      <title>writeups</title>
+      <link>https://sy1.sh/tags/writeups/</link>
+      <pubDate>Tue, 05 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/writeups/</guid>
       <description></description>
     </item>
+    
     <item>
-      <title>Analysis</title>
-      <link>http://localhost:1313/tags/analysis/</link>
+      <title>analysis</title>
+      <link>https://sy1.sh/tags/analysis/</link>
       <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/analysis/</guid>
+      
+      <guid>https://sy1.sh/tags/analysis/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>C</title>
-      <link>http://localhost:1313/tags/c/</link>
+      <link>https://sy1.sh/tags/c/</link>
       <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/c/</guid>
+      
+      <guid>https://sy1.sh/tags/c/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Portable Executable (PE)</title>
-      <link>http://localhost:1313/tags/portable-executable-pe/</link>
+      <link>https://sy1.sh/tags/portable-executable-pe/</link>
       <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/portable-executable-pe/</guid>
+      
+      <guid>https://sy1.sh/tags/portable-executable-pe/</guid>
       <description></description>
     </item>
+    
     <item>
-      <title>Windows</title>
-      <link>http://localhost:1313/tags/windows/</link>
+      <title>windows</title>
+      <link>https://sy1.sh/tags/windows/</link>
       <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/windows/</guid>
+      
+      <guid>https://sy1.sh/tags/windows/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>C2</title>
-      <link>http://localhost:1313/tags/c2/</link>
+      <link>https://sy1.sh/tags/c2/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/c2/</guid>
+      
+      <guid>https://sy1.sh/tags/c2/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>DNS</title>
-      <link>http://localhost:1313/tags/dns/</link>
+      <link>https://sy1.sh/tags/dns/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/dns/</guid>
+      
+      <guid>https://sy1.sh/tags/dns/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Go</title>
-      <link>http://localhost:1313/tags/go/</link>
+      <link>https://sy1.sh/tags/go/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/go/</guid>
+      
+      <guid>https://sy1.sh/tags/go/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Dynamic Linker</title>
-      <link>http://localhost:1313/tags/dynamic-linker/</link>
+      <link>https://sy1.sh/tags/dynamic-linker/</link>
       <pubDate>Tue, 04 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/dynamic-linker/</guid>
+      
+      <guid>https://sy1.sh/tags/dynamic-linker/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>LD_PRELOAD</title>
-      <link>http://localhost:1313/tags/ld_preload/</link>
+      <link>https://sy1.sh/tags/ld_preload/</link>
       <pubDate>Tue, 04 Oct 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/ld_preload/</guid>
+      
+      <guid>https://sy1.sh/tags/ld_preload/</guid>
       <description></description>
     </item>
+    
     <item>
-      <title>Python</title>
-      <link>http://localhost:1313/tags/python/</link>
+      <title>python</title>
+      <link>https://sy1.sh/tags/python/</link>
       <pubDate>Mon, 23 May 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/python/</guid>
+      
+      <guid>https://sy1.sh/tags/python/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Game Bot</title>
-      <link>http://localhost:1313/tags/game-bot/</link>
+      <link>https://sy1.sh/tags/game-bot/</link>
       <pubDate>Sun, 22 May 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/game-bot/</guid>
+      
+      <guid>https://sy1.sh/tags/game-bot/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Windows API</title>
-      <link>http://localhost:1313/tags/windows-api/</link>
+      <link>https://sy1.sh/tags/windows-api/</link>
       <pubDate>Sun, 22 May 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/windows-api/</guid>
+      
+      <guid>https://sy1.sh/tags/windows-api/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>World of Warcraft</title>
-      <link>http://localhost:1313/tags/world-of-warcraft/</link>
+      <link>https://sy1.sh/tags/world-of-warcraft/</link>
       <pubDate>Sun, 22 May 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/world-of-warcraft/</guid>
+      
+      <guid>https://sy1.sh/tags/world-of-warcraft/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>STIX</title>
-      <link>http://localhost:1313/tags/stix/</link>
+      <link>https://sy1.sh/tags/stix/</link>
       <pubDate>Sun, 10 Apr 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/stix/</guid>
+      
+      <guid>https://sy1.sh/tags/stix/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>TAXII</title>
-      <link>http://localhost:1313/tags/taxii/</link>
+      <link>https://sy1.sh/tags/taxii/</link>
       <pubDate>Sun, 10 Apr 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/taxii/</guid>
+      
+      <guid>https://sy1.sh/tags/taxii/</guid>
       <description></description>
     </item>
+    
     <item>
       <title>Threat Intelligence</title>
-      <link>http://localhost:1313/tags/threat-intelligence/</link>
+      <link>https://sy1.sh/tags/threat-intelligence/</link>
       <pubDate>Sun, 10 Apr 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/threat-intelligence/</guid>
+      
+      <guid>https://sy1.sh/tags/threat-intelligence/</guid>
       <description></description>
     </item>
+    
     <item>
-      <title>Docker</title>
-      <link>http://localhost:1313/tags/docker/</link>
+      <title>docker</title>
+      <link>https://sy1.sh/tags/docker/</link>
       <pubDate>Thu, 27 May 2021 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/docker/</guid>
+      
+      <guid>https://sy1.sh/tags/docker/</guid>
       <description></description>
     </item>
+    
     <item>
-      <title>Ssh</title>
-      <link>http://localhost:1313/tags/ssh/</link>
+      <title>ssh</title>
+      <link>https://sy1.sh/tags/ssh/</link>
       <pubDate>Thu, 27 May 2021 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/ssh/</guid>
+      
+      <guid>https://sy1.sh/tags/ssh/</guid>
       <description></description>
     </item>
+    
     <item>
-      <title>Ssh Forwarding</title>
-      <link>http://localhost:1313/tags/ssh-forwarding/</link>
+      <title>ssh forwarding</title>
+      <link>https://sy1.sh/tags/ssh-forwarding/</link>
       <pubDate>Thu, 27 May 2021 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/ssh-forwarding/</guid>
+      
+      <guid>https://sy1.sh/tags/ssh-forwarding/</guid>
       <description></description>
     </item>
+    
   </channel>
 </rss>
