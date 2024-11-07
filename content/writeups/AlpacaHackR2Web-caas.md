@@ -1,6 +1,6 @@
 ---
 title: "AlpacaHack Round 2 (Web) - CaaS (Cow as a Service)"
-date: "2024-11-06"
+date: "2024-11-07"
 tags:
   - writeups
   - ctf
