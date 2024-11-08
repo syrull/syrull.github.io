@@ -57,12 +57,12 @@ First off, let's check what is the note creation workflow. We would issue a PUT 
 
 ```http
 PUT /api/note/new HTTP/1.1
-Host: http://google.com/
+Host: google.com
 Content-Length: 366
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; Valve Steam Client/default/1685488080) 
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryAathc2UBgTcyl0Js
 Accept: */*
-Origin: http://google.com:8005/
+Origin: http://google.com/
 Sec-Fetch-Site: same-origin
 Sec-Fetch-Mode: cors
 Sec-Fetch-Dest: empty
