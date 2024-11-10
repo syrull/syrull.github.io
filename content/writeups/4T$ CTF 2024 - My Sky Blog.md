@@ -1,6 +1,6 @@
 ---
 title: "4T$ CTF 2024 - My Sky Blog"
-date: "2024-11-11"
+date: "2024-11-10"
 tags:
   - writeups
   - ctf
