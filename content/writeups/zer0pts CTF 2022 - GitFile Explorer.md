@@ -1,6 +1,6 @@
 ---
 title: "zer0pts CTF 2023 - GitFile Explorer"
-date: "2024-11-08"
+date: "2024-11-12"
 tags:
   - writeups
   - ctf
