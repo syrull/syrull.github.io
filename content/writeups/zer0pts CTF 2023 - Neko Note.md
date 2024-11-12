@@ -1,5 +1,5 @@
 ---
-title: "zer0pts (Web) - Neko Note"
+title: "zer0pts CTF 2023 - Neko Note"
 date: "2024-11-08"
 tags:
   - writeups
