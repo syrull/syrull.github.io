@@ -1,6 +1,6 @@
 baseURL = 'https://sy1.sh/'
 languageCode = 'en-us'
-title = 'sy1's blog'
+title = 'syl\' blog'
 theme = 'hugo-dead-simple'
 
 [menu]
