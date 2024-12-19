@@ -1,6 +1,6 @@
 baseURL = 'https://sy1.sh/'
 languageCode = 'en-us'
-title = 'GeoCities - New Page (35) (or syls boring website)'
+title = 'sy1's blog'
 theme = 'hugo-dead-simple'
 
 [menu]
