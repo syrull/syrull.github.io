@@ -6,7 +6,26 @@
     <description>Recent content in Go on GeoCities - New Page (35) (or syls boring website)</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>4T$ CTF 2024 - My Sky Blog</title>
+      <link>https://sy1.sh/writeups/4t-ctf-2024-my-sky-blog/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/writeups/4t-ctf-2024-my-sky-blog/</guid>
+      <description>We start with a simple blog website. We can create an account and login, upon logging in we are greeted with a random greeting and we have couple of options:
+ Create a post Change Username/Password  After few black-box testing here for XSS, I&amp;rsquo;ve found XSS on the /profile because the username wasn&amp;rsquo;t escaped, but that&amp;rsquo;s not the main vulnerability. I&amp;rsquo;ve downloaded the source code and I saw that its a Go project and the name of the module is module ssti which hints for SSTI (Server Side Template Injection).</description>
+    </item>
+    
+    <item>
+      <title>zer0pts CTF 2023 - Neko Note</title>
+      <link>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</link>
+      <pubDate>Fri, 08 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</guid>
+      <description>I spent way too much time on this challenge but it was a really good one. We would start with a simple web page that has a basic form that you ca use to create notes. The form consists of 3 things, title, body and &amp;hellip;a password?! The password part was odd but lets continue.. You can also specify a &amp;ldquo;link&amp;rdquo; to other note via the square brackets like [6f16cd75-c50d-4ea2-b845-a085ff982a57] that UUID would be the identifier of the other note that you wan to link, and the interesting part here is that it expands its title, so if you put that UUID in your body, whenever you request the note you would get a link with the note&amp;rsquo;s title.</description>
+    </item>
+    
     <item>
       <title>Using DNS as C2 Communication - Evasive Techniques (Part 3)</title>
       <link>https://sy1.sh/posts/2022-10-26-dns-c2-communcation/</link>

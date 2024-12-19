@@ -6,17 +6,7 @@
     <description>Recent content in Posts on GeoCities - New Page (35) (or syls boring website)</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Achieved CTF Writeups</title>
-      <link>https://sy1.sh/posts/writeups/</link>
-      <pubDate>Tue, 05 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/posts/writeups/</guid>
-      <description>I&amp;rsquo;ve achieved my writeups since that there are a lot of them, with a lot of images and I just don&amp;rsquo;t have the time to port them all. Here is a comperhensive list of the writeups:
-You can find them here: https://github.com/syrull/writeups  htb-broscience.md htb-stocker.md htb-investigation.md htb-vessel.md htb-encoding.md pg-photographer.md pg-sar.md htb-metatwo.md htb-socket.md htb-inject.md htb-precious.md htb-pc.md htb-interface.md htb-busqueda.md htb-escape.md htb-sandworm.md htb-pilgrimage.md htb-topology.md htb-joker.md htb-irked.md htb-ambassador.md vulnlab-baby.md vulnlab-retro.md vulnlab-sync.md vulnlab-feedback.md vulnlab-forgotten.md vulnlab-baby2.md vulnlab-kaiju.</description>
-    </item>
-    
+    <lastBuildDate>Fri, 06 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Static Analysis Research - Windows PE</title>
       <link>https://sy1.sh/posts/2023-01-06-static-analysis-research-p1/</link>
@@ -97,6 +87,18 @@ Here is a very simple representation of STIX Objects in a graph. Explanation of 
 Using SSH Forwarding Exporting the $SSH_AUTH_SOCK environment variable in the image.
 $ docker run -rm -t -i -v $(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK ubuntu /bin/bash Or in the environment section of a compose file.
 environment: SSH_AUTH_SOCK: $SSH_AUTH_SOCK Eventual Issues with that  Installing ssh in the container Adding entries to /etc/ssh/ssh_known_hosts  Caveats  Traces of ssh keys inside the image  References  https://gist.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://sy1.sh/posts/2024-19-12-investigation-on-scams/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/posts/2024-19-12-investigation-on-scams/</guid>
+      <description>[[25-11-2024 They Tried To Scam Me Notes]]
+This is rather an unusual article that I would be publishing. I usually don&amp;rsquo;t do threat hunting or any amount of hunting outside work, but this one got personal.
+ This is probably a good place to state that this is not related to my work activities and that I am doing this of my own accord!
+ Let&amp;rsquo;s start from the beginning. A little while ago, I was contacted by a person in a marketplace for an item that I was selling.</description>
     </item>
     
   </channel>

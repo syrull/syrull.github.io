@@ -3,26 +3,89 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://sy1.sh/posts/</loc>
-    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <lastmod>2023-01-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sy1.sh/</loc>
-    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url><url>
-    <loc>https://sy1.sh/posts/writeups/</loc>
-    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/tags/ctf/</loc>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sy1.sh/writeups/</loc>
-    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://sy1.sh/tags/ctf/</loc>
-    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <loc>https://sy1.sh/tags/lfi/</loc>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/php/</loc>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sy1.sh/tags/</loc>
-    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sy1.sh/tags/writeups/</loc>
-    <lastmod>2024-11-05T00:00:00+00:00</lastmod>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/zer0pts-ctf-2022-gitfile-explorer/</loc>
+    <lastmod>2024-11-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/htb-challenge-gunship/</loc>
+    <lastmod>2024-11-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/js/</loc>
+    <lastmod>2024-11-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/prototype-pollution/</loc>
+    <lastmod>2024-11-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/4t-ctf-2024-homelab-more-like-pwnlab/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/4t-ctf-2024-my-sky-blog/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/bluehensctf-2024-corkscrew/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/bluehensctf-2024-firefun-3/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/cipher/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/docker/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/firebase/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/go/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/privilege-escalation/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/ssti/</loc>
+    <lastmod>2024-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/xss/</loc>
+    <lastmod>2024-11-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</loc>
+    <lastmod>2024-11-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/alpacahackr2web-caas/</loc>
+    <lastmod>2024-11-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/command-injection/</loc>
+    <lastmod>2024-11-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/tags/perl/</loc>
+    <lastmod>2024-11-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://sy1.sh/writeups/alpacahackr2web-pico-note-1/</loc>
+    <lastmod>2024-11-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sy1.sh/tags/analysis/</loc>
     <lastmod>2023-01-06T00:00:00+00:00</lastmod>
@@ -43,9 +106,6 @@
     <lastmod>2022-10-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sy1.sh/tags/dns/</loc>
-    <lastmod>2022-10-26T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://sy1.sh/tags/go/</loc>
     <lastmod>2022-10-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://sy1.sh/posts/2022-10-26-dns-c2-communcation/</loc>
@@ -93,9 +153,6 @@
     <loc>https://sy1.sh/tags/threat-intelligence/</loc>
     <lastmod>2022-04-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://sy1.sh/tags/docker/</loc>
-    <lastmod>2021-05-27T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://sy1.sh/posts/2021-05-27-installing-private-packages-in-docker-image-notes/</loc>
     <lastmod>2021-05-27T00:00:00+00:00</lastmod>
   </url><url>
@@ -107,6 +164,8 @@
   </url><url>
     <loc>https://sy1.sh/about/</loc>
     <priority>0</priority>
+  </url><url>
+    <loc>https://sy1.sh/posts/2024-19-12-investigation-on-scams/</loc>
   </url><url>
     <loc>https://sy1.sh/categories/</loc>
   </url>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>js on GeoCities - New Page (35) (or syls boring website)</title>
+    <link>https://sy1.sh/tags/js/</link>
+    <description>Recent content in js on GeoCities - New Page (35) (or syls boring website)</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/js/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HTB Challenge - Gunship</title>
+      <link>https://sy1.sh/writeups/htb-challenge-gunship/</link>
+      <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/writeups/htb-challenge-gunship/</guid>
+      <description>This is a prototype pollution challenge as I realized by having pinned packages such as &amp;quot;flat&amp;quot;: &amp;quot;5.0.0&amp;quot;, we then can see the vulnerability related to it which is this .
+So the challenge starts with a simple submit input that takes an artist name and sends it to the backend.
+router.post(&amp;#39;/api/submit&amp;#39;, (req, res) =&amp;gt; { const { artist } = unflatten(req.body); if (artist.name.includes(&amp;#39;Haigh&amp;#39;) || artist.name.includes(&amp;#39;Westaway&amp;#39;) || artist.name.includes(&amp;#39;Gingell&amp;#39;)) { return res.json({ &amp;#39;response&amp;#39;: pug.</description>
+    </item>
+    
+    <item>
+      <title>BlueHensCTF 2024 - Firefun 3</title>
+      <link>https://sy1.sh/writeups/bluehensctf-2024-firefun-3/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/writeups/bluehensctf-2024-firefun-3/</guid>
+      <description>We would start with a simple landing page that has nothing in it besides some HTML, the wappalyzer tells us that this is a Firebase application.
+In that case we can try to fuzz some firebase specific things, which will lead us to the configuration file:
+/__/firebase/init.json Now we can quickly craft some enumeration of that application, HOWEVER I&amp;rsquo;ve tried with various tools such as:
+ firepwn  baserunner   But for whatever reason they did not work, so I&amp;rsquo;ve crafted my own code to do the enumeration in NodeJS.</description>
+    </item>
+    
+    <item>
+      <title>zer0pts CTF 2023 - Neko Note</title>
+      <link>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</link>
+      <pubDate>Fri, 08 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</guid>
+      <description>I spent way too much time on this challenge but it was a really good one. We would start with a simple web page that has a basic form that you ca use to create notes. The form consists of 3 things, title, body and &amp;hellip;a password?! The password part was odd but lets continue.. You can also specify a &amp;ldquo;link&amp;rdquo; to other note via the square brackets like [6f16cd75-c50d-4ea2-b845-a085ff982a57] that UUID would be the identifier of the other note that you wan to link, and the interesting part here is that it expands its title, so if you put that UUID in your body, whenever you request the note you would get a link with the note&amp;rsquo;s title.</description>
+    </item>
+    
+    <item>
+      <title>AlpacaHack Round 2 (Web) - Pico Note 1</title>
+      <link>https://sy1.sh/writeups/alpacahackr2web-pico-note-1/</link>
+      <pubDate>Wed, 06 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/writeups/alpacahackr2web-pico-note-1/</guid>
+      <description>Overview In this challenge we need to provide a certain title/content to the main application in order to trigger XSS. However it is quite tricky since that we have a CSP Header with a nonce =&amp;gt; content-security-policy: script-src &#39;nonce-&amp;lt;random_shit&amp;gt;&#39;; and in order to trigger the XSS we would send an URL to a bot.
+So let&amp;rsquo;s explore the code.
+Code Analysis We won&amp;rsquo;t check the bot, since it is quite straightforward.</description>
+    </item>
+    
+  </channel>
+</rss>

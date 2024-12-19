@@ -6,22 +6,139 @@
     <description>Recent content in Tags on GeoCities - New Page (35) (or syls boring website)</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 12 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ctf</title>
       <link>https://sy1.sh/tags/ctf/</link>
-      <pubDate>Tue, 05 Nov 2024 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 12 Nov 2024 00:00:00 +0000</pubDate>
       
       <guid>https://sy1.sh/tags/ctf/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>lfi</title>
+      <link>https://sy1.sh/tags/lfi/</link>
+      <pubDate>Tue, 12 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/lfi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>php</title>
+      <link>https://sy1.sh/tags/php/</link>
+      <pubDate>Tue, 12 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/php/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>writeups</title>
       <link>https://sy1.sh/tags/writeups/</link>
-      <pubDate>Tue, 05 Nov 2024 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 12 Nov 2024 00:00:00 +0000</pubDate>
       
       <guid>https://sy1.sh/tags/writeups/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>js</title>
+      <link>https://sy1.sh/tags/js/</link>
+      <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/js/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>prototype pollution</title>
+      <link>https://sy1.sh/tags/prototype-pollution/</link>
+      <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/prototype-pollution/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cipher</title>
+      <link>https://sy1.sh/tags/cipher/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/cipher/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>docker</title>
+      <link>https://sy1.sh/tags/docker/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>firebase</title>
+      <link>https://sy1.sh/tags/firebase/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/firebase/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Go</title>
+      <link>https://sy1.sh/tags/go/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>privilege escalation</title>
+      <link>https://sy1.sh/tags/privilege-escalation/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/privilege-escalation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ssti</title>
+      <link>https://sy1.sh/tags/ssti/</link>
+      <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/ssti/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>xss</title>
+      <link>https://sy1.sh/tags/xss/</link>
+      <pubDate>Fri, 08 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/xss/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>command injection</title>
+      <link>https://sy1.sh/tags/command-injection/</link>
+      <pubDate>Thu, 07 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/command-injection/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>perl</title>
+      <link>https://sy1.sh/tags/perl/</link>
+      <pubDate>Thu, 07 Nov 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://sy1.sh/tags/perl/</guid>
       <description></description>
     </item>
     
@@ -76,15 +193,6 @@
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
       
       <guid>https://sy1.sh/tags/dns/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Go</title>
-      <link>https://sy1.sh/tags/go/</link>
-      <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/tags/go/</guid>
       <description></description>
     </item>
     
@@ -166,15 +274,6 @@
       <pubDate>Sun, 10 Apr 2022 00:00:00 +0000</pubDate>
       
       <guid>https://sy1.sh/tags/threat-intelligence/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>docker</title>
-      <link>https://sy1.sh/tags/docker/</link>
-      <pubDate>Thu, 27 May 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/tags/docker/</guid>
       <description></description>
     </item>
     
