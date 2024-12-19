@@ -363,7 +363,7 @@ If you've made it this far into the article, it means a lot to me, and I thank y
 |[hashes.txt](/scam-artifcats/hashes.txt)| Samples that I've collected; I may have encountered more that I forgot to include, but this list should be fairly comprehensive. |
 |[telegram_users_and_bots.txt](/scam-artifcats/telegram_users_and_bots.txt)| Users who are admins of some scam groups, along with a list of Telegram bots that are likely instances of the systems I analyzed. |
 |[telegraph_articles.txt](/scam-artifcats/telegraph_articles.txt)| A collection of Telegraph articles about scamming, anonymity, and various tutorials. |
-|[telegram_chats_groups.txt](/scam-artifcats/telegraph_articles.txt)| A collection of Telegarm channels/groups and so on, all related to scams. |
+|[telegram_chats_groups.txt](/scam-artifcats/telegram_chats_groups.txt)| A collection of Telegarm channels/groups and so on, all related to scams. |
 
 
 > Note: I've reported many of those it is very possible that some of them won't be working.
