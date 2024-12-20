@@ -6,4 +6,4 @@ If you want to contact me:
 
 - Discord: `syl5x`
 - [LinkedIn](https://www.linkedin.com/in/dimitar-ganev-syl-/)
-- Email: `dganev[ат]pm.me`
+- Email: `sylsec[ат]pm.me`
