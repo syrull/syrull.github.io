@@ -8,7 +8,6 @@ tags:
   - scam
   - Bulgaria
 toc: true
-math: true
 bold: true
 nomenu: false
 ---
