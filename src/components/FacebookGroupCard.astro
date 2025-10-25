@@ -1,0 +1,136 @@
+---
+interface Group {
+	name: string;
+	url: string;
+}
+
+interface Props {
+	city: string;
+	groups: Group[];
+	emoji?: string;
+}
+
+const { city, groups, emoji = '📍' } = Astro.props;
+---
+
+<details class="city-group">
+	<summary>
+		<span class="city-header">
+			<span class="emoji">{emoji}</span>
+			<span class="city-name">{city}</span>
+			<span class="group-count">({groups.length} groups)</span>
+		</span>
+		<span class="toggle-icon">▶</span>
+	</summary>
+	<div class="groups-container">
+		{groups.map((group) => (
+			<a href={group.url} target="_blank" rel="noopener noreferrer" class="group-link">
+				{group.name}
+			</a>
+		))}
+	</div>
+</details>
+
+<style>
+	.city-group {
+		margin: 0.75rem 0;
+		border: 1px solid rgb(var(--border-color));
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	summary {
+		padding: 1rem;
+		background-color: rgb(var(--bg-secondary));
+		cursor: pointer;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		user-select: none;
+		transition: background-color 0.2s ease;
+	}
+
+	summary:hover {
+		background-color: rgb(var(--bg-secondary), 0.8);
+		border-color: var(--accent);
+	}
+
+	.city-header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		font-weight: 600;
+	}
+
+	.emoji {
+		font-size: 1.2rem;
+	}
+
+	.city-name {
+		font-size: 1.1rem;
+		color: rgb(var(--text-primary));
+	}
+
+	.group-count {
+		font-size: 0.9rem;
+		color: rgb(var(--text-secondary));
+		font-weight: 400;
+	}
+
+	.toggle-icon {
+		color: var(--accent);
+		transition: transform 0.3s ease;
+		font-size: 0.8rem;
+	}
+
+	details[open] .toggle-icon {
+		transform: rotate(90deg);
+	}
+
+	.groups-container {
+		padding: 1rem;
+		background-color: rgb(var(--bg-primary));
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: 0.75rem;
+	}
+
+	.group-link {
+		padding: 0.6rem 0.75rem;
+		background-color: rgb(var(--bg-secondary));
+		border: 1px solid var(--accent);
+		border-radius: 4px;
+		color: var(--accent);
+		text-decoration: none;
+		font-size: 0.9rem;
+		transition: all 0.2s ease;
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.group-link:hover {
+		background-color: var(--accent);
+		color: rgb(var(--bg-primary));
+		box-shadow: 0 2px 8px rgba(35, 55, 255, 0.3);
+	}
+
+	@media (max-width: 720px) {
+		.groups-container {
+			grid-template-columns: 1fr;
+		}
+
+		.city-header {
+			gap: 0.5rem;
+		}
+
+		.city-name {
+			font-size: 1rem;
+		}
+
+		.group-count {
+			font-size: 0.8rem;
+		}
+	}
+</style>

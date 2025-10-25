@@ -1,0 +1,131 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+
+type Props = CollectionEntry<'posts'>['data'];
+
+const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+		<style>
+			main {
+				width: calc(100% - 2em);
+				max-width: 100%;
+				margin: 0;
+			}
+			.hero-image {
+				width: 100%;
+			}
+			.hero-image img {
+				display: block;
+				margin: 0 auto;
+				border-radius: 12px;
+				box-shadow: var(--box-shadow);
+			}
+			.prose {
+				width: 960px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 1em;
+				color: rgb(var(--text-primary));
+			}
+			.title {
+				margin-bottom: 1em;
+				padding: 1em 0;
+				text-align: center;
+				line-height: 1;
+			}
+			.title h1 {
+				margin: 0 0 0.5em 0;
+			}
+			.date {
+				margin-bottom: 0.5em;
+				color: rgb(var(--text-secondary));
+			}
+			.last-updated-on {
+				font-style: italic;
+			}
+			/* Lightbox styles */
+			.lightbox {
+				display: none;
+				position: fixed;
+				z-index: 1000;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.8);
+				align-items: center;
+				justify-content: center;
+			}
+			.lightbox img {
+				max-width: 90%;
+				max-height: 90%;
+				border-radius: 8px;
+			}
+			.lightbox:target {
+				display: flex;
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article>
+				<div class="hero-image">
+					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+				</div>
+				<div class="prose">
+					<div class="title">
+						<div class="date">
+							<FormattedDate date={pubDate} />
+							{
+								updatedDate && (
+									<div class="last-updated-on">
+										Last updated on <FormattedDate date={updatedDate} />
+									</div>
+								)
+							}
+						</div>
+						<h1>{title}</h1>
+						<hr />
+					</div>
+					<slot />
+				</div>
+			</article>
+		</main>
+		<Footer />
+		<!-- Lightbox modal -->
+		<div id="lightbox" class="lightbox">
+			<img id="lightbox-img" src="" alt="">
+		</div>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const lightbox = document.getElementById('lightbox') as HTMLDivElement | null;
+				const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+				if (!lightbox || !lightboxImg) return;
+				const images = document.querySelectorAll('.prose img');
+
+				images.forEach(img => {
+					(img as HTMLImageElement).style.cursor = 'pointer';
+					img.addEventListener('click', function(this: HTMLImageElement) {
+						lightboxImg.src = this.src;
+						lightbox.style.display = 'flex';
+					});
+				});
+
+				lightbox.addEventListener('click', function() {
+					lightbox.style.display = 'none';
+				});
+			});
+		</script>
+	</body>
+</html>

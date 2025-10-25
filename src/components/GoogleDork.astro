@@ -1,0 +1,210 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  query: string;
+}
+
+const { title, description, query } = Astro.props;
+
+// URL encode the query for the search link
+const encodedQuery = encodeURIComponent(query);
+const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
+---
+
+<div class="google-dork">
+  <div class="dork-header">
+    <h4 class="dork-title">{title}</h4>
+    <a 
+      href={googleSearchUrl} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      class="search-button"
+      title="Search on Google"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      Search
+    </a>
+  </div>
+  <p class="dork-description">{description}</p>
+  <div class="dork-query">
+    <code>{query}</code>
+    <button 
+      class="copy-button" 
+      data-query={query}
+      title="Copy to clipboard"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .google-dork {
+    background: rgb(var(--bg-secondary));
+    border: 1px solid rgba(var(--border-color), 0.5);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .google-dork:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(var(--accent), 0.15);
+  }
+
+  .dork-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+  }
+
+  .dork-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgb(var(--text-primary));
+  }
+
+  .search-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .search-button:hover {
+    background: var(--accent-dark);
+  }
+
+  .search-button svg {
+    flex-shrink: 0;
+  }
+
+  .dork-description {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.9rem;
+    color: rgb(var(--text-secondary));
+    line-height: 1.5;
+  }
+
+  .dork-query {
+    position: relative;
+    background: rgba(var(--bg-primary), 0.5);
+    border: 1px solid rgba(var(--border-color), 0.3);
+    border-radius: 6px;
+    padding: 0.75rem;
+    padding-right: 3rem;
+    font-family: 'Courier New', Courier, monospace;
+    overflow-x: auto;
+  }
+
+  .dork-query code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.9rem;
+    color: var(--accent);
+    word-break: break-all;
+  }
+
+  .copy-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgb(var(--bg-primary));
+    border: 1px solid rgba(var(--border-color), 0.5);
+    border-radius: 4px;
+    padding: 0.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: rgb(var(--text-primary));
+  }
+
+  .copy-button:hover {
+    background: rgba(var(--bg-secondary), 0.8);
+    border-color: var(--accent);
+  }
+
+  .copy-button:active {
+    transform: scale(0.95);
+  }
+
+  .copy-button.copied {
+    background: #28a745;
+    border-color: #28a745;
+  }
+
+  .copy-button.copied svg {
+    stroke: white;
+  }
+
+  .copy-button svg {
+    stroke: rgb(var(--text-primary));
+  }
+
+  @media (max-width: 640px) {
+    .dork-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .search-button {
+      align-self: flex-start;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButtons = document.querySelectorAll('.copy-button');
+    
+    copyButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const query = button.getAttribute('data-query');
+        if (!query) return;
+        
+        try {
+          await navigator.clipboard.writeText(query);
+          
+          // Visual feedback
+          button.classList.add('copied');
+          const originalHTML = button.innerHTML;
+          button.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          `;
+          
+          setTimeout(() => {
+            button.classList.remove('copied');
+            button.innerHTML = originalHTML;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+    });
+  });
+</script>

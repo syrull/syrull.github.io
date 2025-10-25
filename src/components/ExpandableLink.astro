@@ -1,0 +1,99 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+}
+
+const { href, title, description } = Astro.props;
+---
+
+<details class="expandable-link">
+  <summary>
+    <a href={href} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">
+      {title}
+    </a>
+    <span class="toggle-icon">▼</span>
+  </summary>
+  <div class="link-description">
+    <p><strong>Usage:</strong> {description}</p>
+  </div>
+</details>
+
+<style>
+  .expandable-link {
+    margin: 0.75em 0;
+    border: 1px solid rgb(var(--border-color));
+    border-radius: 8px;
+    padding: 0.5em;
+    background: rgb(var(--bg-secondary));
+    transition: all 0.3s ease;
+  }
+
+  .expandable-link:hover {
+    background: rgb(var(--bg-secondary), 0.8);
+    border-color: var(--accent);
+  }
+
+  .expandable-link summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em;
+    user-select: none;
+  }
+
+  .expandable-link summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .expandable-link summary a {
+    flex: 1;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .expandable-link summary a:hover {
+    color: var(--accent-dark);
+    text-decoration: underline;
+  }
+
+  .toggle-icon {
+    margin-left: 0.5em;
+    font-size: 0.8em;
+    color: rgb(var(--text-secondary));
+    transition: transform 0.3s ease;
+  }
+
+  .expandable-link[open] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .link-description {
+    padding: 1em;
+    margin-top: 0.5em;
+    border-top: 1px solid rgb(var(--border-color));
+    animation: slideDown 0.3s ease;
+  }
+
+  .link-description p {
+    margin: 0;
+    color: rgb(var(--text-primary));
+    line-height: 1.6;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
