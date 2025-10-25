@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>prototype pollution on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>https://sy1.sh/tags/prototype-pollution/</link>
-    <description>Recent content in prototype pollution on GeoCities - New Page (35) (or syls boring website)</description>
+    <title>Prototype Pollution on syls blog</title>
+    <link>http://localhost:1313/tags/prototype-pollution/</link>
+    <description>Recent content in Prototype Pollution on syls blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/prototype-pollution/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/prototype-pollution/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HTB Challenge - Gunship</title>
-      <link>https://sy1.sh/writeups/htb-challenge-gunship/</link>
+      <link>http://localhost:1313/writeups/htb-challenge---gunship/</link>
       <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/htb-challenge-gunship/</guid>
-      <description>This is a prototype pollution challenge as I realized by having pinned packages such as &amp;quot;flat&amp;quot;: &amp;quot;5.0.0&amp;quot;, we then can see the vulnerability related to it which is this .
-So the challenge starts with a simple submit input that takes an artist name and sends it to the backend.
-router.post(&amp;#39;/api/submit&amp;#39;, (req, res) =&amp;gt; { const { artist } = unflatten(req.body); if (artist.name.includes(&amp;#39;Haigh&amp;#39;) || artist.name.includes(&amp;#39;Westaway&amp;#39;) || artist.name.includes(&amp;#39;Gingell&amp;#39;)) { return res.json({ &amp;#39;response&amp;#39;: pug.</description>
+      <guid>http://localhost:1313/writeups/htb-challenge---gunship/</guid>
+      <description>This is a prototype pollution challenge as I realized by having pinned packages such as &amp;quot;flat&amp;quot;: &amp;quot;5.0.0&amp;quot;, we then can see the vulnerability related to it which is this.&#xA;So the challenge starts with a simple submit input that takes an artist name and sends it to the backend.&#xA;router.post(&amp;#39;/api/submit&amp;#39;, (req, res) =&amp;gt; { const { artist } = unflatten(req.body); if (artist.name.includes(&amp;#39;Haigh&amp;#39;) || artist.name.includes(&amp;#39;Westaway&amp;#39;) || artist.name.includes(&amp;#39;Gingell&amp;#39;)) { return res.json({ &amp;#39;response&amp;#39;: pug.</description>
     </item>
-    
   </channel>
 </rss>

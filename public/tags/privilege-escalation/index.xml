@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>privilege escalation on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>https://sy1.sh/tags/privilege-escalation/</link>
-    <description>Recent content in privilege escalation on GeoCities - New Page (35) (or syls boring website)</description>
+    <title>Privilege Escalation on syls blog</title>
+    <link>http://localhost:1313/tags/privilege-escalation/</link>
+    <description>Recent content in Privilege Escalation on syls blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 10 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/privilege-escalation/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/privilege-escalation/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>4T$ CTF 2024 - Homelab ? More like Pwnlab !</title>
-      <link>https://sy1.sh/writeups/4t-ctf-2024-homelab-more-like-pwnlab/</link>
+      <link>http://localhost:1313/writeups/4t-ctf-2024---homelab-more-like-pwnlab/</link>
       <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/4t-ctf-2024-homelab-more-like-pwnlab/</guid>
-      <description>We would start with 2 things:
- Web SSH Access (through the browser) Application with simple upload/download functionality  I found that the application does not enforce the paths for uploading and downloading and you can upload/download whatever file you want, you just have to URL encode it like so:
-..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd I&amp;rsquo;ve also realized that this application is running in a Docker container, by going through the web SSH, I can see the docker compose file in /home/admin/docker-compose.</description>
+      <guid>http://localhost:1313/writeups/4t-ctf-2024---homelab-more-like-pwnlab/</guid>
+      <description>We would start with 2 things:&#xA;Web SSH Access (through the browser) Application with simple upload/download functionality I found that the application does not enforce the paths for uploading and downloading and you can upload/download whatever file you want, you just have to URL encode it like so:&#xA;..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd I&amp;rsquo;ve also realized that this application is running in a Docker container, by going through the web SSH, I can see the docker compose file in /home/admin/docker-compose.</description>
     </item>
-    
   </channel>
 </rss>

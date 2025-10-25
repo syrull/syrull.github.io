@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>DNS on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>https://sy1.sh/tags/dns/</link>
-    <description>Recent content in DNS on GeoCities - New Page (35) (or syls boring website)</description>
+    <title>DNS on syls blog</title>
+    <link>http://localhost:1313/tags/dns/</link>
+    <description>Recent content in DNS on syls blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/dns/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 26 Oct 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/dns/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Using DNS as C2 Communication - Evasive Techniques (Part 3)</title>
-      <link>https://sy1.sh/posts/2022-10-26-dns-c2-communcation/</link>
+      <link>http://localhost:1313/posts/2022-10-26-dns-c2-communcation/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/posts/2022-10-26-dns-c2-communcation/</guid>
-      <description>Overview Following my last post about some evasion techniques that the Symbiote uses which I tried to recreate in their simplest form, this post will see how the Symbiote is communicating to the command and control C2 server.
-Upon reading the article, we can see that the Symbiote uses the DNS Protocol to exfiltrate data out of the infected machine, the way that it does that is by chunking it into a bunch of A Resource Records (RR) that it sends through the UDP.</description>
+      <guid>http://localhost:1313/posts/2022-10-26-dns-c2-communcation/</guid>
+      <description>Overview Following my last post about some evasion techniques that the Symbiote uses which I tried to recreate in their simplest form, this post will see how the Symbiote is communicating to the command and control C2 server.&#xA;Upon reading the article, we can see that the Symbiote uses the DNS Protocol to exfiltrate data out of the infected machine, the way that it does that is by chunking it into a bunch of A Resource Records (RR) that it sends through the UDP.</description>
     </item>
-    
   </channel>
 </rss>

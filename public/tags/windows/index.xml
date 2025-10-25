@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>windows on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>https://sy1.sh/tags/windows/</link>
-    <description>Recent content in windows on GeoCities - New Page (35) (or syls boring website)</description>
+    <title>Windows on syls blog</title>
+    <link>http://localhost:1313/tags/windows/</link>
+    <description>Recent content in Windows on syls blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 06 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/windows/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 06 Jan 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/windows/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Static Analysis Research - Windows PE</title>
-      <link>https://sy1.sh/posts/2023-01-06-static-analysis-research-p1/</link>
+      <link>http://localhost:1313/posts/2023-01-06-static-analysis-research-p1/</link>
       <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/posts/2023-01-06-static-analysis-research-p1/</guid>
-      <description>Overview Recently, I decided do delve a little bit more into static analysis, something beyond just running strings on a binary and getting the ASCII characters that are printable. I decided to take a deep look at how FLOSS is working and possibly recreate some of its functionality in my own tool.
-Before reading further, I want you to know that this post is about research I did on static analysis.</description>
+      <guid>http://localhost:1313/posts/2023-01-06-static-analysis-research-p1/</guid>
+      <description>Overview Recently, I decided do delve a little bit more into static analysis, something beyond just running strings on a binary and getting the ASCII characters that are printable. I decided to take a deep look at how FLOSS is working and possibly recreate some of its functionality in my own tool.&#xA;Before reading further, I want you to know that this post is about research I did on static analysis.</description>
     </item>
-    
   </channel>
 </rss>

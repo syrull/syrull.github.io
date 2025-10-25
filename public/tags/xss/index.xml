@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>xss on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>https://sy1.sh/tags/xss/</link>
-    <description>Recent content in xss on GeoCities - New Page (35) (or syls boring website)</description>
+    <title>Xss on syls blog</title>
+    <link>http://localhost:1313/tags/xss/</link>
+    <description>Recent content in Xss on syls blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 08 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/xss/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 08 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/xss/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>zer0pts CTF 2023 - Neko Note</title>
-      <link>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</link>
+      <link>http://localhost:1313/writeups/zer0pts-ctf-2023---neko-note/</link>
       <pubDate>Fri, 08 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</guid>
+      <guid>http://localhost:1313/writeups/zer0pts-ctf-2023---neko-note/</guid>
       <description>I spent way too much time on this challenge but it was a really good one. We would start with a simple web page that has a basic form that you ca use to create notes. The form consists of 3 things, title, body and &amp;hellip;a password?! The password part was odd but lets continue.. You can also specify a &amp;ldquo;link&amp;rdquo; to other note via the square brackets like [6f16cd75-c50d-4ea2-b845-a085ff982a57] that UUID would be the identifier of the other note that you wan to link, and the interesting part here is that it expands its title, so if you put that UUID in your body, whenever you request the note you would get a link with the note&amp;rsquo;s title.</description>
     </item>
-    
     <item>
       <title>AlpacaHack Round 2 (Web) - Pico Note 1</title>
-      <link>https://sy1.sh/writeups/alpacahackr2web-pico-note-1/</link>
+      <link>http://localhost:1313/writeups/alpacahackr2web-pico-note-1/</link>
       <pubDate>Wed, 06 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/alpacahackr2web-pico-note-1/</guid>
-      <description>Overview In this challenge we need to provide a certain title/content to the main application in order to trigger XSS. However it is quite tricky since that we have a CSP Header with a nonce =&amp;gt; content-security-policy: script-src &#39;nonce-&amp;lt;random_shit&amp;gt;&#39;; and in order to trigger the XSS we would send an URL to a bot.
-So let&amp;rsquo;s explore the code.
-Code Analysis We won&amp;rsquo;t check the bot, since it is quite straightforward.</description>
+      <guid>http://localhost:1313/writeups/alpacahackr2web-pico-note-1/</guid>
+      <description>Overview In this challenge we need to provide a certain title/content to the main application in order to trigger XSS. However it is quite tricky since that we have a CSP Header with a nonce =&amp;gt; content-security-policy: script-src &#39;nonce-&amp;lt;random_shit&amp;gt;&#39;; and in order to trigger the XSS we would send an URL to a bot.&#xA;So let&amp;rsquo;s explore the code.&#xA;Code Analysis We won&amp;rsquo;t check the bot, since it is quite straightforward.</description>
     </item>
-    
   </channel>
 </rss>

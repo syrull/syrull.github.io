@@ -1,118 +1,89 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>writeups on GeoCities - New Page (35) (or syls boring website)</title>
-    <link>https://sy1.sh/tags/writeups/</link>
-    <description>Recent content in writeups on GeoCities - New Page (35) (or syls boring website)</description>
+    <title>Writeups on syls blog</title>
+    <link>http://localhost:1313/tags/writeups/</link>
+    <description>Recent content in Writeups on syls blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 12 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://sy1.sh/tags/writeups/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 06 May 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/writeups/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CTF Writeups</title>
-      <link>https://sy1.sh/writeups/</link>
-      <pubDate>Tue, 12 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/</guid>
-      <description>I&amp;rsquo;ve achieved some of my writeups since that there are a lot of them, with a lot of images and I just don&amp;rsquo;t have the time to port them all. Here is a comperhensive list of the writeups:
-You can find them here: https://github.com/syrull/writeups </description>
+      <link>http://localhost:1313/writeups/</link>
+      <pubDate>Tue, 06 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/writeups/</guid>
+      <description>I&amp;rsquo;ve achieved some of my writeups since that there are a lot of them, with a lot of images and I just don&amp;rsquo;t have the time to port them all. Here is a comperhensive list of the writeups:&#xA;You can find them here: https://github.com/syrull/writeups</description>
     </item>
-    
+    <item>
+      <title>FLARE-On 2014 writeups</title>
+      <link>http://localhost:1313/writeups/the-flare-on-2014/</link>
+      <pubDate>Tue, 06 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/writeups/the-flare-on-2014/</guid>
+      <description>Overview I&amp;rsquo;ve began to learn reverse engineering, and by the end of this year I aim to be decent at it, I will start with the Flare On and bunch of other challenges.&#xA;C1 Its a Windows Form with Bob Ross on it.&#xA;a&#xA;I&amp;rsquo;ve noticed the title of the Program Form 1 and thought that this is .NET binary, I loaded it into dnSpy and explored it.&#xA;a&#xA;We are having a hidden resource called dat_secret which are random bytes, then we have a decryption function that looks like this:</description>
+    </item>
     <item>
       <title>zer0pts CTF 2023 - GitFile Explorer</title>
-      <link>https://sy1.sh/writeups/zer0pts-ctf-2022-gitfile-explorer/</link>
+      <link>http://localhost:1313/writeups/zer0pts-ctf-2022---gitfile-explorer/</link>
       <pubDate>Tue, 12 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/zer0pts-ctf-2022-gitfile-explorer/</guid>
-      <description>This is a single PHP file challenge that contains a &amp;ldquo;Git File Explorer&amp;rdquo;, it basically fetches a file from github/gitlab/bitbucket that you specify in the form. The challenge here is to read /flag at the root.
-I went through the code to see how we can possibly read the flag, and the only way it seem to be out of this snippet:
-if ($service) { $url = craft_url($service, $owner, $repo, $branch, $file); if (preg_match(&amp;#34;/^http.</description>
+      <guid>http://localhost:1313/writeups/zer0pts-ctf-2022---gitfile-explorer/</guid>
+      <description>This is a single PHP file challenge that contains a &amp;ldquo;Git File Explorer&amp;rdquo;, it basically fetches a file from github/gitlab/bitbucket that you specify in the form. The challenge here is to read /flag at the root.&#xA;I went through the code to see how we can possibly read the flag, and the only way it seem to be out of this snippet:&#xA;if ($service) { $url = craft_url($service, $owner, $repo, $branch, $file); if (preg_match(&amp;#34;/^http.</description>
     </item>
-    
     <item>
       <title>HTB Challenge - Gunship</title>
-      <link>https://sy1.sh/writeups/htb-challenge-gunship/</link>
+      <link>http://localhost:1313/writeups/htb-challenge---gunship/</link>
       <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/htb-challenge-gunship/</guid>
-      <description>This is a prototype pollution challenge as I realized by having pinned packages such as &amp;quot;flat&amp;quot;: &amp;quot;5.0.0&amp;quot;, we then can see the vulnerability related to it which is this .
-So the challenge starts with a simple submit input that takes an artist name and sends it to the backend.
-router.post(&amp;#39;/api/submit&amp;#39;, (req, res) =&amp;gt; { const { artist } = unflatten(req.body); if (artist.name.includes(&amp;#39;Haigh&amp;#39;) || artist.name.includes(&amp;#39;Westaway&amp;#39;) || artist.name.includes(&amp;#39;Gingell&amp;#39;)) { return res.json({ &amp;#39;response&amp;#39;: pug.</description>
+      <guid>http://localhost:1313/writeups/htb-challenge---gunship/</guid>
+      <description>This is a prototype pollution challenge as I realized by having pinned packages such as &amp;quot;flat&amp;quot;: &amp;quot;5.0.0&amp;quot;, we then can see the vulnerability related to it which is this.&#xA;So the challenge starts with a simple submit input that takes an artist name and sends it to the backend.&#xA;router.post(&amp;#39;/api/submit&amp;#39;, (req, res) =&amp;gt; { const { artist } = unflatten(req.body); if (artist.name.includes(&amp;#39;Haigh&amp;#39;) || artist.name.includes(&amp;#39;Westaway&amp;#39;) || artist.name.includes(&amp;#39;Gingell&amp;#39;)) { return res.json({ &amp;#39;response&amp;#39;: pug.</description>
     </item>
-    
     <item>
       <title>4T$ CTF 2024 - Homelab ? More like Pwnlab !</title>
-      <link>https://sy1.sh/writeups/4t-ctf-2024-homelab-more-like-pwnlab/</link>
+      <link>http://localhost:1313/writeups/4t-ctf-2024---homelab-more-like-pwnlab/</link>
       <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/4t-ctf-2024-homelab-more-like-pwnlab/</guid>
-      <description>We would start with 2 things:
- Web SSH Access (through the browser) Application with simple upload/download functionality  I found that the application does not enforce the paths for uploading and downloading and you can upload/download whatever file you want, you just have to URL encode it like so:
-..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd I&amp;rsquo;ve also realized that this application is running in a Docker container, by going through the web SSH, I can see the docker compose file in /home/admin/docker-compose.</description>
+      <guid>http://localhost:1313/writeups/4t-ctf-2024---homelab-more-like-pwnlab/</guid>
+      <description>We would start with 2 things:&#xA;Web SSH Access (through the browser) Application with simple upload/download functionality I found that the application does not enforce the paths for uploading and downloading and you can upload/download whatever file you want, you just have to URL encode it like so:&#xA;..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd I&amp;rsquo;ve also realized that this application is running in a Docker container, by going through the web SSH, I can see the docker compose file in /home/admin/docker-compose.</description>
     </item>
-    
     <item>
       <title>4T$ CTF 2024 - My Sky Blog</title>
-      <link>https://sy1.sh/writeups/4t-ctf-2024-my-sky-blog/</link>
+      <link>http://localhost:1313/writeups/4t-ctf-2024---my-sky-blog/</link>
       <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/4t-ctf-2024-my-sky-blog/</guid>
-      <description>We start with a simple blog website. We can create an account and login, upon logging in we are greeted with a random greeting and we have couple of options:
- Create a post Change Username/Password  After few black-box testing here for XSS, I&amp;rsquo;ve found XSS on the /profile because the username wasn&amp;rsquo;t escaped, but that&amp;rsquo;s not the main vulnerability. I&amp;rsquo;ve downloaded the source code and I saw that its a Go project and the name of the module is module ssti which hints for SSTI (Server Side Template Injection).</description>
+      <guid>http://localhost:1313/writeups/4t-ctf-2024---my-sky-blog/</guid>
+      <description>We start with a simple blog website. We can create an account and login, upon logging in we are greeted with a random greeting and we have couple of options:&#xA;Create a post Change Username/Password After few black-box testing here for XSS, I&amp;rsquo;ve found XSS on the /profile because the username wasn&amp;rsquo;t escaped, but that&amp;rsquo;s not the main vulnerability. I&amp;rsquo;ve downloaded the source code and I saw that its a Go project and the name of the module is module ssti which hints for SSTI (Server Side Template Injection).</description>
     </item>
-    
     <item>
       <title>BlueHensCTF 2024 - Corkscrew</title>
-      <link>https://sy1.sh/writeups/bluehensctf-2024-corkscrew/</link>
+      <link>http://localhost:1313/writeups/bluehensctf-2024---corkscrew/</link>
       <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/bluehensctf-2024-corkscrew/</guid>
-      <description>We start with a few hints and a string that we should rearrange. The hints are that this consists of a old school crypto and the string is Us_lnt10ns}1443{FTCDqsysp0srrr4up_t1.
-After consulting with my best friend chatgpt, it hinted me that this could be a Spiral-Like cipher. So it goes like this:
-The text is 36 chars long and we can create a square shape out of it.
-U s _ l n t 1 0 n s } 1 4 4 3 { F T C D q s y s p 0 s r r r 4 u p _ t 1 Then we simply transpose it clockwise in a spiral way so that becomes</description>
+      <guid>http://localhost:1313/writeups/bluehensctf-2024---corkscrew/</guid>
+      <description>We start with a few hints and a string that we should rearrange. The hints are that this consists of a old school crypto and the string is Us_lnt10ns}1443{FTCDqsysp0srrr4up_t1.&#xA;After consulting with my best friend chatgpt, it hinted me that this could be a Spiral-Like cipher. So it goes like this:&#xA;The text is 36 chars long and we can create a square shape out of it.&#xA;U s _ l n t 1 0 n s } 1 4 4 3 { F T C D q s y s p 0 s r r r 4 u p _ t 1 Then we simply transpose it clockwise in a spiral way so that becomes</description>
     </item>
-    
     <item>
       <title>BlueHensCTF 2024 - Firefun 3</title>
-      <link>https://sy1.sh/writeups/bluehensctf-2024-firefun-3/</link>
+      <link>http://localhost:1313/writeups/bluehensctf-2024---firefun-3/</link>
       <pubDate>Sun, 10 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/bluehensctf-2024-firefun-3/</guid>
-      <description>We would start with a simple landing page that has nothing in it besides some HTML, the wappalyzer tells us that this is a Firebase application.
-In that case we can try to fuzz some firebase specific things, which will lead us to the configuration file:
-/__/firebase/init.json Now we can quickly craft some enumeration of that application, HOWEVER I&amp;rsquo;ve tried with various tools such as:
- firepwn  baserunner   But for whatever reason they did not work, so I&amp;rsquo;ve crafted my own code to do the enumeration in NodeJS.</description>
+      <guid>http://localhost:1313/writeups/bluehensctf-2024---firefun-3/</guid>
+      <description>We would start with a simple landing page that has nothing in it besides some HTML, the wappalyzer tells us that this is a Firebase application.&#xA;In that case we can try to fuzz some firebase specific things, which will lead us to the configuration file:&#xA;/__/firebase/init.json Now we can quickly craft some enumeration of that application, HOWEVER I&amp;rsquo;ve tried with various tools such as:&#xA;firepwn baserunner But for whatever reason they did not work, so I&amp;rsquo;ve crafted my own code to do the enumeration in NodeJS.</description>
     </item>
-    
     <item>
       <title>zer0pts CTF 2023 - Neko Note</title>
-      <link>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</link>
+      <link>http://localhost:1313/writeups/zer0pts-ctf-2023---neko-note/</link>
       <pubDate>Fri, 08 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/zer0pts-ctf-2023-neko-note/</guid>
+      <guid>http://localhost:1313/writeups/zer0pts-ctf-2023---neko-note/</guid>
       <description>I spent way too much time on this challenge but it was a really good one. We would start with a simple web page that has a basic form that you ca use to create notes. The form consists of 3 things, title, body and &amp;hellip;a password?! The password part was odd but lets continue.. You can also specify a &amp;ldquo;link&amp;rdquo; to other note via the square brackets like [6f16cd75-c50d-4ea2-b845-a085ff982a57] that UUID would be the identifier of the other note that you wan to link, and the interesting part here is that it expands its title, so if you put that UUID in your body, whenever you request the note you would get a link with the note&amp;rsquo;s title.</description>
     </item>
-    
     <item>
       <title>AlpacaHack Round 2 (Web) - CaaS (Cow as a Service)</title>
-      <link>https://sy1.sh/writeups/alpacahackr2web-caas/</link>
+      <link>http://localhost:1313/writeups/alpacahackr2web-caas/</link>
       <pubDate>Thu, 07 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/alpacahackr2web-caas/</guid>
-      <description>Overview I&amp;rsquo;ve initially thought that this is a JavaScript command injection challenge, since that we have the flag located at the root and we have a binary that is being executed (/usr/games/cowsay). I began to read the documentation of google/zx , but after a while I didn&amp;rsquo;t find anything that could lead to command injection.
-Then I&amp;rsquo;ve started to explore the binary itself /usr/games/cowsay, I also setup a verbose output for ZX as I&amp;rsquo;ve read the documentation.</description>
+      <guid>http://localhost:1313/writeups/alpacahackr2web-caas/</guid>
+      <description>Overview I&amp;rsquo;ve initially thought that this is a JavaScript command injection challenge, since that we have the flag located at the root and we have a binary that is being executed (/usr/games/cowsay). I began to read the documentation of google/zx, but after a while I didn&amp;rsquo;t find anything that could lead to command injection.&#xA;Then I&amp;rsquo;ve started to explore the binary itself /usr/games/cowsay, I also setup a verbose output for ZX as I&amp;rsquo;ve read the documentation.</description>
     </item>
-    
     <item>
       <title>AlpacaHack Round 2 (Web) - Pico Note 1</title>
-      <link>https://sy1.sh/writeups/alpacahackr2web-pico-note-1/</link>
+      <link>http://localhost:1313/writeups/alpacahackr2web-pico-note-1/</link>
       <pubDate>Wed, 06 Nov 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://sy1.sh/writeups/alpacahackr2web-pico-note-1/</guid>
-      <description>Overview In this challenge we need to provide a certain title/content to the main application in order to trigger XSS. However it is quite tricky since that we have a CSP Header with a nonce =&amp;gt; content-security-policy: script-src &#39;nonce-&amp;lt;random_shit&amp;gt;&#39;; and in order to trigger the XSS we would send an URL to a bot.
-So let&amp;rsquo;s explore the code.
-Code Analysis We won&amp;rsquo;t check the bot, since it is quite straightforward.</description>
+      <guid>http://localhost:1313/writeups/alpacahackr2web-pico-note-1/</guid>
+      <description>Overview In this challenge we need to provide a certain title/content to the main application in order to trigger XSS. However it is quite tricky since that we have a CSP Header with a nonce =&amp;gt; content-security-policy: script-src &#39;nonce-&amp;lt;random_shit&amp;gt;&#39;; and in order to trigger the XSS we would send an URL to a bot.&#xA;So let&amp;rsquo;s explore the code.&#xA;Code Analysis We won&amp;rsquo;t check the bot, since it is quite straightforward.</description>
     </item>
-    
   </channel>
 </rss>

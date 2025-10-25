@@ -21,11 +21,11 @@ I've began to learn reverse engineering, and by the end of this year I aim to be
 
 Its a Windows Form with Bob Ross on it.
 
-[a](/images/flareon2014/c1_1.png)
+![a](/images/flareon2014/c1_1.png)
 
 I've noticed the title of the Program `Form 1` and thought that this is .NET binary, I loaded it into `dnSpy` and explored it.
 
-[a](/images/flareon2014/c1_2.png)
+![a](/images/flareon2014/c1_2.png)
 
 We are having a hidden resource called `dat_secret` which are random bytes, then we have a decryption function that looks like this:
 
@@ -61,7 +61,7 @@ We transform the text 3 times, first we byte swap it and xor it with 41 then we 
 
 Now, I wanted to debug the function, so that I can inspect what would be the text after the first transformation.
 
-[a](/images/flareon2014/c1_3.png)
+![a](/images/flareon2014/c1_3.png)
 
 So, we have the `"3rmahg3rd.b0b.d0ge@flare-on.com"` string which is our flag.
 
