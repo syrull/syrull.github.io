@@ -20,7 +20,7 @@ const { city, groups, emoji = '📍' } = Astro.props;
 			<span class="city-name">{city}</span>
 			<span class="group-count">({groups.length} groups)</span>
 		</span>
-		<span class="toggle-icon">▶</span>
+		<span class="toggle-icon">▼</span>
 	</summary>
 	<div class="groups-container">
 		{groups.map((group) => (
@@ -33,26 +33,31 @@ const { city, groups, emoji = '📍' } = Astro.props;
 
 <style>
 	.city-group {
-		margin: 0.75rem 0;
+		margin: 0.75em 0;
 		border: 1px solid rgb(var(--border-color));
 		border-radius: 8px;
-		overflow: hidden;
+		padding: 0.5em;
+		background: rgb(var(--bg-secondary));
+		transition: all 0.3s ease;
+	}
+
+	.city-group:hover {
+		background: rgb(var(--bg-secondary), 0.8);
+		border-color: var(--accent);
 	}
 
 	summary {
-		padding: 1rem;
-		background-color: rgb(var(--bg-secondary));
 		cursor: pointer;
+		list-style: none;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		padding: 0.5em;
 		user-select: none;
-		transition: background-color 0.2s ease;
 	}
 
-	summary:hover {
-		background-color: rgb(var(--bg-secondary), 0.8);
-		border-color: var(--accent);
+	summary::-webkit-details-marker {
+		display: none;
 	}
 
 	.city-header {
@@ -78,21 +83,25 @@ const { city, groups, emoji = '📍' } = Astro.props;
 	}
 
 	.toggle-icon {
-		color: var(--accent);
+		margin-left: 0.5em;
+		font-size: 0.8em;
+		color: rgb(var(--text-secondary));
 		transition: transform 0.3s ease;
-		font-size: 0.8rem;
 	}
 
 	details[open] .toggle-icon {
-		transform: rotate(90deg);
+		transform: rotate(180deg);
 	}
 
 	.groups-container {
-		padding: 1rem;
+		padding: 1em;
+		margin-top: 0.5em;
+		border-top: 1px solid rgb(var(--border-color));
 		background-color: rgb(var(--bg-primary));
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		gap: 0.75rem;
+		animation: slideDown 0.3s ease;
 	}
 
 	.group-link {
@@ -131,6 +140,17 @@ const { city, groups, emoji = '📍' } = Astro.props;
 
 		.group-count {
 			font-size: 0.8rem;
+		}
+	}
+
+	@keyframes slideDown {
+		from {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
 		}
 	}
 </style>
