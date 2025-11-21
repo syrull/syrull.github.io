@@ -15,7 +15,7 @@ heroImage: '../../assets/fishing-bot.png'
 
 This fishing bot consists only of about 50 lines of code, it incorporates the mechanics of World of Warcraft and some simple Windows API Calls. 
 
-![Fishing Bot in action](/images/fishing-bot/fishing.gif)
+![Fishing Bot in action](https://github.com/syrull/simple-fishing-bot/raw/main/assets/fishing.gif)
 
 
 Repository: https://github.com/syrull/simple-fishing-bot 

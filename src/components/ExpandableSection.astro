@@ -1,0 +1,80 @@
+---
+interface Props {
+  title: string;
+  defaultOpen?: boolean;
+}
+
+const { title, defaultOpen = false } = Astro.props;
+---
+
+<details class="expandable-section" open={defaultOpen}>
+  <summary>
+    <span class="summary-title">{title}</span>
+    <span class="toggle-icon">▼</span>
+  </summary>
+  <div class="section-content">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .expandable-section {
+    margin: 0.75em 0;
+    border: 1px solid rgb(var(--border-color));
+    border-radius: 8px;
+    padding: 0.5em;
+    background: rgb(var(--bg-secondary));
+    transition: all 0.3s ease;
+  }
+
+  .expandable-section:hover {
+    background: rgb(var(--bg-secondary), 0.8);
+    border-color: var(--accent);
+  }
+
+  .expandable-section summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em;
+    user-select: none;
+  }
+
+  .expandable-section summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .summary-title {
+    flex: 1;
+    font-weight: 600;
+    color: rgb(var(--text-primary));
+  }
+
+  .toggle-icon {
+    margin-left: 0.5em;
+    font-size: 0.8em;
+    color: rgb(var(--text-secondary));
+    transition: transform 0.3s ease;
+  }
+
+  .expandable-section[open] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .section-content {
+    padding: 1em;
+    padding-top: 0.5em;
+    border-top: 1px solid rgb(var(--border-color));
+    margin-top: 0.5em;
+  }
+
+  .section-content > :first-child {
+    margin-top: 0;
+  }
+
+  .section-content > :last-child {
+    margin-bottom: 0;
+  }
+</style>
