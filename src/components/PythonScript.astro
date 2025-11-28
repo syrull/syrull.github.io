@@ -196,28 +196,29 @@ const finalCode = codeProp || slotContent || "";
 
   .script-actions {
     display: flex;
-    gap: 0.25em;
+    gap: 0.5rem;
   }
 
   .action-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.35em;
-    padding: 0.4em 0.6em;
-    background: rgba(var(--text-primary), 0.05);
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    background: rgb(var(--bg-primary));
     border: 1px solid rgb(var(--border-color));
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    color: rgb(var(--text-secondary));
+    color: rgb(var(--text-primary));
     font-family: inherit;
-    font-size: 0.8em;
+    font-size: 0.8rem;
+    font-weight: 500;
     transition: all 0.2s ease;
   }
 
   .action-btn:hover {
-    background: var(--accent);
-    color: white;
     border-color: var(--accent);
+    color: var(--accent);
+    background: rgb(var(--bg-secondary));
   }
 
   .action-btn svg {
