@@ -11,7 +11,35 @@
 - `npm run astro -- check` — validate content schemas and TypeScript types.
 
 ## Coding Style & Naming Conventions
-Use 2-space indentation and let your editor’s Astro/TypeScript formatter run before commits. Name `.astro` components in PascalCase (`Header.astro`) and exported helpers in camelCase. Co-locate CSS or utilities with their companion component when it improves clarity. Keep the strict typing defaults from `astro/tsconfigs/strict`; add explicit types instead of relying on `any` or implicit inference.
+Use 2-space indentation and let your editor's Astro/TypeScript formatter run before commits. Name `.astro` components in PascalCase (`Header.astro`) and exported helpers in camelCase. Co-locate CSS or utilities with their companion component when it improves clarity. Keep the strict typing defaults from `astro/tsconfigs/strict`; add explicit types instead of relying on `any` or implicit inference.
+
+## Component Button Style Guidelines
+All interactive buttons across components must follow a consistent style:
+```css
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: rgb(var(--bg-primary));
+  border: 1px solid rgb(var(--border-color));
+  border-radius: 6px;
+  color: rgb(var(--text-primary));
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgb(var(--bg-secondary));
+}
+```
+This applies to action buttons in `PythonScript.astro`, `GoogleDork.astro`, `GitHubRepo.astro`, and any future components with clickable buttons. Use outlined style (not filled) with accent color on hover.
 
 ## Testing Guidelines
 No formal test runner is configured yet; rely on `npm run astro -- check` and `npm run build` before pushing. When you introduce automated tests, place `.test.ts[x]` files alongside the code they cover and document any new tooling in this guide. For visual changes, capture screenshots and sanity-check pages via `npm run preview`.

@@ -1,0 +1,2239 @@
+---
+title: "Reverse Engineering: \"Tzar The Burden of the Crown\" - Part 1 (WDT Files)"
+pubDate: "2025-11-28"
+description: "Reverse Engineering: \"Tzar The Burden of the Crown\""
+tags:
+  - reverse engineering
+  - re
+  - tzar
+  - game
+  - game mod
+toc: true
+heroImage: '../../assets/re-tzar.png'
+---
+
+import ExpandableSection from '../../components/ExpandableSection.astro';
+import PythonScript from '../../components/PythonScript.astro';
+import GitHubRepo from '../../components/GitHubRepo.astro';
+
+## Table of Contents
+
+- [Story](#story)
+  - [Repository](#repository)
+  - [How does the game load the terrains](#how-does-the-game-load-the-terrains)
+- [HMMSYS PackFile](#hmmsys-packfile)
+- [Creating a `*.wdt` file](#creating-a-wdt-file)
+- [End](#end)
+
+# Story
+
+I wanted to get more into reverse engineering, so instead of me compiling `hello world` program and reverse engineer it, I decided to take a 25 year old game that I used to play as a kid
+and reverse engineer it. The game is called: "Tzar: The Burden of the Crown" by Haemimont Games, sadly they don't even show it on their [main page](https://www.haemimontgames.com/?#games) anymore, but it is [available on Steam](https://store.steampowered.com/app/825730/Tzar_The_Burden_of_the_Crown/). Unfortunately the game currently does not work on Windows 11 (due whatever reason that we might investigate further along the process).
+
+My initial goal of this project was to understand how the game works, how the game loads maps, resources and eventually if it's possible to mod it. In my short research I saw that there are couple of mods for the game [available on moddb](https://www.moddb.com/games/tzar-the-burden-of-the-crown/mods), they are introducing new terrains units and so on. My first goal was to see if I can alter those terrains.
+
+## Repository
+
+These are all the tools that I've used.
+
+<GitHubRepo repo="syrull/tzar-re" />
+
+## How does the game load the terrains
+
+I won't dive deep onto how the terrain are being builded and drawn on the display, instead let's see where are the assets for that. Modifying the assets should be sufficient for my first goal. Upon investigating the directory of the game we got the following structure:
+
+<ExpandableSection title="Game Directory Structure">
+```
+.
+├── Campaign
+│   ├── TzarTutorial.wcm
+│   └── Tzar.wcm
+├── HeadOff
+│   ├── Home.url
+│   ├── HoTL100.exe
+│   └── License.url
+├── Hero Icons
+│   ├── Big
+│   │   ├── ARAB HERO1.BMP
+│   │   ├── ARAB HERO3.BMP
+│   │   ├── ARAB HERO4.BMP
+│   │   ├── ARAB HERO5.BMP
+│   │   ├── ASIAN HERO1.BMP
+│   │   ├── ASIAN HERO2.BMP
+│   │   ├── ASIAN HERO3.BMP
+│   │   ├── ASIAN HERO4.BMP
+│   │   ├── Chinaman.bmp
+│   │   ├── EURO HERO10.BMP
+│   │   ├── EURO HERO11.BMP
+│   │   ├── EURO HERO3.BMP
+│   │   ├── EURO HERO4.BMP
+│   │   ├── EURO HERO5.BMP
+│   │   ├── EURO HERO7.BMP
+│   │   ├── EURO HERO.bmp
+│   │   ├── Ghiron.BMP
+│   │   ├── Hero1.bmp
+│   │   ├── Hero2.bmp
+│   │   ├── Hero3.bmp
+│   │   ├── Hero4.bmp
+│   │   ├── Old Sartor.BMP
+│   │   ├── Peasant1.BMP
+│   │   ├── Peasant2.bmp
+│   │   ├── tabela.bmp
+│   │   ├── Vardal.BMP
+│   │   ├── Woolin.BMP
+│   │   └── Young Sartor.BMP
+│   └── Small
+│       ├── ARAB TRADER.BMP
+│       ├── ASIAN PRIEST small.BMP
+│       ├── Chinaman.bmp
+│       ├── Dwarf.bmp
+│       ├── Euro peon.bmp
+│       ├── EURO PRIEST.BMP
+│       ├── ghiron small.BMP
+│       ├── Hero.bmp
+│       ├── JIN-FIGHTER.BMP
+│       ├── Knight.bmp
+│       ├── Maceman.bmp
+│       ├── Messiah.bmp
+│       ├── Monk.bmp
+│       ├── Nindja.bmp
+│       ├── old sartor small.bmp
+│       ├── Ork.bmp
+│       ├── Peasant2.BMP
+│       ├── PEASANT small.BMP
+│       ├── Pikeman.bmp
+│       ├── Priest.bmp
+│       ├── Samuray2.bmp
+│       ├── Samuray3.bmp
+│       ├── Satrap.bmp
+│       ├── Spy small.bmp
+│       ├── STONE GOLEM.BMP
+│       ├── vardal small.BMP
+│       ├── Wizard.bmp
+│       ├── Woolin small.bmp
+│       ├── Xodja.bmp
+│       └── young sartor small.bmp
+├── Maps
+│   ├── MP1.wmp
+│   ├── MP2.wmp
+│   ├── MP3.wmp
+│   ├── MP4.wmp
+│   ├── MP5.wmp
+│   └── MP6.wmp
+├── Packs
+│   ├── data.wdt
+│   ├── help.raw
+│   ├── help.wdt
+│   ├── images.wdt
+│   ├── local.wdt
+│   ├── movies.wdt
+│   ├── sounds.wdt
+│   ├── terrains2.wdt
+│   ├── terrains.wdt
+│   └── v101.wdt
+├── Setup.exe
+├── System
+│   ├── Lang.ini
+│   ├── terrainsBg.wdt
+│   ├── terrainsEn.wdt
+│   ├── TzarBg.dll
+│   ├── TzarEn.dll
+│   ├── TzarExtBg.dll
+│   └── TzarExtEn.dll
+├── TzarCampaign.exe
+├── Tzar.dll
+├── TzarEdit.dll
+├── TzarEdit.exe
+├── Tzar.exe
+├── TzarExt.dll
+└── Tzar.ini
+
+9 directories, 94 files
+```
+</ExpandableSection>
+
+An interesting thing is that we have some of the assets out, like the `Hero Icons`. But where are the icons for the buildings and so on? Obviously those must be in the `Packs/` folder, where we got the conveniently named `terrains, sounds, movies, etc...`. Let's see what is inside those files:
+
+```bash
+❯ cat Packs/data.wdt | xxd | head -n 50 
+00000000: 4c5a 5353 56ff 0300 0080 0000 c400 2e00  LZSSV...........
+00000010: 0000 702a 0000 8155 0000 1e74 0000 ca92  ..p*...U...t....
+00000020: 0000 b9b6 0000 42d3 0000 43f7 0000 a453  ......B...C....S
+00000030: 69b5 3acd 4e41 50b0 d8ed 746b 4db2 cb0a  i.:.NAP...tkM...
+00000040: 8d40 1fff 9cc7 fe0f 8e1e ffb0 8740 2894  .@...........@(.
+00000050: 1aa5 06b9 41a4 bff4 65d4 9a75 2677 137f  ....A...e..u&w..
+00000060: 3843 202f e808 9c26 bf43 a7be f029 f4e9  8C /...&.C...)..
+00000070: 73fa 028f 147f 804c 212f d408 942a 9b41  s......L!/...*.A
+```
+
+--- 
+
+```bash
+❯ strings Packs/data.wdt | head -n 50  
+LZSSV
+8C /
+B~pUjo
+)}XE
+t+/&
+S^tU?;
+```
+
+Those files are either packed or compressed, I did not know what is *LZSS* at that point but it was very interesting to me to learn this [compression algorithm](https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski). So this is a LZSS compressed file I thought, so... simple right? Lets see how I would decompress it. 
+
+I found this [utility for decompression](https://github.com/blacktop/lzss), and I ran it through the `wdt` file.
+
+```
+❯ go run cmd/main.go -d ~/dev/tzar-re/Tzar/Packs/data.wdt 
+Decompressed 72526 bytes to 257080 bytes
+Output written to: /home/syl/dev/tzar-re/Tzar/Packs/data.wdt.decompressed
+```
+
+It looked promising, but upon seeing the file I wasn't so optimistic.
+
+```bash
+❯ strings ./Packs/data.wdt.decompressed | head -n 50
+               
+      
+      
+p*   
+                            
+            
+                                                                              t                
+                @
+```
+
+Now something is wrong with the decompression, and at this point I knew that I had to learn how LZSS worked.
+
+<ExpandableSection title="Noob explains the LZSS algorithm">
+
+The algorithm is pretty simple once you understand it (I laughed when I reread what I've typed), but you gotta learn the base of it which is LZ77 and LZ78. Those are lossless compression algorithms but they have a caveat, in some rare cases the compressed data may result in a bigger size than the raw data. They work through dictionary coders (yes I just learned that word), they create a dictionary of matches to be compressed at certain offsets through the data.
+
+![lz78](../../assets/LZ78.png)
+
+**I wish to understand what does that mean.**, actually after making this joke I learned what does it mean and now as a person who vaguely understands it its not funny anymore.
+
+Anyway, let's try to compress the following string: `ABRACADABRA`, before we do we have to set the minimal match length so lets put that on 2.
+
+`(Type) <Literal|Pointer>` If the length is < 2 => `(1) <Literal>` else: `(0) <Offset, Length>`
+
+**Iter 1:**
+  - Current Item: `A`
+  - Lookahead: `A`
+  - Buffer: `nil`
+  - Output: `(1) A`
+
+**Iter 2:**
+  - Current Item: `B`
+  - Lookahead: `B`
+  - Buffer: `A`
+  - Output: `(1) B`
+
+**Iter 3:**
+  - Current Item: `R`
+  - Lookahead: `R`
+  - Buffer: `A, B`
+  - Output: `(1) R`
+
+**Iter 4:**
+
+We do have a match here but since we set the minimal match length to 2, we won't do anything here.
+
+  - Current Item: `A`
+  - Lookahead: `A`
+  - Buffer: `A, B, R`
+  - Output: `(1) A`
+
+**Iter 5:**
+
+  - Current Item: `C`
+  - Lookahead: `C`
+  - Buffer: `A, B, R, A`
+  - Output: `(1) C`
+
+**Iter 6:**
+
+Match, but too short sequence (1)
+
+  - Current Item: `A`
+  - Lookahead: `A`
+  - Buffer: `A, B, R, A, C`
+  - Output: `(1) A`
+
+**Iter 7:**
+
+  - Current Item: `D`
+  - Lookahead: `D`
+  - Buffer: `A, B, R, A, C, A`
+  - Output: `(1) D`
+
+**Iter 8:**
+
+We use the `0` for reference, and 7, 4 means go back 7 chars and add 4
+
+  - Current Item: `A`
+  - Lookahead: `A B R A`
+  - Buffer: `A, B, R, A, C, A, D`
+  - Output: `(0) <7, 4>`
+
+So in the end we will end up with: `1 A 1 B 1 R 1 A 1 C 1 A 1 D 0 <7, 4>`, instead of writing the last 4 bytes we wrote a pointer to them, if the pointer takes 2 bytes we saved 2 bytes of space.
+
+</ExpandableSection>
+
+Okay now that I "know" what is LZSS and I can use it on simple string, lets bang our head with the wdt archive that Tzar has. This particular one took me a while to get and understand because of the fact that their implementation of the LZSS is not trivial, I've used `Arti***** Intel****` to help me break this.
+
+I've opened the `Tzar.exe` with Ghidra and began to look how the game parses those files, after a bit of wandering I ended up in the function that I called `GameInnit`, which was quite large function that was initializing most of the things, for example the frontend of the game, system checks, valid resource checks and so on. I began the great function renaming. Upon doing so I've reached this part:*
+
+```c
+bVar2 = FUN_004eb980();
+if (CONCAT31(extraout_var,bVar2) == 0) {
+    ShowErrorMessageBox(s_Incompatible_data_pack_file!_00586c70,(LPCSTR)0x0,0);
+    goto cleanup;
+}
+```
+
+Which shows an error of the data pack is incompatible, and directly under it we have the following functions:
+
+```c
+MultiInstanceGuard();
+Resource_WDTResourceManager((uint *)&DAT_005ca960);
+FUN_004737e0();
+FUN_004baf60();
+FUN_004baff0();
+FUN_00473990();
+```
+
+The one that I've renamed to `Resource_WDTResourceManager` is actually wrong which basically wasted me a lot of time to figure out why. Eventaully I realized that a bit further on top of the error that is being shown we have this bit:
+
+```c
+puVar3 = Game_ConfigLoader();
+if (puVar3 != (undefined *)0x0) {
+  if (puVar3 != (undefined *)0x29a) goto cleanup;
+  bVar2 = true;
+}
+```
+
+Essentially, following the `bVar2` lead me to the `puVar3` which loads the game configuration files. There I finally had a glimpse of light:
+
+```c
+tzarIniPath = &g_GameBasePath;
+...
+puVar4 = FUN_005149d0(this,s_DEFAULTS_005839a8,s_PACKSDIR_005839b4,&DAT_005cb45c,0x40);
+...
+AddVirtualRoot(&g_GameBasePath,1,0);
+if (((short)local_314 == 0) && ((short)local_318 != 0)) {
+  ShowErrorMsgWin(&DAT_005839d4,s_Error_initializing_virtual_file_s_005837f4,0);
+  FUN_00513eb0(this);
+  MemFree(this);
+  puVar4 = (undefined *)0x1;
+}
+```
+
+But the further I went I thought that this LZSS is actually working as an archive like ZIP/RAR, which quickly became a headache. Turns out that it isn't that trivial to just uncompress the data, and searching the internet I found a little executable from 2000s that does that and a QuickBMS script that also do that, I am of course not going to use either because that's cheating! Anyway turns out that my simple understanding of the LZSS compression of a simple string *might* not be sufficient to reverse this.
+
+> An important note here is that *I thought* that the LZSS was acting like an archive, but that is wrong, this is the compression over the archive which will be documented in the next section.
+
+This operation would load the paths for each "Virtual" root in the `tzarIniPath`.
+
+```c
+while (tzarIniPath != (char *)0x0) {
+  iVar7 = AddVirtualRoot(tzarIniPath + 1,0,0);
+  if (iVar7 == 0) {
+      Log_FormatFilename((undefined1 *)&local_20c,(byte *)s_Error_registering_root:_%s_0058398c);
+      ShowErrorMessageBox((LPCSTR)&local_20c,(LPCSTR)0x0,0);
+  }
+  else if (*tzarIniPath == '1') {
+      local_314 = local_314 + 1;
+  }
+  tzarIniPath = (char *)LinkedList_GetNext((int)local_31c);
+}
+```
+
+I've checked the function `AddVirtualRoot` and I eventually found this part:
+
+```c
+piVar10 = CLzssFilector(local_31c,piVar10,1);
+```
+
+So this is a constructor for the LZSS algorithm, this can be helpful to understand the initial params that they use for the LZSS so that we can unpack it at least. Here we check the magic bytes:
+
+
+```c
+iVar1 = (**(code **)(**(int **)((int)this + 0xc) + 0x10))((int *)((int)this + 0x14),0,0xe,0);
+if ((iVar1 == 0) && (*(undefined ***)((int)this + 0x14) == PTR_DAT_00592704)) {
+```
+
+---
+
+```
+                      PTR_DAT_00592704                                XREF[2]:     CLzssFilector:00517713(*), 
+                                                                                  CLzssFilector:00517718(R)  
+00592704 4c 5a 53 53     addr *     DAT_53535a4c
+00592708 00 00 00 00     addr *     00000000
+```
+
+So here we go, we have the magic `4c 5a 53 53 -> LZSS`. I've also derived bunch of other stuff from that function like: `uncompressed size, block size`. 
+
+| Offset | Size | Field | Description |
+|--------|------|-------|-------------|
+| 0x00 | 4 | magic | `"LZSS"` (0x53535A4C) |
+| 0x04 | 4 | total_size | Total decompressed size |
+| 0x08 | 4 | chunk_size | Decompressed chunk size (typically 0x8000) |
+| 0x0C | 2 | flags | Low byte = mode (0xC4), high byte = flags |
+
+At this point, I realized that this custom implementation might also have stuff like, offsets for the files inside the archive, the directory structure possibly, and bunch of other stuff that I don't know yet. Moving along from this point became really hard, I couldn't find the LZSS reading function, but eventually I found the function to read a chunk out of the LZSS archive, which was really hard for me to understand, but eventually I got this:
+
+- There is a big endian byte swap after the magic
+- Size of the compressed input
+- Output Buffer
+- Compression Mode
+
+I also found this bit:
+
+```c
+if (-1 < iVar2)  // if MSB is 0 → back-reference
+    ...
+else             // if MSB is 1 → literal byte
+    *puVar6 = (char)(uVar3 >> 0x18);  // copy literal
+```
+
+---
+
+```hex
+Bit stream: [1][8-bit literal] or [0][12-bit offset][4-bit length]
+            │                      │  └─ offset into sliding window (0-4095)
+            │                      └─ length of match (encoded, +2 minimum)
+            └─ type bit: 1=literal, 0=reference
+```
+
+Window size can be 1KB (`0xAx`), 2KB (`0xBx`), or 4KB (`0xCx`).
+
+Now after back and forth with AI and myself adjusting those values and bruteforcing stuff because I don't get some stuff I finally got the blob:
+
+```bash
+❯ uv run ./tzar_wdt_decompress.py /home/syl/dev/tzar-re/Tzar/Packs/data.wdt data_raw.bin
+Input:  /home/syl/dev/tzar-re/Tzar/Packs/data.wdt
+Output: data_raw.bin
+
+Compressed size: 72,526 bytes
+
+LZSS Header:
+  Total size:  261,974 bytes
+  Chunk size:  32,768 bytes (0x8000)
+  Mode:        0xc4
+  Chunks:      8
+  Decompressing: 100% (8/8 chunks)
+
+Wrote 261,974 bytes to data_raw.bin
+
+First 64 bytes of decompressed data:
+  0000: 48 4d 4d 53 59 53 20 50 61 63 6b 46 69 6c 65 0a  HMMSYS PackFile.
+  0010: 1a 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  0020: cc 00 00 00 e3 0f 00 00 0e 00 44 41 54 41 5c 41  ..........DATA\A
+  0030: 49 5c 41 49 2e 49 4e 49 3b 13 00 00 0c 01 00 00  I\AI.INI;.......
+```
+
+<PythonScript title="LZSS Decompressor" filename="tzar_wdt_lzss_decompress.py">
+{`
+#!/usr/bin/env python3
+"""
+Tzar WDT Decompressor - Extracts WDT to a single decompressed blob.
+
+This is a standalone script that only handles the LZSS decompression layer,
+outputting the raw HMMSYS PackFile data for analysis or further processing.
+
+Usage:
+    python tzar_wdt_decompress.py <input.wdt> [output.bin]
+    
+If output is not specified, writes to <input>.decompressed
+"""
+
+import struct
+import sys
+from pathlib import Path
+
+
+def bswap32(val: int) -> int:
+    """Byte-swap a 32-bit value (LE <-> BE)."""
+    return (((val >> 24) & 0xFF) |
+            ((val >> 8) & 0xFF00) |
+            ((val << 8) & 0xFF0000) |
+            ((val << 24) & 0xFF000000))
+
+
+def read_u32_at(data: bytes, pos: int) -> int:
+    """Read 4 bytes as little-endian, padding if near end."""
+    if pos >= len(data):
+        return 0
+    chunk = data[pos:pos + 4]
+    if len(chunk) < 4:
+        chunk = chunk + b'\x00' * (4 - len(chunk))
+    return struct.unpack('<I', chunk)[0]
+
+
+def decode_chunk_c4(src: bytes, max_output: int) -> bytes:
+    """
+    Decode a single LZSS chunk using mode 0xC4.
+    
+    Mode 0xC4: 12-bit window offset, 4-bit length, 0x1000 byte window.
+    """
+    WINDOW_SIZE = 0x1000
+    
+    output = bytearray()
+    src_ptr = 0
+    bit_state = 0
+    src_end = len(src) - 1
+    
+    while len(output) < max_output and src_ptr < src_end:
+        raw = read_u32_at(src, src_ptr)
+        swapped = bswap32(raw)
+        
+        bit_pos = bit_state & 0x07
+        shifted = (swapped << bit_pos) & 0xFFFFFFFF
+        iVar2 = shifted
+        uVar3 = (iVar2 << 1) & 0xFFFFFFFF
+        
+        if iVar2 & 0x80000000:
+            # LITERAL byte
+            advance = (1 if bit_state > 0xdffe else 0) + 1
+            src_ptr += advance
+            bit_state = (bit_state + 0x2001) & 0xff07
+            
+            literal = (uVar3 >> 24) & 0xFF
+            output.append(literal)
+        else:
+            # BACK-REFERENCE
+            advance = (1 if bit_state > 0xdffe else 0) + 2
+            src_ptr += advance
+            bit_state = (bit_state + 0x2001) & 0xff07
+            
+            offset = (uVar3 >> 20) & 0xFFF
+            length_bits = (uVar3 >> 16) & 0x0F
+            
+            if offset == 0:
+                # Zero run
+                skip_len = length_bits + 2
+                output.extend(b'\x00' * skip_len)
+            else:
+                # Copy from back-reference
+                back_dist = WINDOW_SIZE - offset
+                
+                if length_bits & 1:
+                    if len(output) >= back_dist:
+                        output.append(output[-back_dist])
+                    else:
+                        output.append(0)
+                
+                pair_count = (length_bits >> 1) + 1
+                for _ in range(pair_count):
+                    if len(output) >= back_dist:
+                        output.append(output[-back_dist])
+                    else:
+                        output.append(0)
+                    if len(output) >= back_dist:
+                        output.append(output[-back_dist])
+                    else:
+                        output.append(0)
+    
+    return bytes(output[:max_output])
+
+
+def decompress_wdt(data: bytes) -> bytes:
+    """Decompress WDT LZSS data to raw blob."""
+    MAGIC = b'LZSS'
+    
+    if data[:4] != MAGIC:
+        raise ValueError(f"Invalid magic: expected {MAGIC!r}, got {data[:4]!r}")
+    
+    total_size = struct.unpack_from('<I', data, 4)[0]
+    chunk_size = struct.unpack_from('<I', data, 8)[0]
+    flags = struct.unpack_from('<H', data, 12)[0]
+    mode = flags & 0xFF
+    
+    print(f"LZSS Header:")
+    print(f"  Total size:  {total_size:,} bytes")
+    print(f"  Chunk size:  {chunk_size:,} bytes (0x{chunk_size:x})")
+    print(f"  Mode:        0x{mode:02x}")
+    
+    if mode != 0xC4:
+        raise ValueError(f"Unsupported LZSS mode: 0x{mode:02x} (only 0xC4 supported)")
+    
+    num_chunks = (total_size + chunk_size - 1) // chunk_size
+    print(f"  Chunks:      {num_chunks}")
+    
+    # Read chunk offset table
+    chunk_offsets = []
+    for i in range(num_chunks):
+        chunk_offsets.append(struct.unpack_from('<I', data, 14 + i * 4)[0])
+    chunk_offsets.append(len(data))
+    
+    # Decompress all chunks
+    output = bytearray()
+    
+    for i in range(num_chunks):
+        if i < num_chunks - 1:
+            dec_size = chunk_size
+        else:
+            dec_size = total_size - (chunk_size * (num_chunks - 1))
+        
+        chunk_data = data[chunk_offsets[i]:chunk_offsets[i + 1]]
+        chunk_output = decode_chunk_c4(chunk_data, dec_size)
+        output.extend(chunk_output)
+        
+        # Progress
+        pct = (i + 1) * 100 // num_chunks
+        print(f"\r  Decompressing: {pct:3d}% ({i+1}/{num_chunks} chunks)", end='', flush=True)
+    
+    print()
+    return bytes(output[:total_size])
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <input.wdt> [output.bin]")
+        print()
+        print("Decompresses a Tzar WDT file to a raw binary blob.")
+        sys.exit(1)
+    
+    input_path = Path(sys.argv[1])
+    
+    if len(sys.argv) >= 3:
+        output_path = Path(sys.argv[2])
+    else:
+        output_path = input_path.with_suffix(input_path.suffix + '.decompressed')
+    
+    print(f"Input:  {input_path}")
+    print(f"Output: {output_path}")
+    print()
+    
+    data = input_path.read_bytes()
+    print(f"Compressed size: {len(data):,} bytes")
+    print()
+    
+    decompressed = decompress_wdt(data)
+    
+    output_path.write_bytes(decompressed)
+    print()
+    print(f"Wrote {len(decompressed):,} bytes to {output_path}")
+    
+    # Show a preview of the decompressed header
+    print()
+    print("First 64 bytes of decompressed data:")
+    for i in range(0, min(64, len(decompressed)), 16):
+        hex_part = ' '.join(f'{b:02x}' for b in decompressed[i:i+16])
+        ascii_part = ''.join(chr(b) if 32 <= b < 127 else '.' for b in decompressed[i:i+16])
+        print(f"  {i:04x}: {hex_part:<48} {ascii_part}")
+
+
+if __name__ == '__main__':
+    main()
+
+`}
+</PythonScript>
+
+Now we have another challenge... What the hell is `HMMSYS PackFile` 😭.
+
+## HMMSYS PackFile 
+
+Now this is a custom format introduced by the developers, I couldn't find this string at first, but it turns out that is separated, but I eventually found it:
+
+```
+                      s_MMSYS_PackFile_005927ed                       XREF[2,3]:   HMMSYS_ValidateAndInit:005223ee(
+                      s_MSYS_PackFile_005927ee                                     HMMSYS_ValidateAndInit:005223fb(
+                      s_SYS_PackFile_005927ef                                      HMMSYS_ValidateAndInit:005223fb(
+                      s_HMMSYS_PackFile_005927ec                                   HMMSYS_ValidateAndInit:00522408(
+                                                                                  HMMSYS_ValidateAndInit:00522408(
+005927ec 48 4d 4d        ds         "HMMSYS PackFile\n",1Ah
+          53 59 53 
+          20 50 61 
+005927fe 00              ??         00h
+005927ff 00              ??         00h
+```
+
+Now, looking at the actual raw file blob it seems to me that it would be trivial to retrieve everything in that PackFile since everything that is packed seems to be put in there raw with the path + filename.
+
+With some reversing I got the following information:
+
+| Offset | Size | Field | Description |
+|--------|------|-------|-------------|
+| 0x00 | 16 | magic | "HMMSYS PackFile\n" (with \n) |
+| 0x10 | 4 | eof_marker | Always 0x1A (DOS EOF / Ctrl+Z) |
+| 0x14 | 12 | reserved | Zeros/padding |
+| 0x20 | 4 | file_count | Number of files in archive |
+| 0x24 | 4 | entry_table_size | Size of the entry table in bytes* |
+
+<PythonScript title="WDT Extractor" filename="tzar_wdt_extractor.py">
+{`
+#!/usr/bin/env python3
+"""
+Tzar: The Burden of the Crown - WDT Archive Extractor
+
+WDT files use LZSS compression (mode 0xC4) wrapping an inner "HMMSYS PackFile" format.
+
+=== WDT Format ===
+Header (14 bytes):
+- 0x00: Magic "LZSS" (4 bytes)
+- 0x04: total_decompressed_size (u32)
+- 0x08: chunk_size (u32) - typically 0x8000
+- 0x0C: flags/mode (u16) - low byte is mode (0xC4)
+
+After header:
+- Chunk offset table: num_chunks * u32 offsets
+- Compressed chunk data
+
+=== LZSS Mode 0xC4 ===
+- Window size: 0x1000 (4096 bytes)
+- Bit reader: reads 32-bit LE, byte-swaps, shifts by bit position
+- Control bit 1: literal byte (8 bits)
+- Control bit 0: back-reference (12-bit offset, 4-bit length)
+- Special case: offset=0 means zero-fill run
+
+=== HMMSYS PackFile Format ===
+Header (0x28 bytes):
+- 0x00: Magic "HMMSYS PackFile\\n" (16 bytes)
+- 0x10: EOF marker (u32) - always 0x1A (ASCII SUB, DOS EOF marker)
+- 0x14-0x1F: zeros/reserved
+- 0x20: file_count (u32) - actual number of files
+- 0x24: entry_table_size (u32) - bytes used by entry table
+
+Entry format uses prefix compression:
+- Entry 0: u16(name_len) + full_path + u32(offset) + u32(size)
+- Entry N: u8(b0) + u8(b1) + stored_name + u32(offset) + u32(size)
+  - b0 = length of reconstructed full path
+  - b1 = prefix length to copy from previous full path
+  - stored_name_len = b0 - b1
+  
+Prefix compression algorithm
+- Files are sorted and adjacent files share common prefixes
+- full_path = prev_full_path[:b1] + stored_name
+- This works for all entries including directory changes
+- Game calculates next entry offset as: current + b0 + 2 + (8 - b1)
+  which equals: current + 2 + stored_name_len + 8
+"""
+
+import struct
+from pathlib import Path
+from dataclasses import dataclass, field
+from typing import Iterator
+
+
+class LZSSDecompressor:
+    """
+    LZSS Decompressor for Tzar WDT files.
+    
+    Based on reverse engineering of FUN_00518710 from Tzar.exe.
+    Uses mode 0xC4: 12-bit window offset, 4-bit length, 0x1000 byte window.
+    
+    The algorithm uses a rare bit-reading scheme:
+    1. Read 4 bytes as little-endian uint32
+    2. Byte-swap to big-endian for bit manipulation  
+    3. Shift left by current bit position (0-7)
+    4. Check MSB: 1=literal, 0=back-reference
+    """
+    
+    MAGIC = b'LZSS'
+    WINDOW_SIZE = 0x1000
+    
+    def decompress_file(self, filepath: str | Path) -> bytes:
+        """Decompress an entire WDT file."""
+        with open(filepath, 'rb') as f:
+            data = f.read()
+        return self.decompress(data)
+    
+    def decompress(self, data: bytes) -> bytes:
+        """Decompress WDT data."""
+        # Validate header
+        if data[:4] != self.MAGIC:
+            raise ValueError(f"Invalid magic: expected {self.MAGIC!r}, got {data[:4]!r}")
+        
+        total_size = struct.unpack_from('<I', data, 4)[0]
+        chunk_size = struct.unpack_from('<I', data, 8)[0]
+        reserved = struct.unpack_from('<H', data, 12)[0]
+        mode = reserved & 0xFF
+        
+        if mode != 0xC4:
+            raise ValueError(f"Unsupported LZSS mode: 0x{mode:02x} (expected 0xC4)")
+        
+        # Calculate chunks
+        num_chunks = (total_size + chunk_size - 1) // chunk_size
+        
+        # Read chunk offset table (starts at byte 14)
+        chunk_offsets = []
+        for i in range(num_chunks):
+            chunk_offsets.append(struct.unpack_from('<I', data, 14 + i * 4)[0])
+        chunk_offsets.append(len(data))  # End marker
+        
+        # Decompress all chunks
+        output = bytearray()
+        
+        for i in range(num_chunks):
+            # Determine this chunk's decompressed size
+            if i < num_chunks - 1:
+                dec_size = chunk_size
+            else:
+                dec_size = total_size - (chunk_size * (num_chunks - 1))
+            
+            # Get compressed chunk data
+            chunk_data = data[chunk_offsets[i]:chunk_offsets[i + 1]]
+            
+            # Decompress chunk
+            chunk_output = self._decode_chunk(chunk_data, dec_size)
+            output.extend(chunk_output)
+        
+        return bytes(output[:total_size])
+    
+    def _decode_chunk(self, src: bytes, max_output: int) -> bytes:
+        """
+        Decode a single LZSS chunk using mode 0xC4.
+        
+        Based on reverse-engineering FUN_00518710 case 0xC4.
+        The bit reader uses a 16-bit state 'uVar4' where:
+        - Low 3 bits track bit position within current dword
+        - Magic 0x2001 advances the state and handles byte boundaries
+        """
+        output = bytearray()
+        src_ptr = 0
+        bit_state = 0
+        
+        def read_u32_at(pos: int) -> int:
+            """Read 4 bytes as little-endian, handling bounds."""
+            if pos >= len(src):
+                return 0
+            chunk = src[pos:pos + 4]
+            if len(chunk) < 4:
+                chunk = chunk + b'\x00' * (4 - len(chunk))
+            return struct.unpack('<I', chunk)[0]
+        
+        def bswap32(val: int) -> int:
+            """Byte-swap a 32-bit value."""
+            return (((val >> 24) & 0xFF) |
+                    ((val >> 8) & 0xFF00) |
+                    ((val << 8) & 0xFF0000) |
+                    ((val << 24) & 0xFF000000))
+        
+        src_end = len(src) - 1
+        
+        while len(output) < max_output and src_ptr < src_end:
+            # Read and byte-swap 32 bits
+            raw = read_u32_at(src_ptr)
+            swapped = bswap32(raw)
+            
+            # Get bit position from low 3 bits
+            bit_pos = bit_state & 0x07
+            
+            # Shift by bit position
+            shifted = (swapped << bit_pos) & 0xFFFFFFFF
+            iVar2 = shifted
+            uVar3 = (iVar2 << 1) & 0xFFFFFFFF
+            
+            if iVar2 & 0x80000000:
+                # LITERAL byte - MSB is set
+                advance = (1 if bit_state > 0xdffe else 0) + 1
+                src_ptr += advance
+                bit_state = (bit_state + 0x2001) & 0xff07
+                
+                literal = (uVar3 >> 24) & 0xFF
+                output.append(literal)
+            else:
+                # BACK-REFERENCE
+                advance = (1 if bit_state > 0xdffe else 0) + 2
+                src_ptr += advance
+                bit_state = (bit_state + 0x2001) & 0xff07
+                
+                # 12-bit offset, 4-bit length
+                offset = (uVar3 >> 20) & 0xFFF
+                length_bits = (uVar3 >> 16) & 0x0F
+                
+                if offset == 0:
+                    # Zero run
+                    skip_len = length_bits + 2
+                    output.extend(b'\x00' * skip_len)
+                else:
+                    # Copy from back-reference
+                    back_dist = self.WINDOW_SIZE - offset
+                    
+                    # Odd flag: copy one byte first
+                    if length_bits & 1:
+                        if len(output) >= back_dist:
+                            output.append(output[-back_dist])
+                        else:
+                            output.append(0)
+                    
+                    # Copy pairs
+                    pair_count = (length_bits >> 1) + 1
+                    for _ in range(pair_count):
+                        if len(output) >= back_dist:
+                            output.append(output[-back_dist])
+                        else:
+                            output.append(0)
+                        if len(output) >= back_dist:
+                            output.append(output[-back_dist])
+                        else:
+                            output.append(0)
+        
+        return bytes(output[:max_output])
+
+
+@dataclass
+class HMMSYSFileEntry:
+    """Represents a file entry in the HMMSYS PackFile."""
+    name: str           # Full reconstructed path (may be incorrect due to prefix compression)
+    offset: int         # Offset within the decompressed data
+    size: int           # File size in bytes
+    directory: str      # Parent directory
+    raw_stored: str = ""  # The raw stored string (before prefix reconstruction)
+    b0: int = 0         # Original b0 value (for debugging)
+    b1: int = 0         # Original b1 value (for debugging)
+
+
+class HMMSYSUnpacker:
+    """
+    Unpacker for HMMSYS PackFile format found inside Tzar WDT archives.
+    
+    Reverse-engineered from Tzar.exe:
+    - HMMSYS_ValidateAndInit (0x00522380): Validates magic, reads 0x28-byte header
+    - EntryTable_Init (0x00509460): Creates entry table object (0x2E bytes)
+    - EntryTable_ParseEntry (0x00509540): Parses entries with prefix decompression
+    
+    Prefix compression algorithm:
+    - Entry 0: u16(name_len) + full_path + u32(offset) + u32(size)
+    - Entry N: u8(b0) + u8(b1) + stored_name + u32(offset) + u32(size)
+    
+    Where:
+    - b0 = length of reconstructed full path
+    - b1 = prefix length to copy from previous path  
+    - stored_name_len = b0 - b1
+    - full_path = prev_full_path[:b1] + stored_name
+    
+    The game's next-entry calculation (from EntryTable_ParseEntry):
+        next_offset = current + b0 + 2 + (suffix_size - b1)
+    Where suffix_size = 8 (the fixed offset + size fields).
+    This simplifies to: current + 2 + (b0 - b1) + 8 = current + 10 + stored_name_len
+    """
+    
+    MAGIC = b'HMMSYS PackFile\n'
+    HEADER_SIZE = 0x28
+    
+    def __init__(self, data: bytes, debug: bool = False):
+        self.data = data
+        self.debug = debug
+        self.file_count = 0
+        self.entry_table_size = 0
+        self.entries: list[HMMSYSFileEntry] = []
+        
+        # State for prefix compression
+        self._prev_full_path = ""  # Previous full path for prefix reconstruction
+        
+        self._parse_header()
+        self._parse_entries()
+    
+    def _parse_header(self):
+        """
+        Parse the HMMSYS header.
+        
+        Mirrors HMMSYS_ValidateAndInit (0x00522380) which:
+        1. Reads 0x28 bytes via stream vtable
+        2. Compares against magic at 0x005927ec
+        3. Extracts file_count from offset 0x20
+        4. Extracts entry_table_size from offset 0x24
+        """
+        if len(self.data) < self.HEADER_SIZE:
+            raise ValueError("Data too short for HMMSYS header")
+        
+        magic = self.data[0:16]
+        if magic != self.MAGIC:
+            raise ValueError(f"Invalid HMMSYS magic: {magic!r}")
+        
+        # 0x10: EOF marker - always 0x1A (DOS EOF / ASCII SUB character)
+        self._eof_marker = struct.unpack_from('<I', self.data, 0x10)[0]
+        # 0x20: Actual file count
+        self.file_count = struct.unpack_from('<I', self.data, 0x20)[0]
+        # 0x24: Entry table size in bytes
+        self.entry_table_size = struct.unpack_from('<I', self.data, 0x24)[0]
+        
+        if self.debug:
+            print(f"HMMSYS: eof_marker=0x{self._eof_marker:x}, "
+                  f"files={self.file_count}, table_size={self.entry_table_size}")
+    
+    def _parse_entries(self):
+        """Parse all file entries."""
+        pos = self.HEADER_SIZE
+        entry_end = self.HEADER_SIZE + self.entry_table_size
+        
+        for entry_idx in range(self.file_count):
+            if pos >= entry_end or pos >= len(self.data) - 10:
+                break
+            
+            entry, consumed = self._parse_entry(pos, entry_idx)
+            if entry:
+                self.entries.append(entry)
+                if self.debug:
+                    print(f"  [{entry_idx:3d}] {entry.name}")
+                    if entry.raw_stored != entry.name.split('\\')[-1]:
+                        print(f"         stored: '{entry.raw_stored}'")
+            
+            if consumed == 0:
+                # Parse failed, try brute force
+                entry, consumed = self._parse_entry_bruteforce(pos, entry_idx)
+                if entry:
+                    self.entries.append(entry)
+                else:
+                    break
+            
+            pos += consumed
+    
+    def _parse_entry(self, pos: int, entry_idx: int) -> tuple[HMMSYSFileEntry | None, int]:
+        """
+        Parse a single file entry.
+        
+        Mirrors EntryTable_ParseEntry (0x00509540) which:
+        1. Copies entry data to buffer (up to 255 bytes)
+        2. Checks if first byte is 0 (end marker)
+        3. Calculates next offset: current + b0 + 2 + (8 - b1)
+        
+        Entry format:
+        - Entry 0: u16(name_len) + full_path + u32(offset) + u32(size)
+        - Entry N: u8(b0) + u8(b1) + stored_name + u32(offset) + u32(size)
+        """
+        
+        if entry_idx == 0:
+            # First entry: u16 name_len + full_path + offset + size
+            name_len = struct.unpack_from('<H', self.data, pos)[0]
+            full_path = self.data[pos + 2:pos + 2 + name_len].decode('latin-1')
+            offset = struct.unpack_from('<I', self.data, pos + 2 + name_len)[0]
+            size = struct.unpack_from('<I', self.data, pos + 2 + name_len + 4)[0]
+            
+            self._prev_full_path = full_path
+            directory = full_path.rsplit('\\', 1)[0] if '\\' in full_path else ""
+            
+            return HMMSYSFileEntry(
+                name=full_path,
+                offset=offset,
+                size=size,
+                directory=directory,
+                raw_stored=full_path,
+                b0=0,
+                b1=0
+            ), 2 + name_len + 8
+        
+        # Subsequent entries: b0 + b1 + stored_name + offset + size
+        b0 = self.data[pos]
+        b1 = self.data[pos + 1]
+        stored_len = b0 - b1
+        
+        if stored_len <= 0 or stored_len > 100:
+            return None, 0
+        
+        stored = self.data[pos + 2:pos + 2 + stored_len].decode('latin-1', errors='replace')
+        offset = struct.unpack_from('<I', self.data, pos + 2 + stored_len)[0]
+        size = struct.unpack_from('<I', self.data, pos + 2 + stored_len + 4)[0]
+        
+        # Validate offset/size
+        if not (0x50 < offset < len(self.data) and 0 < size < 50_000_000):
+            return None, 0
+        
+        # Apply prefix compression: full_path = prev[:b1] + stored
+        full_name = self._prev_full_path[:b1] + stored
+        self._prev_full_path = full_name
+        directory = full_name.rsplit('\\', 1)[0] if '\\' in full_name else ""
+        
+        return HMMSYSFileEntry(
+            name=full_name,
+            offset=offset,
+            size=size,
+            directory=directory,
+            raw_stored=stored,
+            b0=b0,
+            b1=b1
+        ), 2 + stored_len + 8
+    
+    def _parse_entry_bruteforce(self, pos: int, entry_idx: int) -> tuple[HMMSYSFileEntry | None, int]:
+        """Fallback: brute-force find valid entry."""
+        for try_len in range(3, min(60, len(self.data) - pos - 10)):
+            name_bytes = self.data[pos + 2:pos + 2 + try_len]
+            
+            if b'\x00' in name_bytes:
+                continue
+            
+            try:
+                name_str = name_bytes.decode('latin-1')
+                if not all(c.isalnum() or c in '._-\\/ ' for c in name_str):
+                    continue
+            except:
+                continue
+            
+            offset = struct.unpack_from('<I', self.data, pos + 2 + try_len)[0]
+            size = struct.unpack_from('<I', self.data, pos + 2 + try_len + 4)[0]
+            
+            if 0x50 < offset < len(self.data) and 0 < size < 50_000_000:
+                b0 = self.data[pos]
+                b1 = self.data[pos + 1]
+                
+                # For bruteforce, we can't reliably apply prefix compression
+                # so just use the raw name as-is
+                full_name = name_str
+                self._prev_full_path = full_name
+                directory = full_name.rsplit('\\', 1)[0] if '\\' in full_name else ""
+                
+                return HMMSYSFileEntry(
+                    name=full_name,
+                    offset=offset,
+                    size=size,
+                    directory=directory,
+                    raw_stored=name_str,
+                    b0=b0,
+                    b1=b1
+                ), 2 + try_len + 8
+        
+        return None, 0
+    
+    def extract_file(self, entry: HMMSYSFileEntry) -> bytes:
+        """Extract a single file's contents."""
+        return self.data[entry.offset:entry.offset + entry.size]
+    
+    def extract_all(self, output_dir: str | Path, use_raw_names: bool = False):
+        """
+        Extract all files to the specified directory.
+        
+        Args:
+            output_dir: Directory to extract files to
+            use_raw_names: If True, use raw_stored names instead of reconstructed names
+                          (useful if prefix reconstruction is wrong)
+        """
+        output_dir = Path(output_dir)
+        
+        for entry in self.entries:
+            if use_raw_names:
+                # Use raw stored name with current directory
+                if '\\' in entry.raw_stored:
+                    rel_path = entry.raw_stored
+                else:
+                    rel_path = f"{entry.directory}\\{entry.raw_stored}" if entry.directory else entry.raw_stored
+            else:
+                rel_path = entry.name
+            
+            # Convert backslashes for filesystem
+            rel_path = rel_path.replace('\\', '/')
+            file_path = output_dir / rel_path
+            
+            # Create parent directories
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # Write file
+            content = self.extract_file(entry)
+            file_path.write_bytes(content)
+            print(f"Extracted: {rel_path} ({entry.size} bytes)")
+    
+    def list_files(self) -> Iterator[HMMSYSFileEntry]:
+        """Iterate over all file entries."""
+        yield from self.entries
+
+
+class WDTExtractor:
+    """
+    High-level extractor for Tzar WDT archive files.
+    
+    Combines LZSS decompression and HMMSYS unpacking.
+    """
+    
+    def __init__(self, wdt_path: str | Path, debug: bool = False):
+        self.wdt_path = Path(wdt_path)
+        self.debug = debug
+        self.decompressor = LZSSDecompressor()
+        self.unpacker: HMMSYSUnpacker | None = None
+        self._decompressed_data: bytes | None = None
+    
+    def load(self):
+        """Load and decompress the WDT file."""
+        print(f"Decompressing {self.wdt_path.name}...")
+        self._decompressed_data = self.decompressor.decompress_file(self.wdt_path)
+        print(f"Decompressed size: {len(self._decompressed_data):,} bytes")
+        
+        print("Parsing HMMSYS PackFile...")
+        self.unpacker = HMMSYSUnpacker(self._decompressed_data, debug=self.debug)
+        print(f"Found {len(self.unpacker.entries)} files")
+    
+    def list_files(self) -> list[HMMSYSFileEntry]:
+        """List all files in the archive."""
+        if not self.unpacker:
+            self.load()
+        return list(self.unpacker.list_files())
+    
+    def extract_all(self, output_dir: str | Path, use_raw_names: bool = False):
+        """Extract all files to the specified directory."""
+        if not self.unpacker:
+            self.load()
+        self.unpacker.extract_all(output_dir, use_raw_names=use_raw_names)
+    
+    def extract_file(self, name: str) -> bytes | None:
+        """Extract a specific file by name."""
+        if not self.unpacker:
+            self.load()
+        
+        for entry in self.unpacker.entries:
+            if entry.name.upper() == name.upper():
+                return self.unpacker.extract_file(entry)
+        return None
+    
+    def save_decompressed(self, output_path: str | Path):
+        """Save the raw decompressed data (for debugging/analysis)."""
+        if not self._decompressed_data:
+            self.load()
+        Path(output_path).write_bytes(self._decompressed_data)
+        print(f"Saved decompressed data to {output_path}")
+
+
+def main():
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description='Extract files from Tzar WDT archives',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+Examples:
+  %(prog)s list Packs/local.wdt
+  %(prog)s extract Packs/local.wdt -o extracted/
+  %(prog)s extract Packs/data.wdt -o extracted/ --raw-names
+  %(prog)s dump Packs/local.wdt -o local_decompressed.bin
+  
+  Use --raw-names if you encounter any extraction issues.
+        '''
+    )
+    
+    parser.add_argument('--debug', '-d', action='store_true',
+                        help='Show debug output during parsing')
+    
+    subparsers = parser.add_subparsers(dest='command', required=True)
+    
+    # List command
+    list_parser = subparsers.add_parser('list', help='List files in archive')
+    list_parser.add_argument('wdt_file', help='Path to WDT file')
+    list_parser.add_argument('--show-raw', action='store_true',
+                             help='Show raw stored names alongside reconstructed names')
+    
+    # Extract command
+    extract_parser = subparsers.add_parser('extract', help='Extract files from archive')
+    extract_parser.add_argument('wdt_file', help='Path to WDT file')
+    extract_parser.add_argument('-o', '--output', default='extracted',
+                                help='Output directory (default: extracted)')
+    extract_parser.add_argument('--raw-names', action='store_true',
+                                help='Use raw stored names instead of reconstructed names')
+    
+    # Dump command (save decompressed data)
+    dump_parser = subparsers.add_parser('dump', help='Dump decompressed data')
+    dump_parser.add_argument('wdt_file', help='Path to WDT file')
+    dump_parser.add_argument('-o', '--output', required=True,
+                             help='Output file for decompressed data')
+    
+    args = parser.parse_args()
+    
+    extractor = WDTExtractor(args.wdt_file, debug=args.debug)
+    
+    if args.command == 'list':
+        extractor.load()
+        print("\nFiles in archive:")
+        print("-" * 70)
+        for entry in extractor.list_files():
+            if args.show_raw and entry.raw_stored != entry.name.split('\\')[-1]:
+                print(f"{entry.size:>10} bytes  {entry.name}")
+                print(f"{'':>10}        (stored: {entry.raw_stored})")
+            else:
+                print(f"{entry.size:>10} bytes  {entry.name}")
+        print("-" * 70)
+        print(f"Total: {len(extractor.list_files())} files")
+    
+    elif args.command == 'extract':
+        extractor.load()
+        print(f"\nExtracting to {args.output}/...")
+        extractor.extract_all(args.output, use_raw_names=args.raw_names)
+        print("Done!")
+    
+    elif args.command == 'dump':
+        extractor.load()
+        extractor.save_decompressed(args.output)
+
+
+if __name__ == '__main__':
+    main()
+`}
+</PythonScript>
+
+# Creating a `*.wdt` file
+
+At this point I thought that I had everything to create a wdt backtogether. The HMMSYS pack was quite easy to make, you basically follow the table for the headers and then iterate over the files and append them. Now that I got the pack, I needed to compress it back, at this point I was pretty much stuck because the compression broke it, that means that somehow my algorithm is not exactly the same as the one in the game and I spend a lot of time here but I couldn't find what went broke (and currently I kinda lack the skill to go through the debugger and exactly see what is wrong). However I noticed that an uncompressed file also loads because the game either checks if the wdt archive starts with LZSS magic and further along it checks if it starts with the HMMSYS, so actually we can skip the compression.
+
+At this point it's trivial to extract the contents of the `images.wdt` and for example replace the main screen of the game with something like this:
+
+**You have to use the following BMP settings:** (yes I learned that the hard way)
+
+| Property          | Required Value            |
+|-------------------|---------------------------|
+| Bits per pixel    | 8, 16, or 24              |
+| DIB header size   | 40 (BITMAPINFOHEADER)     |
+| Compression       | 0 (BI_RGB)                |
+
+![tzar_modified_asset](../../assets/tzar_broken.png)
+
+Use this script to `extract/bundle/list` and overall work with the WDT files that Tzar has, the script also incorporates a `validate` command to verify that the BMP's that you put are in the correct BMP format, if they are not you can use `convert-bmp` to make them.
+
+<PythonScript title="Tzar WDT Tool" filename="tzar_wdt_tool.py">
+{`
+#!/usr/bin/env python3
+"""
+Tzar: The Burden of the Crown - WDT Archive Tool
+
+A complete CLI tool for working with Tzar WDT archives:
+- Extract files from WDT archives
+- Create/bundle WDT archives from directories
+- Convert BMP images to Tzar-compatible format
+- Validate assets before bundling
+
+Usage:
+    tzar_wdt.py extract <archive.wdt> -o <output_dir>
+    tzar_wdt.py bundle <output.wdt> -d <source_dir>
+    tzar_wdt.py list <archive.wdt>
+    tzar_wdt.py convert-bmp <image.bmp>
+    tzar_wdt.py validate -d <directory>
+
+See 'tzar_wdt.py <command> --help' for more information.
+"""
+
+import struct
+import argparse
+import sys
+from pathlib import Path
+from dataclasses import dataclass
+from typing import Iterator, Optional
+
+
+# =============================================================================
+# BMP Utilities
+# =============================================================================
+
+def get_bmp_info(filepath: Path) -> dict:
+    """Read BMP header information."""
+    try:
+        with open(filepath, 'rb') as f:
+            data = f.read(138)
+    except Exception as e:
+        return {'valid': False, 'error': str(e)}
+    
+    if len(data) < 30 or data[:2] != b'BM':
+        return {'valid': False, 'error': 'Not a BMP file'}
+    
+    file_size = struct.unpack_from('<I', data, 2)[0]
+    data_offset = struct.unpack_from('<I', data, 10)[0]
+    dib_size = struct.unpack_from('<I', data, 14)[0]
+    width = struct.unpack_from('<i', data, 18)[0]
+    height = struct.unpack_from('<i', data, 22)[0]
+    bpp = struct.unpack_from('<H', data, 28)[0]
+    compression = struct.unpack_from('<I', data, 30)[0] if len(data) > 30 else 0
+    
+    # Tzar uses:
+    # - 16-bit RGB555 for color images (screens, sprites)
+    # - 8-bit indexed for masks/collision maps
+    # - 24-bit RGB for some screen images
+    # All must use BITMAPINFOHEADER (40 bytes) with no compression
+    is_compatible = (dib_size == 40 and compression == 0 and bpp in (8, 16, 24))
+    
+    return {
+        'valid': True,
+        'file_size': file_size,
+        'data_offset': data_offset,
+        'dib_size': dib_size,
+        'width': width,
+        'height': abs(height),
+        'height_raw': height,
+        'bpp': bpp,
+        'compression': compression,
+        'is_tzar_compatible': is_compatible,
+    }
+
+
+def convert_bmp_to_rgb555(input_path: Path, output_path: Optional[Path] = None) -> bool:
+    """
+    Convert any BMP to 16-bit RGB555 format compatible with Tzar.
+    
+    Returns True if conversion was performed, False if already compatible.
+    """
+    info = get_bmp_info(input_path)
+    if not info['valid']:
+        raise ValueError(f"Invalid BMP file: {info.get('error', 'unknown error')}")
+    
+    if info['is_tzar_compatible']:
+        return False
+    
+    try:
+        from PIL import Image
+    except ImportError:
+        raise ImportError("PIL/Pillow is required for BMP conversion: pip install Pillow")
+    
+    img = Image.open(input_path)
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+    
+    width, height = img.size
+    pixels = img.load()
+    
+    # Build pixel data (RGB555, bottom-to-top row order)
+    pixel_data = bytearray()
+    for y in range(height - 1, -1, -1):
+        for x in range(width):
+            r, g, b = pixels[x, y]
+            r5 = (r >> 3) & 0x1F
+            g5 = (g >> 3) & 0x1F
+            b5 = (b >> 3) & 0x1F
+            pixel16 = (r5 << 10) | (g5 << 5) | b5
+            pixel_data.extend(struct.pack('<H', pixel16))
+    
+    # Build BMP file
+    bmp_data = bytearray()
+    file_size = 54 + len(pixel_data)
+    
+    # File header (14 bytes)
+    bmp_data.extend(b'BM')
+    bmp_data.extend(struct.pack('<I', file_size))
+    bmp_data.extend(struct.pack('<HH', 0, 0))
+    bmp_data.extend(struct.pack('<I', 54))
+    
+    # DIB header - BITMAPINFOHEADER (40 bytes)
+    bmp_data.extend(struct.pack('<I', 40))
+    bmp_data.extend(struct.pack('<i', width))
+    bmp_data.extend(struct.pack('<i', height))
+    bmp_data.extend(struct.pack('<H', 1))
+    bmp_data.extend(struct.pack('<H', 16))
+    bmp_data.extend(struct.pack('<I', 0))
+    bmp_data.extend(struct.pack('<I', 0))
+    bmp_data.extend(struct.pack('<i', 0))
+    bmp_data.extend(struct.pack('<i', 0))
+    bmp_data.extend(struct.pack('<I', 0))
+    bmp_data.extend(struct.pack('<I', 0))
+    
+    bmp_data.extend(pixel_data)
+    
+    out_path = output_path or input_path
+    with open(out_path, 'wb') as f:
+        f.write(bmp_data)
+    
+    return True
+
+
+def validate_bmps_in_directory(directory: Path, fix: bool = False, verbose: bool = True) -> tuple[int, int, int]:
+    """
+    Validate (and optionally fix) all BMP files in a directory.
+    
+    Returns: (total_files, ok_files, problematic_files)
+    """
+    total = 0
+    ok = 0
+    problems = 0
+    
+    # Find all BMP files (case-insensitive)
+    bmp_files = list(directory.rglob('*.[Bb][Mm][Pp]'))
+    
+    for bmp_path in sorted(bmp_files):
+        total += 1
+        info = get_bmp_info(bmp_path)
+        
+        if not info['valid']:
+            if verbose:
+                print(f"⚠  {bmp_path.relative_to(directory)}: Invalid ({info.get('error', 'unknown')})")
+            problems += 1
+            continue
+        
+        if info['is_tzar_compatible']:
+            ok += 1
+            if verbose:
+                bpp_type = {8: "indexed", 16: "RGB555", 24: "RGB"}.get(info['bpp'], str(info['bpp']))
+                print(f"✓  {bmp_path.relative_to(directory)}: OK ({info['bpp']}-bit {bpp_type})")
+        else:
+            if fix:
+                try:
+                    convert_bmp_to_rgb555(bmp_path)
+                    problems += 1  # Count as changed
+                    if verbose:
+                        print(f"✔  {bmp_path.relative_to(directory)}: Converted ({info['bpp']}-bit → 16-bit)")
+                except Exception as e:
+                    problems += 1
+                    if verbose:
+                        print(f"❌ {bmp_path.relative_to(directory)}: Error - {e}")
+            else:
+                problems += 1
+                if verbose:
+                    issues = []
+                    if info['bpp'] not in (8, 16, 24):
+                        issues.append(f"bpp={info['bpp']} (need 8, 16, or 24)")
+                    if info['dib_size'] != 40:
+                        issues.append(f"header={info['dib_size']}B (need 40)")
+                    if info['compression'] != 0:
+                        issues.append(f"compression={info['compression']} (need 0)")
+                    print(f"✗  {bmp_path.relative_to(directory)}: INCOMPATIBLE ({', '.join(issues)})")
+    
+    return total, ok, problems
+
+
+# =============================================================================
+# LZSS Decompressor
+# =============================================================================
+
+class LZSSDecompressor:
+    """LZSS Decompressor for Tzar WDT files (mode 0xC4)."""
+    
+    MAGIC = b'LZSS'
+    WINDOW_SIZE = 0x1000
+    
+    def decompress_file(self, filepath: Path) -> bytes:
+        """Decompress an entire WDT file."""
+        with open(filepath, 'rb') as f:
+            data = f.read()
+        return self.decompress(data)
+    
+    def decompress(self, data: bytes) -> bytes:
+        """Decompress WDT data."""
+        if data[:4] != self.MAGIC:
+            raise ValueError(f"Invalid magic: expected {self.MAGIC!r}, got {data[:4]!r}")
+        
+        total_size = struct.unpack_from('<I', data, 4)[0]
+        chunk_size = struct.unpack_from('<I', data, 8)[0]
+        reserved = struct.unpack_from('<H', data, 12)[0]
+        mode = reserved & 0xFF
+        
+        if mode != 0xC4:
+            raise ValueError(f"Unsupported LZSS mode: 0x{mode:02x}")
+        
+        num_chunks = (total_size + chunk_size - 1) // chunk_size
+        
+        chunk_offsets = []
+        for i in range(num_chunks):
+            chunk_offsets.append(struct.unpack_from('<I', data, 14 + i * 4)[0])
+        chunk_offsets.append(len(data))
+        
+        output = bytearray()
+        for i in range(num_chunks):
+            dec_size = chunk_size if i < num_chunks - 1 else total_size - (chunk_size * (num_chunks - 1))
+            chunk_data = data[chunk_offsets[i]:chunk_offsets[i + 1]]
+            chunk_output = self._decode_chunk(chunk_data, dec_size)
+            output.extend(chunk_output)
+        
+        return bytes(output[:total_size])
+    
+    def _decode_chunk(self, src: bytes, max_output: int) -> bytes:
+        """Decode a single LZSS chunk."""
+        output = bytearray()
+        src_ptr = 0
+        bit_state = 0
+        
+        def read_u32_at(pos: int) -> int:
+            if pos >= len(src):
+                return 0
+            chunk = src[pos:pos + 4]
+            if len(chunk) < 4:
+                chunk = chunk + b'\x00' * (4 - len(chunk))
+            return struct.unpack('<I', chunk)[0]
+        
+        def bswap32(val: int) -> int:
+            return (((val >> 24) & 0xFF) | ((val >> 8) & 0xFF00) |
+                    ((val << 8) & 0xFF0000) | ((val << 24) & 0xFF000000))
+        
+        src_end = len(src) - 1
+        
+        while len(output) < max_output and src_ptr < src_end:
+            raw = read_u32_at(src_ptr)
+            swapped = bswap32(raw)
+            bit_pos = bit_state & 0x07
+            shifted = (swapped << bit_pos) & 0xFFFFFFFF
+            iVar2 = shifted
+            uVar3 = (iVar2 << 1) & 0xFFFFFFFF
+            
+            if iVar2 & 0x80000000:
+                advance = (1 if bit_state > 0xdffe else 0) + 1
+                src_ptr += advance
+                bit_state = (bit_state + 0x2001) & 0xff07
+                literal = (uVar3 >> 24) & 0xFF
+                output.append(literal)
+            else:
+                advance = (1 if bit_state > 0xdffe else 0) + 2
+                src_ptr += advance
+                bit_state = (bit_state + 0x2001) & 0xff07
+                offset = (uVar3 >> 20) & 0xFFF
+                length_bits = (uVar3 >> 16) & 0x0F
+                
+                if offset == 0:
+                    skip_len = length_bits + 2
+                    output.extend(b'\x00' * skip_len)
+                else:
+                    back_dist = self.WINDOW_SIZE - offset
+                    if length_bits & 1:
+                        if len(output) >= back_dist:
+                            output.append(output[-back_dist])
+                        else:
+                            output.append(0)
+                    pair_count = (length_bits >> 1) + 1
+                    for _ in range(pair_count):
+                        if len(output) >= back_dist:
+                            output.append(output[-back_dist])
+                        else:
+                            output.append(0)
+                        if len(output) >= back_dist:
+                            output.append(output[-back_dist])
+                        else:
+                            output.append(0)
+        
+        return bytes(output[:max_output])
+
+
+# =============================================================================
+# HMMSYS PackFile Parser/Creator
+# =============================================================================
+
+@dataclass
+class HMMSYSFileEntry:
+    """Represents a file entry in the HMMSYS PackFile."""
+    name: str
+    offset: int
+    size: int
+    directory: str
+    raw_stored: str = ""
+    b0: int = 0
+    b1: int = 0
+
+
+@dataclass
+class FileEntry:
+    """Represents a file to be packed."""
+    path: Path
+    archive_name: str
+    size: int
+
+
+class HMMSYSUnpacker:
+    """Unpacker for HMMSYS PackFile format."""
+    
+    MAGIC = b'HMMSYS PackFile\n'
+    HEADER_SIZE = 0x28
+    
+    def __init__(self, data: bytes, debug: bool = False):
+        self.data = data
+        self.debug = debug
+        self.file_count = 0
+        self.entry_table_size = 0
+        self.entries: list[HMMSYSFileEntry] = []
+        self._prev_full_path = ""
+        
+        self._parse_header()
+        self._parse_entries()
+    
+    def _parse_header(self):
+        if len(self.data) < self.HEADER_SIZE:
+            raise ValueError("Data too short for HMMSYS header")
+        
+        magic = self.data[0:16]
+        if magic != self.MAGIC:
+            raise ValueError(f"Invalid HMMSYS magic: {magic!r}")
+        
+        self._eof_marker = struct.unpack_from('<I', self.data, 0x10)[0]
+        self.file_count = struct.unpack_from('<I', self.data, 0x20)[0]
+        self.entry_table_size = struct.unpack_from('<I', self.data, 0x24)[0]
+        
+        if self.debug:
+            print(f"HMMSYS: files={self.file_count}, table_size={self.entry_table_size}")
+    
+    def _parse_entries(self):
+        pos = self.HEADER_SIZE
+        entry_end = self.HEADER_SIZE + self.entry_table_size
+        
+        for entry_idx in range(self.file_count):
+            if pos >= entry_end or pos >= len(self.data) - 10:
+                break
+            
+            entry, consumed = self._parse_entry(pos, entry_idx)
+            if entry:
+                self.entries.append(entry)
+                if self.debug:
+                    print(f"  [{entry_idx:3d}] {entry.name}")
+            
+            if consumed == 0:
+                entry, consumed = self._parse_entry_bruteforce(pos, entry_idx)
+                if entry:
+                    self.entries.append(entry)
+                else:
+                    break
+            
+            pos += consumed
+    
+    def _parse_entry(self, pos: int, entry_idx: int) -> tuple[HMMSYSFileEntry | None, int]:
+        if entry_idx == 0:
+            name_len = struct.unpack_from('<H', self.data, pos)[0]
+            full_path = self.data[pos + 2:pos + 2 + name_len].decode('latin-1')
+            offset = struct.unpack_from('<I', self.data, pos + 2 + name_len)[0]
+            size = struct.unpack_from('<I', self.data, pos + 2 + name_len + 4)[0]
+            
+            self._prev_full_path = full_path
+            directory = full_path.rsplit('\\', 1)[0] if '\\' in full_path else ""
+            
+            return HMMSYSFileEntry(
+                name=full_path, offset=offset, size=size,
+                directory=directory, raw_stored=full_path, b0=0, b1=0
+            ), 2 + name_len + 8
+        
+        b0 = self.data[pos]
+        b1 = self.data[pos + 1]
+        stored_len = b0 - b1
+        
+        if stored_len <= 0 or stored_len > 100:
+            return None, 0
+        
+        stored = self.data[pos + 2:pos + 2 + stored_len].decode('latin-1', errors='replace')
+        offset = struct.unpack_from('<I', self.data, pos + 2 + stored_len)[0]
+        size = struct.unpack_from('<I', self.data, pos + 2 + stored_len + 4)[0]
+        
+        if not (0x50 < offset < len(self.data) and 0 < size < 50_000_000):
+            return None, 0
+        
+        full_name = self._prev_full_path[:b1] + stored
+        self._prev_full_path = full_name
+        directory = full_name.rsplit('\\', 1)[0] if '\\' in full_name else ""
+        
+        return HMMSYSFileEntry(
+            name=full_name, offset=offset, size=size,
+            directory=directory, raw_stored=stored, b0=b0, b1=b1
+        ), 2 + stored_len + 8
+    
+    def _parse_entry_bruteforce(self, pos: int, entry_idx: int) -> tuple[HMMSYSFileEntry | None, int]:
+        for try_len in range(3, min(60, len(self.data) - pos - 10)):
+            name_bytes = self.data[pos + 2:pos + 2 + try_len]
+            if b'\x00' in name_bytes:
+                continue
+            try:
+                name_str = name_bytes.decode('latin-1')
+                if not all(c.isalnum() or c in '._-\\/ ' for c in name_str):
+                    continue
+            except:
+                continue
+            
+            offset = struct.unpack_from('<I', self.data, pos + 2 + try_len)[0]
+            size = struct.unpack_from('<I', self.data, pos + 2 + try_len + 4)[0]
+            
+            if 0x50 < offset < len(self.data) and 0 < size < 50_000_000:
+                b0 = self.data[pos]
+                b1 = self.data[pos + 1]
+                full_name = name_str
+                self._prev_full_path = full_name
+                directory = full_name.rsplit('\\', 1)[0] if '\\' in full_name else ""
+                
+                return HMMSYSFileEntry(
+                    name=full_name, offset=offset, size=size,
+                    directory=directory, raw_stored=name_str, b0=b0, b1=b1
+                ), 2 + try_len + 8
+        
+        return None, 0
+    
+    def extract_file(self, entry: HMMSYSFileEntry) -> bytes:
+        return self.data[entry.offset:entry.offset + entry.size]
+    
+    def extract_all(self, output_dir: Path, use_raw_names: bool = False, verbose: bool = True):
+        output_dir = Path(output_dir)
+        
+        for entry in self.entries:
+            rel_path = entry.name.replace('\\', '/')
+            file_path = output_dir / rel_path
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            content = self.extract_file(entry)
+            file_path.write_bytes(content)
+            if verbose:
+                print(f"Extracted: {rel_path} ({entry.size} bytes)")
+    
+    def list_files(self) -> Iterator[HMMSYSFileEntry]:
+        yield from self.entries
+
+
+class HMMSYSPacker:
+    """Packer for HMMSYS PackFile format."""
+    
+    MAGIC = b'HMMSYS PackFile\n'
+    HEADER_SIZE = 0x28
+    
+    def __init__(self):
+        self.entries: list[FileEntry] = []
+    
+    def add_file(self, disk_path: Path, archive_name: str):
+        size = disk_path.stat().st_size
+        self.entries.append(FileEntry(path=disk_path, archive_name=archive_name, size=size))
+    
+    def add_directory(self, root_dir: Path, prefix: str = ""):
+        root_dir = Path(root_dir)
+        for item in sorted(root_dir.rglob('*')):
+            if item.is_file():
+                rel_path = item.relative_to(root_dir)
+                archive_name = str(rel_path).replace('/', '\\')
+                if prefix:
+                    archive_name = prefix + '\\' + archive_name
+                self.add_file(item, archive_name)
+    
+    def _compute_prefix_length(self, prev: str, current: str) -> int:
+        min_len = min(len(prev), len(current))
+        prefix_len = 0
+        for i in range(min_len):
+            if prev[i] == current[i]:
+                prefix_len += 1
+            else:
+                break
+        return prefix_len
+    
+    def pack(self) -> bytes:
+        if not self.entries:
+            raise ValueError("No files to pack")
+        
+        self.entries.sort(key=lambda e: e.archive_name.upper())
+        
+        # Build entry table with placeholders
+        entry_table = bytearray()
+        prev_name = ""
+        
+        for idx, entry in enumerate(self.entries):
+            name = entry.archive_name
+            
+            if idx == 0:
+                name_bytes = name.encode('latin-1')
+                entry_table.extend(struct.pack('<H', len(name_bytes)))
+                entry_table.extend(name_bytes)
+                entry_table.extend(struct.pack('<I', 0))
+                entry_table.extend(struct.pack('<I', entry.size))
+            else:
+                prefix_len = self._compute_prefix_length(prev_name, name)
+                stored = name[prefix_len:]
+                stored_bytes = stored.encode('latin-1')
+                
+                b0 = len(name)
+                b1 = prefix_len
+                
+                entry_table.append(b0)
+                entry_table.append(b1)
+                entry_table.extend(stored_bytes)
+                entry_table.extend(struct.pack('<I', 0))
+                entry_table.extend(struct.pack('<I', entry.size))
+            
+            prev_name = name
+        
+        entry_table_size = len(entry_table)
+        hash_table_size = len(self.entries) * 4
+        data_start = self.HEADER_SIZE + entry_table_size + hash_table_size
+        
+        # Rebuild with correct offsets
+        entry_table_patched = bytearray()
+        prev_name = ""
+        current_offset = data_start
+        
+        for idx, entry in enumerate(self.entries):
+            name = entry.archive_name
+            
+            if idx == 0:
+                name_bytes = name.encode('latin-1')
+                entry_table_patched.extend(struct.pack('<H', len(name_bytes)))
+                entry_table_patched.extend(name_bytes)
+                entry_table_patched.extend(struct.pack('<I', current_offset))
+                entry_table_patched.extend(struct.pack('<I', entry.size))
+            else:
+                prefix_len = self._compute_prefix_length(prev_name, name)
+                stored = name[prefix_len:]
+                stored_bytes = stored.encode('latin-1')
+                
+                b0 = len(name)
+                b1 = prefix_len
+                
+                entry_table_patched.append(b0)
+                entry_table_patched.append(b1)
+                entry_table_patched.extend(stored_bytes)
+                entry_table_patched.extend(struct.pack('<I', current_offset))
+                entry_table_patched.extend(struct.pack('<I', entry.size))
+            
+            current_offset += entry.size
+            prev_name = name
+        
+        # Hash table (all zeros - game doesn't use it)
+        hash_table = b'\x00' * hash_table_size
+        
+        # Build header
+        header = bytearray()
+        header.extend(self.MAGIC)
+        header.extend(struct.pack('<I', 0x1A))
+        header.extend(b'\x00' * 12)
+        header.extend(struct.pack('<I', len(self.entries)))
+        header.extend(struct.pack('<I', len(entry_table_patched)))
+        
+        assert len(header) == self.HEADER_SIZE
+        
+        # Combine all parts
+        output = bytearray()
+        output.extend(header)
+        output.extend(entry_table_patched)
+        output.extend(hash_table)
+        
+        for entry in self.entries:
+            file_data = entry.path.read_bytes()
+            output.extend(file_data)
+        
+        return bytes(output)
+
+
+# =============================================================================
+# High-Level API
+# =============================================================================
+
+class WDTArchive:
+    """High-level interface for working with WDT archives."""
+    
+    def __init__(self, wdt_path: Optional[Path] = None, debug: bool = False):
+        self.wdt_path = Path(wdt_path) if wdt_path else None
+        self.debug = debug
+        self.decompressor = LZSSDecompressor()
+        self.unpacker: Optional[HMMSYSUnpacker] = None
+        self._decompressed_data: Optional[bytes] = None
+        self._is_compressed: Optional[bool] = None
+    
+    def load(self):
+        """Load and parse the WDT file."""
+        if not self.wdt_path:
+            raise ValueError("No WDT file specified")
+        
+        with open(self.wdt_path, 'rb') as f:
+            magic = f.read(4)
+            f.seek(0)
+            data = f.read()
+        
+        if magic == b'LZSS':
+            self._is_compressed = True
+            print(f"Decompressing {self.wdt_path.name}...")
+            self._decompressed_data = self.decompressor.decompress(data)
+            print(f"Decompressed size: {len(self._decompressed_data):,} bytes")
+        elif magic == b'HMMS':
+            self._is_compressed = False
+            self._decompressed_data = data
+            print(f"Loading raw HMMSYS: {self.wdt_path.name} ({len(data):,} bytes)")
+        else:
+            raise ValueError(f"Unknown format: {magic!r}")
+        
+        print("Parsing HMMSYS PackFile...")
+        self.unpacker = HMMSYSUnpacker(self._decompressed_data, debug=self.debug)
+        print(f"Found {len(self.unpacker.entries)} files")
+    
+    def list_files(self) -> list[HMMSYSFileEntry]:
+        if not self.unpacker:
+            self.load()
+        return list(self.unpacker.list_files())
+    
+    def extract_all(self, output_dir: Path, verbose: bool = True):
+        if not self.unpacker:
+            self.load()
+        self.unpacker.extract_all(output_dir, verbose=verbose)
+    
+    def extract_file(self, name: str) -> Optional[bytes]:
+        if not self.unpacker:
+            self.load()
+        for entry in self.unpacker.entries:
+            if entry.name.upper() == name.upper():
+                return self.unpacker.extract_file(entry)
+        return None
+    
+    @staticmethod
+    def create(source_dir: Path, output_path: Path, prefix: str = "",
+               validate_bmps: bool = True, fix_bmps: bool = False,
+               verbose: bool = True) -> bool:
+        """
+        Create a WDT archive from a directory.
+        
+        Args:
+            source_dir: Directory containing files to pack
+            output_path: Output WDT file path
+            prefix: Optional prefix for archive paths
+            validate_bmps: Check BMP files for compatibility
+            fix_bmps: Auto-convert incompatible BMPs
+            verbose: Print progress
+        
+        Returns:
+            True if successful, False if validation failed
+        """
+        source_dir = Path(source_dir)
+        output_path = Path(output_path)
+        
+        # Validate BMPs if requested
+        if validate_bmps:
+            if verbose:
+                print("Validating BMP files...")
+            total, ok, problems = validate_bmps_in_directory(
+                source_dir, fix=fix_bmps, verbose=verbose
+            )
+            
+            if problems > 0 and not fix_bmps:
+                print(f"\n❌ Found {problems} incompatible BMP file(s).")
+                print("   Use --fix-bmp to auto-convert, or convert manually with:")
+                print(f"   tzar_wdt.py convert-bmp -d {source_dir}")
+                return False
+            
+            if verbose:
+                print(f"\nBMP validation: {ok} OK" + (f", {problems} converted" if fix_bmps and problems else ""))
+                print()
+        
+        # Create archive
+        packer = HMMSYSPacker()
+        packer.add_directory(source_dir, prefix)
+        
+        if verbose:
+            print(f"Packing {len(packer.entries)} files...")
+        
+        hmmsys_data = packer.pack()
+        
+        if verbose:
+            print(f"Archive size: {len(hmmsys_data):,} bytes")
+        
+        output_path.write_bytes(hmmsys_data)
+        
+        if verbose:
+            print(f"Saved to {output_path}")
+        
+        return True
+
+
+# =============================================================================
+# CLI Commands
+# =============================================================================
+
+def cmd_extract(args):
+    """Extract files from a WDT archive."""
+    archive = WDTArchive(args.archive, debug=args.debug)
+    archive.load()
+    
+    output_dir = Path(args.output)
+    print(f"\nExtracting to {output_dir}/...")
+    archive.extract_all(output_dir, verbose=not args.quiet)
+    print("Done!")
+    return 0
+
+
+def cmd_bundle(args):
+    """Create a WDT archive from a directory."""
+    source_dir = Path(args.directory)
+    output_path = Path(args.output)
+    
+    if not source_dir.is_dir():
+        print(f"Error: {source_dir} is not a directory")
+        return 1
+    
+    success = WDTArchive.create(
+        source_dir=source_dir,
+        output_path=output_path,
+        prefix=args.prefix or "",
+        validate_bmps=not args.skip_validation,
+        fix_bmps=args.fix_bmp,
+        verbose=not args.quiet
+    )
+    
+    return 0 if success else 1
+
+
+def cmd_list(args):
+    """List files in a WDT archive."""
+    archive = WDTArchive(args.archive, debug=args.debug)
+    archive.load()
+    
+    print("\nFiles in archive:")
+    print("-" * 70)
+    total_size = 0
+    for entry in archive.list_files():
+        print(f"{entry.size:>10} bytes  {entry.name}")
+        total_size += entry.size
+    print("-" * 70)
+    print(f"Total: {len(archive.list_files())} files, {total_size:,} bytes")
+    return 0
+
+
+def cmd_convert_bmp(args):
+    """Convert BMP files to Tzar-compatible format."""
+    if args.directory:
+        directory = Path(args.directory)
+        if not directory.is_dir():
+            print(f"Error: {directory} is not a directory")
+            return 1
+        
+        action = "Checking" if args.check else "Converting"
+        print(f"{action} BMP files in {directory}...\n")
+        
+        total, ok, changed = validate_bmps_in_directory(
+            directory, fix=not args.check, verbose=not args.quiet
+        )
+        
+        print(f"\n{'='*50}")
+        print(f"Total files:  {total}")
+        print(f"Already OK:   {ok}")
+        print(f"{'Incompatible' if args.check else 'Converted'}:  {changed}")
+        
+        return 0 if args.check and changed == 0 else 0
+    
+    elif args.input:
+        input_path = Path(args.input)
+        if not input_path.exists():
+            print(f"Error: {input_path} not found")
+            return 1
+        
+        info = get_bmp_info(input_path)
+        if not info['valid']:
+            print(f"Error: Invalid BMP file")
+            return 1
+        
+        if args.check:
+            if info['is_tzar_compatible']:
+                print(f"✓ {input_path}: OK ({info['width']}x{info['height']} 16-bit RGB555)")
+                return 0
+            else:
+                issues = []
+                if info['bpp'] != 16:
+                    issues.append(f"bpp={info['bpp']}")
+                if info['dib_size'] != 40:
+                    issues.append(f"header={info['dib_size']}B")
+                print(f"✗ {input_path}: INCOMPATIBLE ({', '.join(issues)})")
+                return 1
+        
+        if info['is_tzar_compatible']:
+            print(f"✓ {input_path}: Already in correct format")
+            return 0
+        
+        output_path = Path(args.output) if args.output else None
+        try:
+            convert_bmp_to_rgb555(input_path, output_path)
+            out = output_path or input_path
+            print(f"✔ Converted: {out}")
+            print(f"  {info['width']}x{info['height']}, {info['bpp']}-bit → 16-bit RGB555")
+            return 0
+        except Exception as e:
+            print(f"Error: {e}")
+            return 1
+    
+    else:
+        print("Error: Specify either an input file or -d/--directory")
+        return 1
+
+
+def cmd_validate(args):
+    """Validate assets in a directory."""
+    directory = Path(args.directory)
+    if not directory.is_dir():
+        print(f"Error: {directory} is not a directory")
+        return 1
+    
+    print(f"Validating assets in {directory}...\n")
+    
+    # Validate BMPs
+    print("=== BMP Files ===")
+    total, ok, problems = validate_bmps_in_directory(directory, fix=False, verbose=not args.quiet)
+    
+    print(f"\n{'='*50}")
+    print(f"BMP files:    {total} total, {ok} OK, {problems} incompatible")
+    
+    if problems > 0:
+        print(f"\n⚠ Found {problems} incompatible BMP file(s).")
+        print("  Run with --fix to auto-convert, or use:")
+        print(f"  tzar_wdt.py convert-bmp -d {directory}")
+        return 1
+    
+    print("\n✓ All assets validated successfully!")
+    return 0
+
+
+# =============================================================================
+# Main Entry Point
+# =============================================================================
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog='tzar_wdt.py',
+        description='Tzar: The Burden of the Crown - WDT Archive Tool',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+Examples:
+  # Extract an archive
+  %(prog)s extract images.wdt -o ./extracted
+  
+  # List files in an archive
+  %(prog)s list images.wdt
+  
+  # Bundle a directory into a WDT file
+  %(prog)s bundle images.wdt -d ./extracted
+  
+  # Bundle with auto-fix for incompatible BMPs
+  %(prog)s bundle images.wdt -d ./extracted --fix-bmp
+  
+  # Convert a single BMP to Tzar format
+  %(prog)s convert-bmp image.bmp
+  
+  # Check all BMPs in a directory
+  %(prog)s convert-bmp -d ./extracted --check
+  
+  # Validate all assets before bundling
+  %(prog)s validate -d ./extracted
+        '''
+    )
+    
+    parser.add_argument('--debug', action='store_true', help='Show debug output')
+    parser.add_argument('-q', '--quiet', action='store_true', help='Suppress verbose output')
+    
+    subparsers = parser.add_subparsers(dest='command', required=True)
+    
+    # Extract command
+    extract_parser = subparsers.add_parser('extract', help='Extract files from a WDT archive')
+    extract_parser.add_argument('archive', help='Path to WDT archive')
+    extract_parser.add_argument('-o', '--output', default='extracted',
+                                help='Output directory (default: extracted)')
+    extract_parser.set_defaults(func=cmd_extract)
+    
+    # Bundle command
+    bundle_parser = subparsers.add_parser('bundle', help='Create a WDT archive from a directory')
+    bundle_parser.add_argument('output', help='Output WDT file path')
+    bundle_parser.add_argument('-d', '--directory', required=True,
+                               help='Source directory containing files to pack')
+    bundle_parser.add_argument('--prefix', help='Prefix for archive paths (e.g., "IMAGES")')
+    bundle_parser.add_argument('--skip-validation', action='store_true',
+                               help='Skip BMP format validation')
+    bundle_parser.add_argument('--fix-bmp', action='store_true',
+                               help='Auto-convert incompatible BMPs to RGB555')
+    bundle_parser.set_defaults(func=cmd_bundle)
+    
+    # List command
+    list_parser = subparsers.add_parser('list', help='List files in a WDT archive')
+    list_parser.add_argument('archive', help='Path to WDT archive')
+    list_parser.set_defaults(func=cmd_list)
+    
+    # Convert-bmp command
+    convert_parser = subparsers.add_parser('convert-bmp',
+                                           help='Convert BMP files to Tzar-compatible format')
+    convert_parser.add_argument('input', nargs='?', help='Input BMP file')
+    convert_parser.add_argument('-o', '--output', help='Output file path')
+    convert_parser.add_argument('-d', '--directory',
+                                help='Process all BMPs in directory recursively')
+    convert_parser.add_argument('--check', action='store_true',
+                                help='Check format without converting')
+    convert_parser.set_defaults(func=cmd_convert_bmp)
+    
+    # Validate command
+    validate_parser = subparsers.add_parser('validate',
+                                            help='Validate assets in a directory')
+    validate_parser.add_argument('-d', '--directory', required=True,
+                                 help='Directory to validate')
+    validate_parser.set_defaults(func=cmd_validate)
+    
+    args = parser.parse_args()
+    
+    if hasattr(args, 'func'):
+        sys.exit(args.func(args))
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
+`}
+</PythonScript>
+
+# End
+
+This is the end of this post, thank you so much if you reached here and read my journey of reversing this, I had this goal for a long time and just now found time and motivation to actually finish it and create tools and scripts for it. I hope to find more time to continue onto this and delve even deeper into the game.

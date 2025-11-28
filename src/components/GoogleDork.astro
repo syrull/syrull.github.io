@@ -79,21 +79,23 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.35rem 0.75rem;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.875rem;
+    padding: 0.4rem 0.75rem;
+    background: rgb(var(--bg-primary));
+    color: rgb(var(--text-primary));
+    border: 1px solid rgb(var(--border-color));
+    border-radius: 6px;
+    font-size: 0.8rem;
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
     white-space: nowrap;
   }
 
   .search-button:hover {
-    background: var(--accent-dark);
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgb(var(--bg-secondary));
   }
 
   .search-button svg {
@@ -131,8 +133,8 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
     top: 0.5rem;
     right: 0.5rem;
     background: rgb(var(--bg-primary));
-    border: 1px solid rgba(var(--border-color), 0.5);
-    border-radius: 4px;
+    border: 1px solid rgb(var(--border-color));
+    border-radius: 6px;
     padding: 0.4rem;
     cursor: pointer;
     display: flex;
@@ -143,8 +145,9 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
   }
 
   .copy-button:hover {
-    background: rgba(var(--bg-secondary), 0.8);
     border-color: var(--accent);
+    color: var(--accent);
+    background: rgb(var(--bg-secondary));
   }
 
   .copy-button:active {
@@ -152,16 +155,16 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
   }
 
   .copy-button.copied {
-    background: #28a745;
-    border-color: #28a745;
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .copy-button.copied svg {
-    stroke: white;
+    stroke: var(--accent);
   }
 
   .copy-button svg {
-    stroke: rgb(var(--text-primary));
+    stroke: currentColor;
   }
 
   @media (max-width: 640px) {

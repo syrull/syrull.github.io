@@ -1,0 +1,296 @@
+---
+import { Code } from 'astro-expressive-code/components';
+
+interface Props {
+  title: string;
+  filename?: string;
+  defaultOpen?: boolean;
+  code?: string;
+  lang?: string;
+}
+
+const { title, filename = "script.py", defaultOpen = false, code: codeProp, lang = "python" } = Astro.props;
+const uniqueId = `python-script-${Math.random().toString(36).substring(2, 9)}`;
+
+// Get code from either prop or slot
+let slotContent = "";
+if (Astro.slots.has("default")) {
+  slotContent = await Astro.slots.render("default");
+  // Clean up the slot content - remove HTML entities and trim
+  slotContent = slotContent
+    .replace(/&#123;/g, '{')
+    .replace(/&#125;/g, '}')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+}
+
+const finalCode = codeProp || slotContent || "";
+---
+
+<div class="python-script-container" data-script-id={uniqueId} data-code={finalCode} data-filename={filename}>
+  <div class="script-header">
+    <button class="expand-toggle" aria-expanded={defaultOpen ? "true" : "false"}>
+      <span class="python-icon">🐍</span>
+      <span class="script-title">{title}</span>
+      <span class="filename">{filename}</span>
+      <span class="toggle-icon">▼</span>
+    </button>
+    <div class="script-actions">
+      <button class="action-btn copy-btn" title="Copy to clipboard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="btn-text">Copy</span>
+      </button>
+      <button class="action-btn download-btn" title="Download script">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span class="btn-text">Download</span>
+      </button>
+    </div>
+  </div>
+  <div class="script-content" data-expanded={defaultOpen ? "true" : "false"}>
+    {finalCode ? <Code code={finalCode} lang={lang} /> : <p>No code provided</p>}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', initPythonScripts);
+  document.addEventListener('DOMContentLoaded', initPythonScripts);
+
+  function initPythonScripts() {
+    document.querySelectorAll('.python-script-container').forEach((container) => {
+      const toggle = container.querySelector('.expand-toggle');
+      const content = container.querySelector('.script-content') as HTMLElement;
+      const copyBtn = container.querySelector('.copy-btn');
+      const downloadBtn = container.querySelector('.download-btn');
+      const code = (container as HTMLElement).dataset.code || '';
+      const filename = (container as HTMLElement).dataset.filename || 'script.py';
+
+      // Skip if already initialized
+      if (container.hasAttribute('data-initialized')) return;
+      container.setAttribute('data-initialized', 'true');
+
+      // Toggle expand/collapse
+      toggle?.addEventListener('click', () => {
+        const isExpanded = content?.dataset.expanded === 'true';
+        if (content) {
+          content.dataset.expanded = isExpanded ? 'false' : 'true';
+        }
+        toggle.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+      });
+
+      // Copy to clipboard
+      copyBtn?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        try {
+          await navigator.clipboard.writeText(code);
+          const btnText = copyBtn.querySelector('.btn-text');
+          if (btnText) {
+            const originalText = btnText.textContent;
+            btnText.textContent = 'Copied!';
+            setTimeout(() => {
+              btnText.textContent = originalText;
+            }, 2000);
+          }
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+
+      // Download script
+      downloadBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const blob = new Blob([code], { type: 'text/x-python' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    });
+  }
+</script>
+
+<style>
+  .python-script-container {
+    margin: 0.75em 0;
+    border: 1px solid rgb(var(--border-color));
+    border-radius: 8px;
+    background: rgb(var(--bg-secondary));
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .python-script-container:hover {
+    border-color: var(--accent);
+  }
+
+  .script-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em;
+    gap: 0.5em;
+  }
+
+  .expand-toggle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: rgb(var(--text-primary));
+    font-family: inherit;
+    font-size: inherit;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .expand-toggle:hover {
+    background: rgba(var(--text-primary), 0.05);
+  }
+
+  .python-icon {
+    font-size: 1.2em;
+  }
+
+  .script-title {
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .filename {
+    font-size: 0.85em;
+    color: rgb(var(--text-secondary));
+    font-family: monospace;
+    background: rgba(var(--text-primary), 0.05);
+    padding: 0.2em 0.5em;
+    border-radius: 4px;
+  }
+
+  .toggle-icon {
+    font-size: 0.8em;
+    color: rgb(var(--text-secondary));
+    transition: transform 0.3s ease;
+  }
+
+  .expand-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .script-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    background: rgb(var(--bg-primary));
+    border: 1px solid rgb(var(--border-color));
+    border-radius: 6px;
+    cursor: pointer;
+    color: rgb(var(--text-primary));
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .action-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgb(var(--bg-secondary));
+  }
+
+  .action-btn svg {
+    flex-shrink: 0;
+  }
+
+  .btn-text {
+    white-space: nowrap;
+  }
+
+  .script-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .script-content[data-expanded="true"] {
+    max-height: 2000px;
+    transition: max-height 0.5s ease-in;
+  }
+
+  .script-content :global(.expressive-code),
+  .script-content :global(pre) {
+    margin: 0 !important;
+    border-radius: 0 0 8px 8px !important;
+    border-top: 1px solid rgb(var(--border-color)) !important;
+  }
+
+  .script-content :global(.expressive-code .frame) {
+    border-radius: 0 0 8px 8px !important;
+  }
+
+  .script-content :global(pre) {
+    max-height: 500px;
+    overflow: auto;
+  }
+
+  .script-content :global(code) {
+    font-size: 0.85em;
+    line-height: 1.5;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .script-header {
+      flex-wrap: wrap;
+    }
+
+    .expand-toggle {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .filename {
+      order: 1;
+      width: 100%;
+      margin-top: 0.25em;
+      text-align: center;
+    }
+
+    .script-actions {
+      width: 100%;
+      justify-content: center;
+      margin-top: 0.5em;
+    }
+
+    .btn-text {
+      display: none;
+    }
+
+    .action-btn {
+      padding: 0.5em;
+    }
+  }
+</style>
