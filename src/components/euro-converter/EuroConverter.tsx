@@ -100,27 +100,27 @@ export default function EuroConverter() {
             case 'CONFIRM_1':
                 return (
                     <ConfirmDialogs
-                        confirmNumber={1}
-                        eurAmount={state.eurAmount}
-                        onNext={() => goToStep('CONFIRM_2')}
+                        level={1}
+                        onConfirm={() => goToStep('CONFIRM_2')}
+                        onCancel={resetConverter}
                     />
                 );
 
             case 'CONFIRM_2':
                 return (
                     <ConfirmDialogs
-                        confirmNumber={2}
-                        eurAmount={state.eurAmount}
-                        onNext={() => goToStep('CONFIRM_3')}
+                        level={2}
+                        onConfirm={() => goToStep('CONFIRM_3')}
+                        onCancel={resetConverter}
                     />
                 );
 
             case 'CONFIRM_3':
                 return (
                     <ConfirmDialogs
-                        confirmNumber={3}
-                        eurAmount={state.eurAmount}
-                        onNext={() => goToStep('LOADING')}
+                        level={3}
+                        onConfirm={() => goToStep('LOADING')}
+                        onCancel={resetConverter}
                     />
                 );
 
@@ -137,7 +137,7 @@ export default function EuroConverter() {
                 );
 
             case 'FAKE_ERROR':
-                return <FakeError onRetry={() => goToStep('LOADING')} />;
+                return <FakeError onNext={() => goToStep('RESULT')} />;
 
             case 'RESULT':
                 return (

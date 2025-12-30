@@ -1,10 +1,10 @@
 import React from 'react';
 
 interface FakeErrorProps {
-    onRetry: () => void;
+    onNext: () => void;
 }
 
-export default function FakeError({ onRetry }: FakeErrorProps) {
+export default function FakeError({ onNext }: FakeErrorProps) {
     return (
         <div className="chaos-box">
             <h2 className="chaos-title">ERROR!</h2>
@@ -12,8 +12,8 @@ export default function FakeError({ onRetry }: FakeErrorProps) {
                 [Stub] Fake Error step
             </p>
             <div style={{ textAlign: 'center' }}>
-                <button className="chaos-button" onClick={onRetry}>
-                    Retry
+                <button className="chaos-button" onClick={onNext}>
+                    Continue
                 </button>
             </div>
         </div>
