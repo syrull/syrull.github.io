@@ -1,0 +1,28 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+import EuroConverter from '../../components/euro-converter/EuroConverter';
+---
+
+<!doctype html>
+<html lang="bg">
+    <head>
+        <BaseHead title="EURBGN Converter" description="The worst currency converter ever made" />
+        <style>
+            main {
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
+        <main>
+            <EuroConverter client:load />
+        </main>
+        <Footer />
+    </body>
+</html>
