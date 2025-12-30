@@ -1,0 +1,66 @@
+/* src/components/euro-converter/styles/chaos.css */
+
+.euro-converter {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    font-family: 'Comic Sans MS', 'Papyrus', cursive;
+    background: linear-gradient(135deg, #00ff00, #ff00ff, #ff6600);
+    background-size: 400% 400%;
+    animation: gradient-chaos 3s ease infinite;
+}
+
+@keyframes gradient-chaos {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.chaos-box {
+    background: white;
+    border: 5px dashed #ff00ff;
+    border-radius: 0;
+    padding: 2rem;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 10px 10px 0 #00ff00, -10px -10px 0 #ff6600;
+}
+
+.chaos-title {
+    font-size: 2rem;
+    color: #ff00ff;
+    text-shadow: 2px 2px #00ff00, -2px -2px #ff6600;
+    text-align: center;
+    animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px) rotate(-1deg); }
+    75% { transform: translateX(5px) rotate(1deg); }
+}
+
+.chaos-button {
+    background: linear-gradient(45deg, #ff00ff, #00ff00);
+    border: 3px solid #ff6600;
+    color: white;
+    font-family: inherit;
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: all 0.1s;
+}
+
+.chaos-button:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+.chaos-button:active {
+    transform: scale(0.95);
+}
