@@ -18,11 +18,11 @@ import GitHubRepo from '../../components/GitHubRepo.astro';
 ## Saved you ~$0.003-$0.006
 
 <ExpandableSection title="AI Summary">
-The blog post explores how VS Code Copilot’s billing model—based on “premium requests” rather than token usage—can be exploited by keeping a single request alive indefinitely. Through experimentation, the author observed that long-running, agentic workflows invoking multiple tools and sub-agents still consumed only one premium request.
+The blog post explores how VS Code Copilot's billing model—based on “premium requests” rather than token usage—can be exploited by keeping a single request alive indefinitely. Through experimentation, the author observed that long-running, agentic workflows invoking multiple tools and sub-agents still consumed only one premium request.
 
 To demonstrate this, the author designed an infinite agent loop where the main Copilot chat acts solely as an orchestrator, delegating work to sub-agents via runSubagent. The loop is sustained by periodically polling a URL for new tasks, executing them, and then sleeping before repeating. Tasks are managed through a simple web-based Kanban board backed by a Go server and SQLite database, allowing dynamic prompting and persistent execution without additional premium requests.
 
-A proof of concept is provided, along with Microsoft’s response stating that the behavior does not qualify as a security vulnerability under their criteria, as it relies on user-initiated prompt injection without broader impact.
+A proof of concept is provided, along with Microsoft's response stating that the behavior does not qualify as a security vulnerability under their criteria, as it relies on user-initiated prompt injection without broader impact.
 </ExpandableSection>
 
 ## Story
@@ -51,10 +51,8 @@ I created a proof of concept video with appropriate soundtrack to showcase the <
 
 > This report demonstrates direct prompt injection within a user‑initiated Copilot session where any persistence or billing effects are out of MSRC scope, and without evidence of indirect prompt injection or remotely attacker‑controlled impact on another user, the scenario does not meet MSRC security vulnerability criteria.
 
-> 💀
+I guess its fine to respond with that since it's more like a logic flaw issue with their agent but eventually it does lead to bypass of a restriction, so I would expected them to simply thank me for the report and forward it to the Copilot's team where they would "fix" it, instead it seems like a dead end. Anyways I am posting the repository for educational purposes! 
 
 <GitHubRepo repo="syrull/cocopilot" />
-
-Feel free to fork it and do whatever with it. I am aware of many improvements how to make it even better but I think that for this PoC it is fairly sufficient.
 
 Tested Models: **GPT-5.1-Codex, GPT-5.2-Codex, Claude Haiku 4.5, Claude Opus 4.5, Claude Sonnet 4.5**
