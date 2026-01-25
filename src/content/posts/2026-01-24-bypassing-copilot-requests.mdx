@@ -1,0 +1,58 @@
+---
+title: "Bypassing VSCode Copilot's Premium Requests"
+pubDate: "2026-01-24"
+description: "Bypassing VSCode Copilot's premium requests using an infinite loop"
+tags:
+  - ai
+  - copilot
+  - vscode
+  - bypass
+  - poc
+toc: true
+heroImage: '../../assets/cocopilot.png'
+---
+
+import ExpandableSection from '../../components/ExpandableSection.astro';
+import GitHubRepo from '../../components/GitHubRepo.astro';
+
+## Saved you ~$0.003-$0.006
+
+<ExpandableSection title="AI Summary">
+The blog post explores how VS Code Copilot’s billing model—based on “premium requests” rather than token usage—can be exploited by keeping a single request alive indefinitely. Through experimentation, the author observed that long-running, agentic workflows invoking multiple tools and sub-agents still consumed only one premium request.
+
+To demonstrate this, the author designed an infinite agent loop where the main Copilot chat acts solely as an orchestrator, delegating work to sub-agents via runSubagent. The loop is sustained by periodically polling a URL for new tasks, executing them, and then sleeping before repeating. Tasks are managed through a simple web-based Kanban board backed by a Go server and SQLite database, allowing dynamic prompting and persistent execution without additional premium requests.
+
+A proof of concept is provided, along with Microsoft’s response stating that the behavior does not qualify as a security vulnerability under their criteria, as it relies on user-initiated prompt injection without broader impact.
+</ExpandableSection>
+
+## Story
+
+A little while ago, I noticed that the usage model for Copilot differs from tools like Claude Code (duh). Claude Code relies on tokens to count usage, but with Copilot you're actually buying "premium requests." How does this work? What counts as a request? I had all of these questions and decided to test it.
+
+I created a simple prompt that would iterate for a while, invoking multiple tools and spawning sub-agents. After about 3-4 minutes of "work," it spent only a single premium request. I was curious: what happens if this request never stops?
+
+## The Infinite Agentic Loop
+
+Since we have a `runSubagent` tool in the built-ins, we can use the main chat as an orchestrator for calling sub-agents, where the sub-agents are the ones doing the actual work. The idea is not to pollute the context of the orchestrator and only use it as a delegator.
+
+The next problem to solve is how to create the infinite loop. To my surprise, this is easily solved by asking the agent to poll a URL and whenever "tasks" appear there, execute the `runSubagent` tool. Right after the task is done, use `sleep` for a minute until the next iteration. This creates the infinite loop.
+
+> It is important to know that asking it for an infinite loop is a no-no!
+
+The tasks are what I use to prompt the sub-agents dynamically within the loop. For this, I created a web interface, basically a simple Kanban board where you create tickets. Those tickets become the next "task" in queue order. Each task has a status: "Not Picked," "In Progress," or "Done," and also a summary field. The sub-agent creates a small summary of what it did, which gets saved to the database at the end of each task.
+
+## Proof of Concept
+
+<iframe width="960" height="600" src="https://www.youtube.com/embed/yLoftpWyG7Q?si=iMDbVmYL25m0p02p" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+I created a proof of concept video with appropriate soundtrack to showcase the <strike>vulnerability</strike>.
+
+**Important Note:** I sent this vulnerability report to Microsoft's Copilot AI/LLM Team. This was their response:
+
+> This report demonstrates direct prompt injection within a user‑initiated Copilot session where any persistence or billing effects are out of MSRC scope, and without evidence of indirect prompt injection or remotely attacker‑controlled impact on another user, the scenario does not meet MSRC security vulnerability criteria.
+
+> 💀
+
+<GitHubRepo repo="syrull/cocopilot" />
+
+Feel free to fork it and do whatever with it. I am aware of many improvements how to make it even better but I think that for this PoC it is fairly sufficient.
