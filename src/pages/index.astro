@@ -14,6 +14,10 @@ const posts = (await getCollection('posts')).sort(
 const writeups = (await getCollection('writeups')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 ).slice(0, 6);
+
+const talks = (await getCollection('talks')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+).slice(0, 6);
 ---
 
 <!doctype html>
@@ -269,6 +273,42 @@ const writeups = (await getCollection('writeups')).sort(
 									)}
 									<p class="date">
 										<FormattedDate date={writeup.data.pubDate} />
+									</p>
+								</div>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+
+			<section class="content-section">
+				<div class="section-header">
+					<h2>Talks</h2>
+					<a href="/talks/" class="view-all">View all talks →</a>
+				</div>
+				<ul>
+					{talks.map((talk) => (
+						<li>
+							<a href={`/talks/${talk.id}/`}>
+								{talk.data.youtubeId && (
+									<div class="post-image">
+										<img
+											src={`https://img.youtube.com/vi/${talk.data.youtubeId}/mqdefault.jpg`}
+											alt={talk.data.title}
+											width="400"
+											height="180"
+											loading="lazy"
+											style="width: 100%; height: 100%; object-fit: cover;"
+										/>
+									</div>
+								)}
+								<div class="post-content">
+									<h3 class="title">{talk.data.title}</h3>
+									{talk.data.description && (
+										<p class="description">{talk.data.description}</p>
+									)}
+									<p class="date">
+										<FormattedDate date={talk.data.pubDate} />
 									</p>
 								</div>
 							</a>

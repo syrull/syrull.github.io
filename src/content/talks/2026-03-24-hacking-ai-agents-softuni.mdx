@@ -1,0 +1,48 @@
+---
+title: "Hacking AI Agents: From Prompt Injection to Malicious MCP Servers"
+pubDate: "2026-03-24"
+description: "A deep dive into the attack surface of AI agents, covering prompt injection, jailbreaks, malicious MCP servers, weaponized skills, and agent-to-agent attacks."
+event: "SoftUni"
+youtubeId: "UGrXKB2IFgc"
+slidesUrl: "/presentations/Hacking-AI-Agents.pdf"
+tags:
+  - ai
+  - agents
+  - prompt-injection
+  - mcp
+  - jailbreak
+---
+
+import ExpandableSection from '../../components/ExpandableSection.astro';
+
+> **Note:** This talk is in Bulgarian.
+
+<ExpandableSection title="AI Summary">
+This talk explores the rapidly expanding attack surface of AI agents -- autonomous systems that use LLMs to interact with tools, code, and external services. Starting with Agent 101 fundamentals (what they are, how coding and research agents work), the presentation moves into enumeration techniques: identifying whether a target is a chatbot or a full agent, mapping its inputs and outputs, fingerprinting the underlying model, and probing its modalities. The attack section walks through the OWASP LLM Top 10, then demonstrates real-world exploits: ANSI escape code injection in CLI agents (turning plain text into a weapon), prompt injection attacks against GitHub Copilot, jailbreak techniques (Marinara presets, abliterated models), and output-based attacks (markdown exfiltration, XSS, CSV/LaTeX injection). The second half focuses on supply-chain threats: malicious MCP (Model Context Protocol) servers that poison tool descriptions, exfiltrate data, and execute living-off-the-land attacks; malicious Skills that harvest credentials, execute remote code, and inject shadow context into agent sessions. The talk concludes with the emerging frontier of Agent-to-Agent (A2A) attacks -- where AI agents target other AI agents -- referencing the hackerbot-claw incident and discussing defensive architectures for building secure AI harnesses.
+</ExpandableSection>
+
+**Event:** [SoftUni](https://softuni.bg/trainings/5344/hacking-ai-agents-from-prompt-injection-to-malicious-mcp-servers) -- March 24, 2026
+
+**Slides:** [Download PDF](/presentations/Hacking-AI-Agents.pdf)
+
+## Recording
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+    src="https://www.youtube.com/embed/UGrXKB2IFgc"
+    title="Hacking AI Agents: From Prompt Injection to Malicious MCP Servers"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
+
+## Topics Covered
+
+- **Agents 101** -- What AI agents are, how coding and research agents work
+- **Enumeration** -- Feature identification, I/O mapping, LLM fingerprinting
+- **Attacks** -- ANSI injection, prompt injection (CoPilot), jailbreaks, output attacks
+- **Malicious MCPs** -- Tool poisoning, data exfiltration, LOTL attacks
+- **Malicious Skills** -- Credential theft, remote code execution, shadow context
+- **A2A Attacks** -- Agent-to-agent threats, the hackerbot-claw incident, defensive architectures
