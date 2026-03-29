@@ -9,6 +9,131 @@ math: true
 heroImage: '../../assets/plugin-arch-python.png'
 ---
 
+import PythonScript from '../../components/PythonScript.astro';
+
+## CLAUDE.md / SKILL
+
+Drop this into your `CLAUDE.md` or use it as a skill when building extensible Python systems:
+
+<PythonScript title="Python Plugin Architecture" filename="CLAUDE.md" lang="markdown" defaultOpen={false}>
+{`# Python Plugin Architecture
+
+## When to use
+Use when a Python project needs runtime-extensible behavior: pluggable actions,
+hooks, middleware, or user-defined extensions loaded dynamically.
+
+## Pattern 1: Subclass Discovery (Django-style)
+
+Best for: class-based plugins where each plugin is a subclass of a base.
+
+### Structure
+project/
+  main.py
+  configuration.py
+  actions/
+    __init__.py
+    action_example1.py
+    action_example2.py
+
+### Base class (actions/__init__.py)
+class BaseAction:
+    def call(self):
+        raise NotImplementedError
+
+### Plugin (actions/action_example1.py)
+from actions import BaseAction
+
+class ClickAction(BaseAction):
+    def call(self):
+        print("clicked")
+
+### Configuration (configuration.py)
+ACTIONS = [
+    "actions.action_example1",
+    "actions.action_example2",
+]
+
+### Loader (main.py)
+import importlib
+from actions import BaseAction
+from configuration import ACTIONS
+
+# Import all configured modules so subclasses register
+for module_path in ACTIONS:
+    importlib.import_module(module_path)
+
+# Discover all subclasses
+plugins = BaseAction.__subclasses__()
+
+### How it works
+- Python tracks all subclasses of a class via __subclasses__()
+- Importing a module that defines a subclass is enough to register it
+- The ACTIONS list controls which modules get imported
+- No decorator or registry needed -- inheritance IS the registration
+
+## Pattern 2: Decorator Registry
+
+Best for: function-based plugins, when you need to pass metadata at registration time.
+
+### Structure
+project/
+  main.py
+  register.py
+  actions/
+    __init__.py
+    action_example1.py
+    action_example2.py
+
+### Registry (register.py)
+register = []
+
+def register_action(func):
+    register.append(func)
+    return func
+
+### Plugin (actions/action_example1.py)
+from register import register_action
+
+@register_action
+def action_example1():
+    print("example 1")
+
+### Discovery (actions/__init__.py)
+from actions.action_example1 import *
+from actions.action_example2 import *
+
+### Loader (main.py)
+import actions  # triggers __init__.py which imports all plugins
+from register import register
+
+print(register)  # list of registered functions
+
+### How it works
+- The decorator appends the function to a module-level list
+- Importing the actions package triggers all plugin imports
+- The register list is the single source of truth
+- You can extend the decorator with *args/**kwargs for metadata
+
+## Tradeoffs
+
+| | Subclass Discovery | Decorator Registry |
+|-|---|---|
+| Unit | Class | Function |
+| Registration | Implicit (inheritance) | Explicit (decorator) |
+| Configuration | External list (ACTIONS) | Import in __init__.py |
+| Metadata | Class attributes | Decorator arguments |
+| Overhead | ~24ms | ~23ms |
+| Best for | Complex plugins with state | Simple hooks/callbacks |
+
+## Rules
+- One plugin per file -- keeps discovery clean
+- Always export in __init__.py or configuration -- no implicit magic
+- Base class / decorator lives in a separate module from plugins -- avoids circular imports
+- Test plugins in isolation -- they should work without the loader
+`}
+</PythonScript>
+
+
 There are some use-cases where a plugin architecture is needed, I call this "code" plugins but it is quite possible that there is already a word for that. The idea is to 'load' functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I've created 2 solutions for that matter one that is using the `__subclasses__` dunder method and one using a decorator.
 
 ## Solution 1
