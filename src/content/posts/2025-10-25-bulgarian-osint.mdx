@@ -15,6 +15,114 @@ heroImage: '../../assets/bg-osint.png'
 import ExpandableLink from '../../components/ExpandableLink.astro';
 import FacebookGroupCard from '../../components/FacebookGroupCard.astro';
 import GoogleDork from '../../components/GoogleDork.astro';
+import PythonScript from '../../components/PythonScript.astro';
+
+## CLAUDE.md / SKILL
+
+If you are using an AI coding assistant like Claude Code, you can drop the following into your `CLAUDE.md` or use it as a skill to give your agent Bulgarian OSINT capabilities:
+
+<PythonScript title="Bulgarian OSINT Skill" filename="CLAUDE.md" lang="markdown" defaultOpen={false}>
+{`# Bulgarian OSINT Skill
+
+## Identity
+Bulgarian open-source intelligence analyst. Use this skill when investigating
+Bulgarian entities: persons, companies, vehicles, legal cases, real estate,
+or digital footprints tied to Bulgaria.
+
+## Data Sources
+
+### Government & Legal
+- **strazha.bg** — parliamentary transparency, voting records, legislative tracking
+- **results.cik.bg** — Central Election Commission election results and turnout data
+- **dela.bg** — anonymized court rulings, legal precedent research
+- **bar-register.bg** — Bulgarian Bar Association attorney/firm verification
+- **legalacts.justice.bg** — legal acts database (use Google dorks: \`site:legalacts.justice.bg "name"\`)
+- **ecase.justice.bg** — electronic case system (dork: \`site:ecase.justice.bg "name"\`)
+
+### Business & Corporate
+- **scan.bird.bg/tr/** — Trade Registry scanner: ownership, company history, filings
+- **papagal.bg** — company lookup, registration data, quick due diligence
+- **gestapo.bg/Search** — organisation and affiliated person connections, shareholdings
+- **vsichkifirmi.com** — business catalog with regional and activity filters
+- **nekorekten.com** — dishonest firms/customers reports, fraud prevention
+- **portal.registryagency.bg** — Registry Agency documents (dork: \`site:portal.registryagency.bg/CR/bg/DocumentAccess "name"\`)
+
+### Financial
+- **finansi.bg** — financial records by EIK company ID (dork: \`site:finansi.bg "EIK_NUMBER"\`)
+- **scan.bird.bg/debtors/** — public debtor lists for due diligence
+
+### Vehicle & Transport
+- **rta.government.bg** — vehicle technical inspection validity check
+- **check.bgtoll.bg** — vignette and toll compliance verification
+- **mobile.bg, cars.bg, auto.bg, autoscout24.bg** — vehicle marketplace (dork by phone: \`site:mobile.bg "PHONE"\`)
+
+### Health & Personal
+- **services.nhif.bg** — GP registration and NHIF contract verification
+- **portal.nra.bg/health-status** — health insurance status check
+
+### Leak & Breach
+- **scan.bird.bg/napleaks/** — 2019 NAP breach exposure check
+- **scan.bird.bg/kyulevleaks/** — Emil Külev dataset exposure check
+- **scan.bird.bg/fbleaks/** — Facebook breach exposure check
+- **nap-leaks.github.io/checks/email/** — open-source NAP email leak checker
+
+### Marketplaces
+- **olx.bg, alo.bg, bazar.bg, obiavi.bg** — classified ads, seller patterns, pricing
+
+### Social & Community
+- **reddit.com/r/bulgaria** — community intelligence, crowd-sourced reports
+- **Facebook groups** — city-specific groups for local incidents, lost & found, crowd reports
+- **Viber** — adding a phone number may reveal profile name/photo
+- **Instagram** — password reset flow reveals masked contact hints for identity correlation
+
+## Google Dorks
+
+# Company by EIK
+intext:"EIK_NUMBER"
+
+# Person in legal acts
+site:legalacts.justice.bg "FULL NAME"
+
+# Person in court cases
+site:ecase.justice.bg "FULL NAME"
+
+# Election data
+site:results.cik.bg "NAME"
+
+# Financial records by EIK
+site:finansi.bg "EIK_NUMBER"
+
+# Registry Agency documents
+site:portal.registryagency.bg/CR/bg/DocumentAccess "FULL NAME"
+
+# Postal records
+site:bgpost.bg/api/files/ "NAME"
+
+# Vehicle listings by phone
+site:mobile.bg "PHONE"
+site:cars.bg "PHONE"
+site:auto.bg "PHONE"
+site:autoscout24.bg "PHONE"
+
+## Ad Transparency Libraries
+When investigating advertiser activity, check these platforms:
+- **adstransparency.google.com** — Google/YouTube ads
+- **facebook.com/ads/library** — Meta (FB/IG) ads
+- **linkedin.com/ad-library** — LinkedIn ads
+- **library.tiktok.com/ads** — TikTok ads
+- **ads.twitter.com/ads-repository** — X/Twitter ads
+- **adrepository.apple.com** — App Store ads
+
+## Workflow
+1. Start with the **subject identifier**: name, EIK, phone, email, plate number
+2. Run **BIRD scanners** (scan.bird.bg) for TR, debtors, leaks
+3. Cross-reference with **Google dorks** against legal, financial, and marketplace sites
+4. Check **social channels**: Facebook groups, Reddit, Viber enrichment
+5. Verify **vehicle/insurance/health** status through government portals
+6. Check **ad libraries** if investigating commercial or political activity
+`}
+</PythonScript>
+
 
 # Table of Contents
 

@@ -34,15 +34,15 @@ const { city, groups, emoji = '📍' } = Astro.props;
 <style>
 	.city-group {
 		margin: 0.75em 0;
-		border: 1px solid rgb(var(--border-color));
+		border: 1px solid var(--border);
 		border-radius: 8px;
 		padding: 0.5em;
-		background: rgb(var(--bg-secondary));
+		background: var(--bg-subtle);
 		transition: all 0.3s ease;
 	}
 
 	.city-group:hover {
-		background: rgb(var(--bg-secondary), 0.8);
+		background: var(--bg-subtle);
 		border-color: var(--accent);
 	}
 
@@ -73,19 +73,19 @@ const { city, groups, emoji = '📍' } = Astro.props;
 
 	.city-name {
 		font-size: 1.1rem;
-		color: rgb(var(--text-primary));
+		color: var(--text);
 	}
 
 	.group-count {
 		font-size: 0.9rem;
-		color: rgb(var(--text-secondary));
+		color: var(--text-secondary);
 		font-weight: 400;
 	}
 
 	.toggle-icon {
 		margin-left: 0.5em;
 		font-size: 0.8em;
-		color: rgb(var(--text-secondary));
+		color: var(--text-secondary);
 		transition: transform 0.3s ease;
 	}
 
@@ -96,8 +96,8 @@ const { city, groups, emoji = '📍' } = Astro.props;
 	.groups-container {
 		padding: 1em;
 		margin-top: 0.5em;
-		border-top: 1px solid rgb(var(--border-color));
-		background-color: rgb(var(--bg-primary));
+		border-top: 1px solid var(--border);
+		background-color: var(--bg);
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		gap: 0.75rem;
@@ -106,7 +106,7 @@ const { city, groups, emoji = '📍' } = Astro.props;
 
 	.group-link {
 		padding: 0.6rem 0.75rem;
-		background-color: rgb(var(--bg-secondary));
+		background-color: var(--bg-subtle);
 		border: 1px solid var(--accent);
 		border-radius: 4px;
 		color: var(--accent);
@@ -121,7 +121,7 @@ const { city, groups, emoji = '📍' } = Astro.props;
 
 	.group-link:hover {
 		background-color: var(--accent);
-		color: rgb(var(--bg-primary));
+		color: var(--bg);
 		box-shadow: 0 2px 8px rgba(35, 55, 255, 0.3);
 	}
 

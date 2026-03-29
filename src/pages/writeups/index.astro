@@ -1,114 +1,68 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('writeups')).sort(
+const writeups = (await getCollection('writeups')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const byYear = new Map<number, typeof writeups>();
+for (const w of writeups) {
+	const year = w.data.pubDate.getFullYear();
+	if (!byYear.has(year)) byYear.set(year, []);
+	byYear.get(year)!.push(w);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--text-primary));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--text-secondary));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
+		<BaseHead title={`Writeups | ${SITE_TITLE}`} description="CTF writeups" />
 	</head>
 	<body>
 		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/writeups/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={960} height={480} src={post.data.heroImage} alt="" />
+		<main class="site-wrapper">
+			<div class="page-header"><h1>CTF writeups</h1></div>
+			{years.map(year => (
+				<section class="year-section">
+					<h2 class="year-label">{year}</h2>
+					<ul class="post-list">
+						{byYear.get(year)!.map(w => (
+							<li class="post-item">
+								<span class="post-date"><FormattedDate date={w.data.pubDate} /></span>
+								<div>
+									<a href={`/writeups/${w.id}/`} class="post-link">{w.data.title}</a>
+									{w.data.tags && w.data.tags.length > 0 && (
+										<div class="post-tags">{w.data.tags.map(t => <span class="post-tag">{t}</span>)}</div>
 									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
+								</div>
 							</li>
-						))
-					}
-				</ul>
-			</section>
+						))}
+					</ul>
+				</section>
+			))}
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	.page-header { margin-bottom: 1.5rem; }
+	.page-header h1 { font-size: 1.5rem; margin: 0; }
+	.year-section { margin-bottom: 1.5rem; }
+	.year-label { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-tertiary); font-weight: 500; margin: 0 0 0.5rem 0; }
+	.post-list { list-style: none; }
+	.post-item { padding: 0.6rem 0; display: grid; grid-template-columns: 7rem 1fr; gap: 0.75rem; align-items: baseline; }
+	.post-item + .post-item { border-top: 1px solid var(--border); }
+	.post-date { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-tertiary); white-space: nowrap; }
+	.post-link { font-weight: 500; font-size: 0.95rem; text-decoration: none; line-height: 1.4; }
+	.post-link:hover { text-decoration: underline; text-decoration-color: currentColor; }
+	.post-tags { display: inline-flex; gap: 0.35rem; margin-top: 0.25rem; flex-wrap: wrap; }
+	.post-tag { font-family: var(--font-mono); font-size: 0.7rem; color: var(--tag-text); background: var(--tag-bg); padding: 0.1em 0.5em; border-radius: 3px; }
+	@media (max-width: 640px) { .post-item { grid-template-columns: 1fr; } }
+</style>

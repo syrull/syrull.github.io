@@ -1,53 +1,64 @@
 /*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+  Redesigned: content-first flat-list blog.
+  Inspired by simonwillison.net, jvns.ca, fasterthanli.me.
+*/
 
 :root {
-	--accent: #06b6d4;
-	--accent-dark: #0891b2;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
-		rgba(var(--gray), 33%);
-	
-	/* Light mode colors */
-	--bg-primary: 255, 255, 255;
-	--bg-secondary: 229, 233, 240;
-	--text-primary: 34, 41, 57;
-	--text-secondary: 96, 115, 159;
-	--border-color: 229, 233, 240;
-	--header-bg: 255, 255, 255;
+	--font-body: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+	--font-heading: 'Fraunces', 'Georgia', serif;
+	--font-mono: 'JetBrains Mono', 'Menlo', monospace;
+
+	--bg: #fafaf9;
+	--bg-subtle: #f3f2ef;
+	--text: #1c1917;
+	--text-secondary: #78716c;
+	--text-tertiary: #a8a29e;
+	--link: #b45309;
+	--link-hover: #92400e;
+	--link-visited: #9333ea;
+	--border: #e7e5e4;
+	--accent: #b45309;
+	--tag-bg: #f5f0eb;
+	--tag-text: #92400e;
+	--code-bg: #f5f5f4;
+	--selection: rgba(180, 83, 9, 0.12);
 }
 
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme="light"]) {
-		--bg-primary: 20, 24, 35;
-		--bg-secondary: 30, 35, 50;
-		--text-primary: 229, 233, 240;
-		--text-secondary: 150, 165, 200;
-		--border-color: 50, 60, 80;
-		--header-bg: 25, 29, 42;
-		--gray-gradient: rgba(30, 35, 50, 50%), rgb(20, 24, 35);
-		--box-shadow: 0 2px 6px rgba(0, 0, 0, 50%), 0 8px 24px rgba(0, 0, 0, 60%), 0 16px 32px rgba(0, 0, 0, 70%);
+		--bg: #171412;
+		--bg-subtle: #1f1b18;
+		--text: #e7e5e4;
+		--text-secondary: #a8a29e;
+		--text-tertiary: #78716c;
+		--link: #f59e0b;
+		--link-hover: #fbbf24;
+		--link-visited: #c084fc;
+		--border: #2d2926;
+		--accent: #f59e0b;
+		--tag-bg: #2d2520;
+		--tag-text: #f59e0b;
+		--code-bg: #1f1b18;
+		--selection: rgba(245, 158, 11, 0.15);
 	}
 }
 
 html[data-theme="dark"] {
 	color-scheme: dark;
-	--bg-primary: 20, 24, 35;
-	--bg-secondary: 30, 35, 50;
-	--text-primary: 229, 233, 240;
-	--text-secondary: 150, 165, 200;
-	--border-color: 50, 60, 80;
-	--header-bg: 25, 29, 42;
-	--gray-gradient: rgba(30, 35, 50, 50%), rgb(20, 24, 35);
-	--box-shadow: 0 2px 6px rgba(0, 0, 0, 50%), 0 8px 24px rgba(0, 0, 0, 60%), 0 16px 32px rgba(0, 0, 0, 70%);
+	--bg: #171412;
+	--bg-subtle: #1f1b18;
+	--text: #e7e5e4;
+	--text-secondary: #a8a29e;
+	--text-tertiary: #78716c;
+	--link: #f59e0b;
+	--link-hover: #fbbf24;
+	--link-visited: #c084fc;
+	--border: #2d2926;
+	--accent: #f59e0b;
+	--tag-bg: #2d2520;
+	--tag-text: #f59e0b;
+	--code-bg: #1f1b18;
+	--selection: rgba(245, 158, 11, 0.15);
 }
 
 html[data-theme="light"] {
@@ -57,130 +68,116 @@ html[data-theme="light"] {
 html {
 	color-scheme: light dark;
 }
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-regular.woff2") format("woff2"),
-		url("/fonts/atkinson-regular.woff") format("woff");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-bold.woff2") format("woff2"),
-		url("/fonts/atkinson-bold.woff") format("woff");
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
-body {
-	font-family: "Atkinson", sans-serif;
+
+*, *::before, *::after {
+	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
-	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
-	background-color: rgb(var(--bg-primary));
+}
+
+::selection {
+	background: var(--selection);
+}
+
+html {
+	font-size: 17px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: var(--font-body);
+	color: var(--text);
+	background: var(--bg);
+	line-height: 1.7;
+	transition: background-color 0.2s ease, color 0.2s ease;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: rgb(var(--text-primary));
-	font-size: 20px;
-	line-height: 1.7;
-	transition: background-color 0.3s ease, color 0.3s ease;
 }
-main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
-	padding: 3em 1em;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	margin: 0 0 0.5rem 0;
-	color: rgb(var(--text-primary));
-	line-height: 1.2;
-}
-h1 {
-	font-size: 3.052em;
-}
-h2 {
-	font-size: 2.441em;
-}
-h3 {
-	font-size: 1.953em;
-}
-h4 {
-	font-size: 1.563em;
-}
-h5 {
-	font-size: 1.25em;
-}
-strong,
-b {
-	font-weight: 700;
-}
+
 a {
-	color: var(--accent);
+	color: var(--link);
+	text-decoration-color: rgba(180, 83, 9, 0.3);
+	text-underline-offset: 0.15em;
+	transition: color 0.15s;
 }
 a:hover {
-	color: var(--accent);
+	color: var(--link-hover);
+	text-decoration-color: currentColor;
 }
-p {
-	margin-bottom: 1em;
+a:visited {
+	color: var(--link-visited);
+	text-decoration-color: rgba(147, 51, 234, 0.3);
 }
-.prose p {
-	margin-bottom: 2em;
+a:visited:hover {
+	color: var(--link-hover);
+	text-decoration-color: currentColor;
 }
-textarea {
-	width: 100%;
-	font-size: 16px;
+
+html[data-theme="dark"] a {
+	text-decoration-color: rgba(245, 158, 11, 0.3);
 }
-input {
-	font-size: 16px;
+html[data-theme="dark"] a:visited {
+	text-decoration-color: rgba(192, 132, 252, 0.3);
 }
-table {
-	width: 100%;
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--font-heading);
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+	color: var(--text);
 }
-img {
-	max-width: 100%;
-	height: auto;
-	border-radius: 8px;
+
+strong, b {
+	font-weight: 700;
 }
+
+code, pre {
+	font-family: var(--font-mono);
+	font-size: 0.88em;
+}
+
 code {
-	padding: 2px 5px;
-	background-color: rgb(var(--bg-secondary));
-	color: rgb(var(--text-primary));
-	border-radius: 2px;
-	border: 1px solid rgb(var(--border-color));
+	background: var(--code-bg);
+	padding: 0.15em 0.35em;
+	border-radius: 3px;
 }
-pre {
-	padding: 1.5em;
-	border-radius: 8px;
-}
+
 pre > code {
 	all: unset;
 }
-blockquote {
-	border-left: 4px solid var(--accent);
-	padding: 0 0 0 20px;
-	margin: 0px;
-	font-size: 1.333em;
-}
+
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--border-color));
+	border-top: 1px solid var(--border);
+	margin: 2rem 0;
 }
-@media (max-width: 720px) {
-	body {
-		font-size: 18px;
-	}
-	main {
-		padding: 1em;
-	}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+table {
+	width: 100%;
+}
+
+textarea, input {
+	font-size: 16px;
+}
+
+blockquote {
+	border-left: 3px solid var(--accent);
+	padding-left: 1rem;
+	color: var(--text-secondary);
+	font-style: italic;
+}
+
+.site-wrapper {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 0 1.25rem;
 }
 
 .sr-only {
@@ -191,12 +188,14 @@ hr {
 	height: 1px;
 	width: 1px;
 	overflow: hidden;
-	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
 	clip: rect(1px 1px 1px 1px);
-	/* maybe deprecated but we need to support legacy browsers */
 	clip: rect(1px, 1px, 1px, 1px);
-	/* modern browsers, clip-path works inwards from each corner */
 	clip-path: inset(50%);
-	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+	html {
+		font-size: 16px;
+	}
 }

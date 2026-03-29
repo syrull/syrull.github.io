@@ -20,15 +20,15 @@ const { title, defaultOpen = false } = Astro.props;
 <style>
   .expandable-section {
     margin: 0.75em 0;
-    border: 1px solid rgb(var(--border-color));
+    border: 2px solid var(--border);
     border-radius: 8px;
     padding: 0.5em;
-    background: rgb(var(--bg-secondary));
+    background: var(--bg-subtle);
     transition: all 0.3s ease;
   }
 
   .expandable-section:hover {
-    background: rgb(var(--bg-secondary), 0.8);
+    background: var(--bg-subtle);
     border-color: var(--accent);
   }
 
@@ -38,7 +38,7 @@ const { title, defaultOpen = false } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5em;
+    padding: 0.75em 1em;
     user-select: none;
   }
 
@@ -49,13 +49,16 @@ const { title, defaultOpen = false } = Astro.props;
   .summary-title {
     flex: 1;
     font-weight: 600;
-    color: rgb(var(--text-primary));
+    font-size: 1rem;
+    color: var(--text);
+    border-left: 3px solid var(--accent);
+    padding-left: 0.75em;
   }
 
   .toggle-icon {
     margin-left: 0.5em;
     font-size: 0.8em;
-    color: rgb(var(--text-secondary));
+    color: var(--text-secondary);
     transition: transform 0.3s ease;
   }
 
@@ -66,7 +69,7 @@ const { title, defaultOpen = false } = Astro.props;
   .section-content {
     padding: 1em;
     padding-top: 0.5em;
-    border-top: 1px solid rgb(var(--border-color));
+    border-top: 1px solid var(--border);
     margin-top: 0.5em;
   }
 

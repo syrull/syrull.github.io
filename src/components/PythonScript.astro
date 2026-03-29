@@ -126,9 +126,9 @@ const finalCode = codeProp || slotContent || "";
 <style>
   .python-script-container {
     margin: 0.75em 0;
-    border: 1px solid rgb(var(--border-color));
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: rgb(var(--bg-secondary));
+    background: var(--bg-subtle);
     transition: all 0.3s ease;
     overflow: hidden;
   }
@@ -155,7 +155,7 @@ const finalCode = codeProp || slotContent || "";
     border: none;
     cursor: pointer;
     text-align: left;
-    color: rgb(var(--text-primary));
+    color: var(--text);
     font-family: inherit;
     font-size: inherit;
     border-radius: 4px;
@@ -163,7 +163,7 @@ const finalCode = codeProp || slotContent || "";
   }
 
   .expand-toggle:hover {
-    background: rgba(var(--text-primary), 0.05);
+    background: var(--code-bg);
   }
 
   .python-icon {
@@ -177,16 +177,16 @@ const finalCode = codeProp || slotContent || "";
 
   .filename {
     font-size: 0.85em;
-    color: rgb(var(--text-secondary));
-    font-family: monospace;
-    background: rgba(var(--text-primary), 0.05);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    background: var(--code-bg);
     padding: 0.2em 0.5em;
     border-radius: 4px;
   }
 
   .toggle-icon {
     font-size: 0.8em;
-    color: rgb(var(--text-secondary));
+    color: var(--text-secondary);
     transition: transform 0.3s ease;
   }
 
@@ -204,11 +204,11 @@ const finalCode = codeProp || slotContent || "";
     align-items: center;
     gap: 0.35rem;
     padding: 0.4rem 0.75rem;
-    background: rgb(var(--bg-primary));
-    border: 1px solid rgb(var(--border-color));
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 6px;
     cursor: pointer;
-    color: rgb(var(--text-primary));
+    color: var(--text);
     font-family: inherit;
     font-size: 0.8rem;
     font-weight: 500;
@@ -218,7 +218,7 @@ const finalCode = codeProp || slotContent || "";
   .action-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgb(var(--bg-secondary));
+    background: var(--bg-subtle);
   }
 
   .action-btn svg {
@@ -244,7 +244,7 @@ const finalCode = codeProp || slotContent || "";
   .script-content :global(pre) {
     margin: 0 !important;
     border-radius: 0 0 8px 8px !important;
-    border-top: 1px solid rgb(var(--border-color)) !important;
+    border-top: 1px solid var(--border) !important;
   }
 
   .script-content :global(.expressive-code .frame) {

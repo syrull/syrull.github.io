@@ -15,44 +15,39 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+			.article-header {
+				margin-bottom: 2rem;
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid var(--border);
 			}
+			.article-header h1 {
+				font-size: 2rem;
+				font-weight: 800;
+				margin-bottom: 0.6rem;
+				line-height: 1.2;
+			}
+			.article-meta {
+				font-size: 0.85rem;
+				color: var(--text-secondary);
+				display: flex;
+				gap: 1rem;
+				align-items: center;
+				flex-wrap: wrap;
+			}
+			.article-meta time {
+				font-family: var(--font-mono);
+				font-size: 0.82rem;
+			}
+			.updated { font-style: italic; }
 			.hero-image {
-				width: 100%;
+				margin-bottom: 2rem;
 			}
 			.hero-image img {
+				width: 100%;
+				height: auto;
+				border-radius: 6px;
 				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
 			}
-			.prose {
-				width: 960px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--text-primary));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--text-secondary));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-			/* Lightbox styles */
 			.lightbox {
 				display: none;
 				position: fixed;
@@ -61,49 +56,122 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				top: 0;
 				width: 100%;
 				height: 100%;
-				background-color: rgba(0, 0, 0, 0.8);
+				background-color: rgba(0, 0, 0, 0.85);
 				align-items: center;
 				justify-content: center;
+				cursor: zoom-out;
 			}
 			.lightbox img {
 				max-width: 90%;
 				max-height: 90%;
-				border-radius: 8px;
+				border-radius: 6px;
 			}
 			.lightbox:target {
 				display: flex;
+			}
+			@media (max-width: 640px) {
+				.article-header h1 { font-size: 1.6rem; }
+			}
+		</style>
+		<style is:global>
+			.prose {
+				font-size: 1rem;
+				line-height: 1.8;
+				word-wrap: break-word;
+				overflow-wrap: break-word;
+			}
+			.prose p { margin-bottom: 1.4rem; }
+			.prose h2 {
+				font-size: 1.4rem;
+				margin-top: 2.5rem;
+				margin-bottom: 0.75rem;
+				padding-bottom: 0.4rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.prose h3 {
+				font-size: 1.15rem;
+				margin-top: 2rem;
+				margin-bottom: 0.6rem;
+			}
+			.prose pre {
+				background: var(--code-bg);
+				border: 1px solid var(--border);
+				border-radius: 6px;
+				padding: 1rem 1.25rem;
+				overflow-x: auto;
+				margin-bottom: 1.4rem;
+				font-size: 0.85rem;
+				line-height: 1.55;
+				word-wrap: normal;
+				overflow-wrap: normal;
+			}
+			.prose pre code {
+				background: none;
+				padding: 0;
+				border-radius: 0;
+			}
+			.prose blockquote {
+				border-left: 3px solid var(--accent);
+				padding-left: 1rem;
+				color: var(--text-secondary);
+				margin-bottom: 1.4rem;
+				font-style: italic;
+			}
+			.prose img {
+				max-width: 100%;
+				height: auto;
+				border-radius: 4px;
+				margin: 1rem 0;
+			}
+			.prose ul, .prose ol {
+				padding-left: 1.5rem;
+				margin-bottom: 1.4rem;
+			}
+			.prose li { margin-bottom: 0.3rem; }
+			.prose a {
+				color: var(--link);
+				text-underline-offset: 0.15em;
+			}
+			.prose a:visited { color: var(--link-visited); }
+			.prose iframe {
+				width: 100%;
+				aspect-ratio: 16/9;
+				height: auto;
+				border: none;
+				border-radius: 6px;
+				margin: 1.5rem 0;
 			}
 		</style>
 	</head>
 
 	<body>
 		<Header />
-		<main>
+		<main class="site-wrapper">
 			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
+				<div class="article-header">
+					<h1>{title}</h1>
+					<div class="article-meta">
+						<time datetime={pubDate.toISOString()}>
 							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
+						</time>
+						{updatedDate && (
+							<span class="updated">
+								Updated <FormattedDate date={updatedDate} />
+							</span>
+						)}
 					</div>
+				</div>
+				{heroImage && (
+					<div class="hero-image">
+						<Image width={960} height={480} src={heroImage} alt="" />
+					</div>
+				)}
+				<div class="prose">
 					<slot />
 				</div>
 			</article>
 		</main>
 		<Footer />
-		<!-- Lightbox modal -->
 		<div id="lightbox" class="lightbox">
 			<img id="lightbox-img" src="" alt="">
 		</div>
@@ -113,7 +181,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
 				if (!lightbox || !lightboxImg) return;
 				const images = document.querySelectorAll('.prose img');
-
 				images.forEach(img => {
 					(img as HTMLImageElement).style.cursor = 'pointer';
 					img.addEventListener('click', function(this: HTMLImageElement) {
@@ -121,7 +188,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 						lightbox.style.display = 'flex';
 					});
 				});
-
 				lightbox.addEventListener('click', function() {
 					lightbox.style.display = 'none';
 				});

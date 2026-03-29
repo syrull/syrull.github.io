@@ -23,15 +23,15 @@ const { href, title, description } = Astro.props;
 <style>
   .expandable-link {
     margin: 0.75em 0;
-    border: 1px solid rgb(var(--border-color));
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.5em;
-    background: rgb(var(--bg-secondary));
+    background: var(--bg-subtle);
     transition: all 0.3s ease;
   }
 
   .expandable-link:hover {
-    background: rgb(var(--bg-secondary), 0.8);
+    background: var(--bg-subtle);
     border-color: var(--accent);
   }
 
@@ -65,7 +65,7 @@ const { href, title, description } = Astro.props;
   .toggle-icon {
     margin-left: 0.5em;
     font-size: 0.8em;
-    color: rgb(var(--text-secondary));
+    color: var(--text-secondary);
     transition: transform 0.3s ease;
   }
 
@@ -76,13 +76,13 @@ const { href, title, description } = Astro.props;
   .link-description {
     padding: 1em;
     margin-top: 0.5em;
-    border-top: 1px solid rgb(var(--border-color));
+    border-top: 1px solid var(--border);
     animation: slideDown 0.3s ease;
   }
 
   .link-description p {
     margin: 0;
-    color: rgb(var(--text-primary));
+    color: var(--text);
     line-height: 1.6;
   }
 

@@ -72,8 +72,8 @@ const cloneUrl = `${repoUrl}.git`;
     gap: 1rem;
     padding: 0.75rem 1rem;
     margin-bottom: 1.5rem;
-    background: rgb(var(--bg-secondary));
-    border: 1px solid rgb(var(--border-color));
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
     border-radius: 8px;
     transition: border-color 0.3s ease;
   }
@@ -92,7 +92,7 @@ const cloneUrl = `${repoUrl}.git`;
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
-    color: rgb(var(--text-primary));
+    color: var(--text);
     font-size: 1rem;
     transition: color 0.2s ease;
   }
@@ -126,10 +126,10 @@ const cloneUrl = `${repoUrl}.git`;
     align-items: center;
     gap: 0.35rem;
     padding: 0.4rem 0.75rem;
-    background: rgb(var(--bg-primary));
-    border: 1px solid rgb(var(--border-color));
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 6px;
-    color: rgb(var(--text-primary));
+    color: var(--text);
     font-size: 0.8rem;
     font-weight: 500;
     font-family: inherit;
@@ -144,7 +144,7 @@ const cloneUrl = `${repoUrl}.git`;
   .action-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgb(var(--bg-secondary));
+    background: var(--bg-subtle);
   }
 
   .action-icon {

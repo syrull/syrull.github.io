@@ -47,8 +47,8 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
 
 <style>
   .google-dork {
-    background: rgb(var(--bg-secondary));
-    border: 1px solid rgba(var(--border-color), 0.5);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -72,7 +72,7 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: rgb(var(--text-primary));
+    color: var(--text);
   }
 
   .search-button {
@@ -80,9 +80,9 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
     align-items: center;
     gap: 0.35rem;
     padding: 0.4rem 0.75rem;
-    background: rgb(var(--bg-primary));
-    color: rgb(var(--text-primary));
-    border: 1px solid rgb(var(--border-color));
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 0.8rem;
     font-weight: 500;
@@ -95,7 +95,7 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
   .search-button:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgb(var(--bg-secondary));
+    background: var(--bg-subtle);
   }
 
   .search-button svg {
@@ -105,18 +105,18 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
   .dork-description {
     margin: 0 0 0.75rem 0;
     font-size: 0.9rem;
-    color: rgb(var(--text-secondary));
+    color: var(--text-secondary);
     line-height: 1.5;
   }
 
   .dork-query {
     position: relative;
-    background: rgba(var(--bg-primary), 0.5);
-    border: 1px solid rgba(var(--border-color), 0.3);
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 0.75rem;
     padding-right: 3rem;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-mono);
     overflow-x: auto;
   }
 
@@ -132,8 +132,8 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    background: rgb(var(--bg-primary));
-    border: 1px solid rgb(var(--border-color));
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 0.4rem;
     cursor: pointer;
@@ -141,13 +141,13 @@ const googleSearchUrl = `https://www.google.com/search?q=${encodedQuery}`;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    color: rgb(var(--text-primary));
+    color: var(--text);
   }
 
   .copy-button:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgb(var(--bg-secondary));
+    background: var(--bg-subtle);
   }
 
   .copy-button:active {
