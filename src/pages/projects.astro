@@ -1,0 +1,247 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+
+const languageColors: Record<string, string> = {
+	Go: '#00ADD8',
+	Python: '#3572A5',
+	TypeScript: '#3178C6',
+	Rust: '#DEA584',
+};
+
+const projects = [
+	{
+		repo: 'syrull/pluto',
+		language: 'Go',
+		description:
+			'A minimal, self-hostable AI coding agent (harness) written in Go — a model-agnostic, hackable alternative to Claude Code and Codex that ships only the features I actually use.',
+	},
+	{
+		repo: 'syrull/karl-code',
+		language: 'Go',
+		description:
+			'Pools Claude subscription capacity across a small, trusted group of friends. Each node exposes a local Anthropic-compatible endpoint and routes every request to the least-utilized member over an mTLS mesh, so no node ever holds another node\'s token.',
+	},
+	{
+		repo: 'syrull/simple-fishing-bot',
+		language: 'Python',
+		description:
+			'A ~50-line Python fishing bot for World of Warcraft that combines in-game mechanics with a few Windows API calls to auto-catch fish at a near-perfect (~99%) success rate.',
+	},
+	{
+		repo: 'syrull/cocopilot',
+		language: 'Go',
+		description:
+			'An agentic task queue server written in Go, with a Kanban-style web UI and a simple HTTP API for orchestrating LLM agents that poll for work and submit their results.',
+	},
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Projects | ${SITE_TITLE}`} description="Personal and open-source projects" />
+	</head>
+	<body>
+		<Header />
+		<main class="site-wrapper">
+			<div class="page-header">
+				<h1>Projects</h1>
+				<p class="page-intro">A few things I build and maintain in my spare time.</p>
+			</div>
+
+			<div class="projects-grid">
+				{projects.map(project => {
+					const [owner, name] = project.repo.split('/');
+					const repoUrl = `https://github.com/${project.repo}`;
+					const cloneUrl = `${repoUrl}.git`;
+					return (
+						<article class="project-card">
+							<div class="project-head">
+								<a href={repoUrl} target="_blank" rel="noopener noreferrer" class="project-name">
+									<svg viewBox="0 0 16 16" aria-hidden="true" class="github-icon">
+										<path
+											fill="currentColor"
+											d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+										/>
+									</svg>
+									<span>{owner}/<strong>{name}</strong></span>
+								</a>
+								<span class="project-lang">
+									<span class="lang-dot" style={`background:${languageColors[project.language] ?? 'var(--text-tertiary)'}`}></span>
+									{project.language}
+								</span>
+							</div>
+
+							<p class="project-desc">{project.description}</p>
+
+							<div class="project-actions">
+								<button class="action-btn clone-btn" data-clone-url={cloneUrl} title="Copy clone URL">
+									<svg viewBox="0 0 16 16" aria-hidden="true" class="action-icon">
+										<path fill="currentColor" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/>
+										<path fill="currentColor" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/>
+									</svg>
+									<span class="btn-text">Clone</span>
+								</button>
+
+								<a href={repoUrl} target="_blank" rel="noopener noreferrer" class="action-btn" title="View on GitHub">
+									<svg viewBox="0 0 16 16" aria-hidden="true" class="action-icon">
+										<path fill="currentColor" d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.854-1h4.146a.25.25 0 0 1 .25.25v4.146a.25.25 0 0 1-.427.177L13.03 4.03 9.28 7.78a.751.751 0 0 1-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0 1 10.604 1Z"/>
+									</svg>
+									<span class="btn-text">View</span>
+								</a>
+							</div>
+						</article>
+					);
+				})}
+			</div>
+		</main>
+		<Footer />
+
+		<script>
+			document.querySelectorAll('.clone-btn').forEach(btn => {
+				btn.addEventListener('click', async () => {
+					const cloneUrl = btn.getAttribute('data-clone-url');
+					if (!cloneUrl) return;
+					try {
+						await navigator.clipboard.writeText(`git clone ${cloneUrl}`);
+						const textSpan = btn.querySelector('.btn-text');
+						const originalText = textSpan?.textContent;
+						if (textSpan) {
+							textSpan.textContent = 'Copied!';
+							setTimeout(() => {
+								textSpan.textContent = originalText || 'Clone';
+							}, 2000);
+						}
+					} catch (err) {
+						console.error('Failed to copy:', err);
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
+
+<style>
+	.page-header { margin-bottom: 2rem; }
+	.page-header h1 { font-size: 1.6rem; margin: 0; }
+	.page-intro { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem; }
+
+	.projects-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.project-card {
+		display: flex;
+		flex-direction: column;
+		padding: 1.15rem 1.25rem 1.1rem;
+		background: var(--bg-subtle);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.project-card:hover {
+		border-color: var(--accent);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px -12px var(--accent);
+	}
+
+	.project-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-bottom: 0.7rem;
+	}
+
+	.project-name {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.95rem;
+		color: var(--text);
+		text-decoration: none;
+		min-width: 0;
+	}
+	.project-name:visited { color: var(--text); }
+	.project-name:hover { color: var(--accent); }
+	.project-name span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.project-name strong { color: var(--accent); font-weight: 600; }
+
+	.github-icon {
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+	}
+
+	.project-lang {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--text-secondary);
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+	.lang-dot {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+
+	.project-desc {
+		font-size: 0.88rem;
+		color: var(--text-secondary);
+		line-height: 1.65;
+		margin-bottom: 1.1rem;
+		flex: 1;
+	}
+
+	.project-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.action-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.4rem 0.75rem;
+		background: var(--bg);
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		color: var(--text);
+		font-size: 0.8rem;
+		font-weight: 500;
+		font-family: inherit;
+		line-height: 1.2;
+		text-decoration: none;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		appearance: none;
+		-webkit-appearance: none;
+	}
+	.action-btn:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+		background: var(--bg-subtle);
+	}
+
+	.action-icon {
+		width: 14px;
+		height: 14px;
+	}
+</style>
