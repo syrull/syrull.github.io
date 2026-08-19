@@ -3,6 +3,9 @@
 ## Project Structure & Module Organization
 `src/` holds UI code and `src/content/` hosts Markdown collections. Key dirs: `src/components` (shared UI), `src/layouts` (page scaffolds), `src/pages` (routes), `src/assets` (importable media), and `src/styles` (global CSS). Collections live in `src/content/{blog,posts,writeups}` and follow the schemas in `src/content.config.ts`; add new entries under the matching folder with required frontmatter. Static assets that bypass the bundler belong in `public/`. Build output lands in `dist/` and should not be edited manually.
 
+### `public/nbp/` — unlisted, and generated elsewhere
+`public/nbp/` is a built copy of the NBP game (`../nedko`), not source. Do not hand-edit it, do not add a link to it, and do not give it an Astro route: it is reachable only by typing `/nbp/`, which is deliberate — it holds a bachelor-party invitation meant for one player. Being outside `src/pages/` also keeps it out of `@astrojs/sitemap`. Refresh it from the game repo with `npm run build && rm -rf ../syrull.github.io/public/nbp && cp -r dist ../syrull.github.io/public/nbp`. The game's assets are relative, so the trailing slash matters: GitHub Pages redirects `/nbp` onto `/nbp/`, but `astro preview` does not.
+
 ## Build, Test, and Development Commands
 - `npm install` — install dependencies.
 - `npm run dev` — launch the dev server at http://localhost:4321.
