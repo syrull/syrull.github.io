@@ -13,7 +13,7 @@ heroImage: '../../assets/re-tzar.png'
 ---
 
 import ExpandableSection from '../../components/ExpandableSection.astro';
-import PythonScript from '../../components/PythonScript.astro';
+import CodeScript from '../../components/CodeScript.astro';
 import GitHubRepo from '../../components/GitHubRepo.astro';
 
 ## Table of Contents
@@ -432,7 +432,7 @@ First 64 bytes of decompressed data:
   0030: 49 5c 41 49 2e 49 4e 49 3b 13 00 00 0c 01 00 00  I\AI.INI;.......
 ```
 
-<PythonScript title="LZSS Decompressor" filename="tzar_wdt_lzss_decompress.py">
+<CodeScript title="LZSS Decompressor" filename="tzar_wdt_lzss_decompress.py" lang="python">
 {`
 #!/usr/bin/env python3
 """
@@ -628,7 +628,7 @@ if __name__ == '__main__':
     main()
 
 `}
-</PythonScript>
+</CodeScript>
 
 Now we have another challenge... What the hell is `HMMSYS PackFile` 😭.
 
@@ -661,7 +661,7 @@ With some reversing I got the following information:
 | 0x20 | 4 | file_count | Number of files in archive |
 | 0x24 | 4 | entry_table_size | Size of the entry table in bytes* |
 
-<PythonScript title="WDT Extractor" filename="tzar_wdt_extractor.py">
+<CodeScript title="WDT Extractor" filename="tzar_wdt_extractor.py" lang="python">
 {`
 #!/usr/bin/env python3
 """
@@ -1255,7 +1255,7 @@ Examples:
 if __name__ == '__main__':
     main()
 `}
-</PythonScript>
+</CodeScript>
 
 # Creating a `*.wdt` file
 
@@ -1275,7 +1275,7 @@ At this point it's trivial to extract the contents of the `images.wdt` and for e
 
 Use this script to `extract/bundle/list` and overall work with the WDT files that Tzar has, the script also incorporates a `validate` command to verify that the BMP's that you put are in the correct BMP format, if they are not you can use `convert-bmp` to make them.
 
-<PythonScript title="Tzar WDT Tool" filename="tzar_wdt_tool.py">
+<CodeScript title="Tzar WDT Tool" filename="tzar_wdt_tool.py" lang="python">
 {`
 #!/usr/bin/env python3
 """
@@ -2232,7 +2232,7 @@ Examples:
 if __name__ == '__main__':
     main()
 `}
-</PythonScript>
+</CodeScript>
 
 # End
 

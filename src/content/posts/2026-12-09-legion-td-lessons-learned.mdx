@@ -14,6 +14,8 @@ toc: true
 heroImage: '../../assets/legion_td_plus_logo.png'
 ---
 
+import CodeScript from '../../components/CodeScript.astro';
+
 ## Overview
 
 Right, it's been four years since the initial release of my [Go SDK for Legion TD2](/posts/2022-08-23-legiontd2-sdk/). In that time, I've played on and off, but I've never had the time to sit down and write an update or update the tools.
@@ -42,7 +44,7 @@ I have the basic building blocks, so how do I connect and use them?
 
 Since I am using Linux and playing the game through Proton, I had to do some additional setup. I need to tell Proton to load it via `winhttp.dll`, as described in the [Proton configuration guide for Linux](https://github.com/LegionTD2-Modding/.github/wiki/Configure-Proton-for-Linux). I am running it through Steam, so it's a bit easier on my side: just use these launch options: `WINEDLLOVERRIDES="winhttp=n,b" %command%`.
 
-Now, onto how and why I am using `winhttp.dll`. Initially, I was very confused: why this particular DLL, and how on earth did it appear in my game directory? Was it there to begin with? The confusion arose because I used AI to skip this process and focus on other things, such as features in the mod. Anyway, I did some research on my own and realized that this is actually [UnityDoorstop](https://github.com/NeighTools/UnityDoorstop)'s way of adding .NET assemblies to Unity. It uses `winhttp.dll` to "sideload" another DLL into Unity. As for why it uses `winhttp.dll` specifically, the answer is simple: the game supports and expects it. Sure, I can use other proxies from [UnityDoorstop's supported proxy list](https://github.com/NeighTools/UnityDoorstop/blob/master/src/windows/proxy/proxylist.txt), but the idea is that the game must already use them. (ai: perhaps we need better rephrasing here)
+Now, onto how and why I am using `winhttp.dll`. Initially, I was very confused: why this particular DLL, and how on earth did it appear in my game directory? Was it there to begin with? The confusion arose because I used AI to skip this process and focus on other things, such as features in the mod. Anyway, I did some research on my own and realized that this is actually [UnityDoorstop](https://github.com/NeighTools/UnityDoorstop)'s way of adding .NET assemblies to Unity. It uses `winhttp.dll` to "sideload" another DLL into Unity. As for why it uses `winhttp.dll` specifically, the answer is simple: the game supports and expects it. Sure, I can use other proxies from [UnityDoorstop's supported proxy list](https://github.com/NeighTools/UnityDoorstop/blob/master/src/windows/proxy/proxylist.txt), but the idea is that the game must already use them.
 
 Onto the next thing: I need to create a config file for Doorstop. I use the [example `doorstop_config.ini`](https://github.com/NeighTools/UnityDoorstop/blob/master/assets/windows/doorstop_config.ini) from the repository. I just need to adjust `target_assembly` to point to the BepInEx runtime DLL.
 
@@ -81,7 +83,6 @@ public class Plugin : BaseUnityPlugin
 }
 ```
 
-(ai: this might need rephrasing)
 Okay, I can run `dotnet build -c Release`, and I will have a `DLL` that serves as a base plugin for the game. However, I still haven't loaded anything into the game because I have a standalone DLL. Using the knowledge that I have already gathered, I should extract the appropriate BepInEx 5 package into the game directory. The [BepInEx releases](https://github.com/BepInEx/BepInEx/releases) include prebuilt binaries that I can use. After adding my plugin, the relevant files should look like this:
 
 ```
@@ -107,9 +108,9 @@ When I load the game and check the BepInEx logs, I should see:
 
 # Figuring out how it should work
 
-I am completely new to Unity, let alone decompiling and reverse engineering (ai: is this the correct way to say this?). While I know some basic stuff, bear with me here :D.
+I am completely new to Unity, let alone decompiling and reverse engineering. While I know some basic stuff, bear with me here :D.
 
-I discovered the use of "Harmony" through [ModsGate](https://github.com/LegionTD2-Modding/ModsGate/). It was my first time hearing about this library, so I had to research it too. On top of that, I am also quite inexperienced with C# (ai: is this the right wording/grammar, I mean?).
+I discovered the use of "Harmony" through [ModsGate](https://github.com/LegionTD2-Modding/ModsGate/). It was my first time hearing about this library, so I had to research it too. On top of that, I am also quite inexperienced with C#.
 
 I realized that I need to decompile part of the game. The main game code is in `/Managed/Assembly-CSharp.dll`, and this is what I see when I decompile it with `ILSpy`:
 
@@ -137,9 +138,8 @@ I am going to use those to subscribe to the `Assets.Main.OnRender` event. Then, 
 
 In the end, the code will look like this:
 
-(ai: Maybe use the file code component that I have in re-tzar)
-```csharp
-# HudInstaller.cs
+<CodeScript title="HUD Installer" filename="HudInstaller.cs" lang="csharp" defaultOpen={true}>
+{`
 using System;
 using System.Reflection;
 using BepInEx.Logging;
@@ -230,7 +230,8 @@ internal sealed class HudInstaller(ManualLogSource log) : IDisposable
         _renderEvent.RemoveEventHandler(null, _renderHandler);
     }
 }
-```
+`}
+</CodeScript>
 
 Once I compile the plugin and load the game, I should see this in the logs:
 
@@ -240,7 +241,6 @@ Once I compile the plugin and load the game, I should see this in the logs:
 
 # Drawing on the screen
 
-(ai: maybe the logic here is a bit lost)
 The next logical step is to figure out how to draw on the screen. I've tried a few variants, and I did not like any of them because they required patching the game files, which means the changes would be replaced or lost after each update (technically true when doing it without patching in this case too, but it is still a bit less fragile). [In the end](https://www.youtube.com/watch?v=eVTXPUF4Oz4), I've bundled my overlay 'resources' into the DLL. I use the reflected `ExecuteScript` method from the `Coherent` view to install the CSS and JS that I've created.
 
 I am back to using reflection and the `Harmony` library, which will get me the game methods that I need to draw on the screen. So, in `TryInstall()`, I have:

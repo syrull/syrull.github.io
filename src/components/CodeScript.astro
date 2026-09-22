@@ -9,8 +9,8 @@ interface Props {
   lang?: string;
 }
 
-const { title, filename = "script.py", defaultOpen = false, code: codeProp, lang = "python" } = Astro.props;
-const uniqueId = `python-script-${Math.random().toString(36).substring(2, 9)}`;
+const { title, filename = "code.txt", defaultOpen = false, code: codeProp, lang = "text" } = Astro.props;
+const uniqueId = `code-script-${Math.random().toString(36).substring(2, 9)}`;
 
 // Get code from either prop or slot
 let slotContent = "";
@@ -31,10 +31,10 @@ if (Astro.slots.has("default")) {
 const finalCode = codeProp || slotContent || "";
 ---
 
-<div class="python-script-container" data-script-id={uniqueId} data-code={finalCode} data-filename={filename}>
+<div class="code-script-container" data-script-id={uniqueId} data-code={finalCode} data-filename={filename}>
   <div class="script-header">
     <button class="expand-toggle" aria-expanded={defaultOpen ? "true" : "false"}>
-      <span class="python-icon">🐍</span>
+      <span class="code-icon" aria-hidden="true">&lt;/&gt;</span>
       <span class="script-title">{title}</span>
       <span class="filename">{filename}</span>
       <span class="toggle-icon">▼</span>
@@ -63,17 +63,17 @@ const finalCode = codeProp || slotContent || "";
 </div>
 
 <script>
-  document.addEventListener('astro:page-load', initPythonScripts);
-  document.addEventListener('DOMContentLoaded', initPythonScripts);
+  document.addEventListener('astro:page-load', initCodeScripts);
+  document.addEventListener('DOMContentLoaded', initCodeScripts);
 
-  function initPythonScripts() {
-    document.querySelectorAll('.python-script-container').forEach((container) => {
+  function initCodeScripts() {
+    document.querySelectorAll('.code-script-container').forEach((container) => {
       const toggle = container.querySelector('.expand-toggle');
       const content = container.querySelector('.script-content') as HTMLElement;
       const copyBtn = container.querySelector('.copy-btn');
       const downloadBtn = container.querySelector('.download-btn');
       const code = (container as HTMLElement).dataset.code || '';
-      const filename = (container as HTMLElement).dataset.filename || 'script.py';
+      const filename = (container as HTMLElement).dataset.filename || 'code.txt';
 
       // Skip if already initialized
       if (container.hasAttribute('data-initialized')) return;
@@ -109,7 +109,7 @@ const finalCode = codeProp || slotContent || "";
       // Download script
       downloadBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
-        const blob = new Blob([code], { type: 'text/x-python' });
+        const blob = new Blob([code], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -124,7 +124,7 @@ const finalCode = codeProp || slotContent || "";
 </script>
 
 <style>
-  .python-script-container {
+  .code-script-container {
     margin: 0.75em 0;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -133,7 +133,7 @@ const finalCode = codeProp || slotContent || "";
     overflow: hidden;
   }
 
-  .python-script-container:hover {
+  .code-script-container:hover {
     border-color: var(--accent);
   }
 
@@ -166,8 +166,10 @@ const finalCode = codeProp || slotContent || "";
     background: var(--code-bg);
   }
 
-  .python-icon {
-    font-size: 1.2em;
+  .code-icon {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    font-weight: 600;
   }
 
   .script-title {

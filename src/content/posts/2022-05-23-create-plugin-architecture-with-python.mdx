@@ -9,13 +9,13 @@ math: true
 heroImage: '../../assets/plugin-arch-python.png'
 ---
 
-import PythonScript from '../../components/PythonScript.astro';
+import CodeScript from '../../components/CodeScript.astro';
 
 ## CLAUDE.md / SKILL
 
 Drop this into your `CLAUDE.md` or use it as a skill when building extensible Python systems:
 
-<PythonScript title="Python Plugin Architecture" filename="CLAUDE.md" lang="markdown" defaultOpen={false}>
+<CodeScript title="Python Plugin Architecture" filename="CLAUDE.md" lang="markdown" defaultOpen={false}>
 {`# Python Plugin Architecture
 
 ## When to use
@@ -131,7 +131,7 @@ print(register)  # list of registered functions
 - Base class / decorator lives in a separate module from plugins -- avoids circular imports
 - Test plugins in isolation -- they should work without the loader
 `}
-</PythonScript>
+</CodeScript>
 
 
 There are some use-cases where a plugin architecture is needed, I call this "code" plugins but it is quite possible that there is already a word for that. The idea is to 'load' functions or classes that are dynamically created so that you can have the reference to the instances at runtime. I've created 2 solutions for that matter one that is using the `__subclasses__` dunder method and one using a decorator.
