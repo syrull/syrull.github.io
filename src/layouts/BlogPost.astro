@@ -15,6 +15,10 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
+			article {
+				max-width: var(--article-width);
+				margin-inline: auto;
+			}
 			.article-header {
 				margin-bottom: 2rem;
 				padding-bottom: 1.5rem;
@@ -81,6 +85,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				overflow-wrap: break-word;
 			}
 			.prose p { margin-bottom: 1.4rem; }
+			.prose .expressive-code {
+				margin-block: 1.75rem 2rem;
+			}
 			.prose h2 {
 				font-size: 1.4rem;
 				margin-top: 2.5rem;
@@ -120,8 +127,12 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.prose img {
 				max-width: 100%;
 				height: auto;
+				display: block;
 				border-radius: 4px;
-				margin: 1rem 0;
+				margin-inline: auto;
+			}
+			.prose p:has(> img:only-child) {
+				margin-block: 1.75rem 2rem;
 			}
 			.prose ul, .prose ol {
 				padding-left: 1.5rem;

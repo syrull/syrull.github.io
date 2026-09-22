@@ -7,6 +7,8 @@
 	--font-body: 'Instrument Sans', system-ui, -apple-system, sans-serif;
 	--font-heading: 'Fraunces', 'Georgia', serif;
 	--font-mono: 'JetBrains Mono', 'Menlo', monospace;
+	--site-width: 960px;
+	--article-width: 840px;
 
 	--bg: #fafaf9;
 	--bg-subtle: #f3f2ef;
@@ -175,7 +177,7 @@ blockquote {
 }
 
 .site-wrapper {
-	max-width: 720px;
+	max-width: var(--site-width);
 	margin: 0 auto;
 	padding: 0 1.25rem;
 }
